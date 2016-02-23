@@ -1,0 +1,145 @@
+@CHARSET "ISO-8859-1";
+/* @import url(http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,700); */
+
+.ui-principal {
+	height: 600px;
+	width: 800px;
+	background-color: #d7ebff;
+}
+
+.ui-exportar-boto {
+	position: relative;
+/* 	right: -300px; */
+/* 	background-color: #808080; */
+/* 	border-color: #808080; */
+/* 	left: 40px; */
+    padding-bottom: 15px;
+/* 	color: #333; */
+}
+
+.ui-exportar-boto:hover {
+	background-color: #6b6b6b;
+	border-color: #6b6b6b;
+}
+
+.ui-canvi {
+	position: relative;
+	right: -137px;
+}
+
+.ui-tipus {
+	position: relative;
+	right: -60px;
+}
+
+.ui-seguent-boto {
+	background-image: url('../img/next-icon.png');
+	background-position:center;
+	background-repeat: no-repeat;
+}
+
+.ui-idioma-boto {
+	
+}
+
+.ui-entrar-text {
+	margin-bottom: 10px;
+}
+
+.ui-entrar-formulari {
+	width: 180px;
+	padding: 12px;
+    border: 1px solid rgba(204, 204, 204, 0.36);
+    border-radius: 5px;
+    background: #dbdbdb;
+    margin-top: -47px;
+    position: absolute;
+    margin-left: 438px;
+    z-index: 100;
+}
+
+.ui-entrar-formulari-boto {
+	width: 50px;
+	height: 30px;
+}
+
+.ui-formulari-registre-text {
+	margin-bottom: 10px;
+}
+
+.ui-registre-formulari {
+	padding: 12px;
+    border: 1px solid rgba(204, 204, 204, 0.36);
+    border-radius: 5px;
+    background: #dbdbdb;
+    margin-left: 366px;
+    margin-top: -48px;
+    position: absolute;
+    z-index: 100;
+}
+
+.ui-registre-formulari-boto {
+	width: 60px;
+	height: 30px;
+}
+
+.ui-importacio {
+	font-weight: bold;
+    padding-bottom: 7px;
+}
+
+.ui-modificacio {
+	font-weight: bold;
+    padding-bottom: 7px;
+}
+
+.ui-boto-pujar-fitxer {
+	position: relative;
+    left: 150px;
+    padding-bottom: 15px;
+}
+
+.ui-opcio-a {
+	font-weight: bold;
+	color: #626262;
+	border-bottom: 1px solid;
+	padding-bottom: 17px;
+}
+
+.ui-importacio-text {
+	padding-bottom: 7px;
+}
+
+.ui-checkbox-file {
+	height: 20px;
+    width: 20px;
+}
+
+.ui-map {
+	padding-bottom: 20px;
+}
+
+.ui-exporta-fitxer {
+	padding-top: 15px;
+}
+
+.ui-container-table {
+	overflow-y: scroll;
+    height: 162px;
+    margin-bottom: 28px;
+}
+
+.ui-myProgress {
+  width: 100%;
+  height: 30px;
+  position: relative;
+  background-color: #ddd;
+  margin-top: 20px;
+}
+
+.ui-myBar {
+  background-color: #006600;
+  width: 0px;
+  height: 30px;
+  position: absolute;
+}

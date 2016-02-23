@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+		http://www.springframework.org/schema/jee
+		http://www.springframework.org/schema/jee/spring-jee-3.0.xsd">
+		
+	<bean
+		class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer" />
+
+	<jee:jndi-lookup id="dataSource2" jndi-name="java:comp/env/jdbc/proces" />
+	
+	<bean id="ServicesIntegration" class="com.sitep.str.integration.in.STRServicesIntegration">
+		<property name="dataSource" ref="dataSource2" />
+		<property name="origens" value="${ws_connector_origens}" />
+	</bean>
+
+	<bean id="wsTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="ServicesIntegration" />
+		<property name="targetMethod" value="loadData" />
+		<property name="concurrent" value="true" />
+	</bean>
+
+	<bean id="cronWsTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="wsTask" />
+		<property name="repeatInterval" value="${ws_connector_frequencia}" />
+		<property name="startDelay" value="5000" />
+	</bean>
+	
+	<bean id="schedulerFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="autoStartup" value="true" />
+		<property name="triggers">
+			<list>
+				<ref bean="cronWsTrigger" />
+			</list>
+		</property>
+	</bean>	
+	
+</beans>

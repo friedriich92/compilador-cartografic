@@ -1,0 +1,87 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+
+	<display-name>STRIntegration</display-name>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:/applicationContext.xml</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<servlet>
+		<servlet-name>FonsOfflineServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.FonsOfflineServiceServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>FonsOfflineServiceServlet</servlet-name>
+		<url-pattern>/FonsOfflineServiceServlet</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>CarregadorFitxersVectorialsServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.CarregadorFitxersVectorialsServiceServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>CarregadorFitxersVectorialsServiceServlet</servlet-name>
+		<url-pattern>/CarregadorFitxersVectorialsServiceServlet</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>CapaOfflineServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.CapaOfflineServiceServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>CapaOfflineServiceServlet</servlet-name>
+		<url-pattern>/CapaOfflineServiceServlet</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ImportFileServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.ImportFileServiceServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>ImportFileServiceServlet</servlet-name>
+		<url-pattern>/ImportFileServiceServlet</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ExportFormatServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.ExportFormatServiceServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>ExportFormatServiceServlet</servlet-name>
+		<url-pattern>/ExportFormatServiceServlet</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>FonsOfflinePost</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.FonsOfflinePost</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>FonsOfflinePost</servlet-name>
+		<url-pattern>/FonsOfflinePost</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>UsuariServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.UsuariServiceServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>UsuariServiceServlet</servlet-name>
+		<url-pattern>/UsuariServiceServlet</url-pattern>
+	</servlet-mapping>
+</web-app>

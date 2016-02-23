@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context
+	xsi:schemaLocation="
+		http://java.sun.com/xml/ns/j2ee 
+		http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+			
+	<Resource name="jdbc/proces" auth="Container" type="javax.sql.DataSource"
+		driverClassName="oracle.jdbc.OracleDriver" url="jdbc:oracle:thin:@192.122.214.141:1521:SIGESCATDB"
+		username="GCORP" password="SiteP0305" maxActive="30" maxIdle="10"
+		minActive="10" minIdle="5"
+		maxWait="-1"
+		validationQuery="select sysdate from dual" />
+		
+	<!-- Paràmetres per configuració de sincro entre BDD's -->
+	<Parameter name="ws_connector_origens" value="C:\TEMP\configServices.properties" />
+	<Parameter name="ws_connector_frequencia" value="120000" />
+</Context>
