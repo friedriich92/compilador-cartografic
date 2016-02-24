@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
 
-public interface ImportFileService {
+public interface ImportarFitxerService {
 	
 	public void importFile(HttpServletRequest request, String userName) throws IOException, SQLException;
 	

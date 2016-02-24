@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import com.sitep.str.integration.in.CarregadorFitxersVectorialsService;
+import com.sitep.str.integration.in.CarregadorDeFitxersVectorialsService;
 
-public class CarregadorFitxersVectorialsServiceImpl implements CarregadorFitxersVectorialsService {
+public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFitxersVectorialsService {
 
 	public void vectoriseAndUploadFileToDatabase(String filename, String filenameWithoutExtension) {
 		try {

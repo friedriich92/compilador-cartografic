@@ -26,13 +26,13 @@
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>CarregadorFitxersVectorialsServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.CarregadorFitxersVectorialsServiceServlet</servlet-class>
+		<servlet-name>CarregadorDeFitxersVectorialsServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.CarregadorDeFitxersVectorialsServiceServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>CarregadorFitxersVectorialsServiceServlet</servlet-name>
-		<url-pattern>/CarregadorFitxersVectorialsServiceServlet</url-pattern>
+		<servlet-name>CarregadorDeFitxersVectorialsServiceServlet</servlet-name>
+		<url-pattern>/CarregadorDeFitxersVectorialsServiceServlet</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
@@ -46,13 +46,13 @@
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>ImportFileServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.ImportFileServiceServlet</servlet-class>
+		<servlet-name>ImportarFitxerServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.ImportarFitxerServiceServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>ImportFileServiceServlet</servlet-name>
-		<url-pattern>/ImportFileServiceServlet</url-pattern>
+		<servlet-name>ImportarFitxerServiceServlet</servlet-name>
+		<url-pattern>/ImportarFitxerServiceServlet</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
@@ -83,5 +83,25 @@
 	<servlet-mapping>
 		<servlet-name>UsuariServiceServlet</servlet-name>
 		<url-pattern>/UsuariServiceServlet</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>AplicarFiltreServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.AplicarFiltreServiceServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>AplicarFiltreServiceServlet</servlet-name>
+		<url-pattern>/AplicarFiltreServiceServlet</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>CanviarCoordenadesServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.CanviarCoordenadesServiceServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>CanviarCoordenadesServiceServlet</servlet-name>
+		<url-pattern>/CanviarCoordenadesServiceServlet</url-pattern>
 	</servlet-mapping>
 </web-app>

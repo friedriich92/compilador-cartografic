@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItemIterator;
@@ -18,9 +19,9 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 
-import com.sitep.str.integration.in.ImportFileService;
+import com.sitep.str.integration.in.ImportarFitxerService;
 
-public class ImportFileServiceImpl implements ImportFileService {
+public class ImportarFitxerServiceImpl implements ImportarFitxerService {
 
 	static Connection connectionImportFileService = null;
 	
