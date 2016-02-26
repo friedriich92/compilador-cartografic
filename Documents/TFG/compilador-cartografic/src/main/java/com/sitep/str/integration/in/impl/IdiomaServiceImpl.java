@@ -4,9 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
-import com.sitep.str.integration.in.ExportFormatService;
 
-public class ExportFormatServiceImpl implements ExportFormatService {
+import com.sitep.str.integration.in.IdiomaService;
+
+public class IdiomaServiceImpl implements IdiomaService {
 
 	public void exportFormat(HttpServletRequest request) throws IOException {
 		StringBuilder buffer = new StringBuilder();

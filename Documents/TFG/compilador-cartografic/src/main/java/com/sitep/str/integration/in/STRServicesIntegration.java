@@ -7,6 +7,9 @@ import javax.xml.xpath.XPathExpression;
 
 import org.w3c.dom.Document;
 
+import com.sitep.str.integration.in.classes.FitxerVersio;
+import com.sitep.str.integration.in.impl.AplicarCanviServiceImpl;
+
 public class STRServicesIntegration{
 	
 //	static Logger log = Logger.getLogger(STRServicesIntegration.class);
@@ -37,6 +40,8 @@ public class STRServicesIntegration{
 			System.out.println("loadData STRServicesIntegration");
 			System.out.println("-------------------------------");
 			System.out.println("DONE STRServicesIntegration.java");
+			AplicarCanviService<FitxerVersio> ap = new AplicarCanviServiceImpl();
+			ap.printSomething();
 //			UsuariService usuariService = new UsuariServiceImpl();
 //			usuariService.registerUser2(new BigInteger(20, random).toString(32), "12345", "ucomp@gmail.com", "analista"); // Arreglar
 		} catch (Exception tr) {

@@ -7,15 +7,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.sitep.str.integration.in.ExportFormatService;
-import com.sitep.str.integration.in.impl.ExportFormatServiceImpl;
+import com.sitep.str.integration.in.IdiomaService;
+import com.sitep.str.integration.in.impl.IdiomaServiceImpl;
 
-public class ExportFormatServiceServlet extends HttpServlet {
+public class IdiomaServiceServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private ExportFormatService exportFormatService = new ExportFormatServiceImpl();
+	private IdiomaService idiomaService = new IdiomaServiceImpl();
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		exportFormatService.exportFormat(request);	 
+		idiomaService.exportFormat(request);	 
 	}
 }

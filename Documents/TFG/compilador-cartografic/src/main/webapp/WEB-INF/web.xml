@@ -56,13 +56,13 @@
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>ExportFormatServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.ExportFormatServiceServlet</servlet-class>
+		<servlet-name>IdiomaServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.IdiomaServiceServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>ExportFormatServiceServlet</servlet-name>
-		<url-pattern>/ExportFormatServiceServlet</url-pattern>
+		<servlet-name>IdiomaServiceServlet</servlet-name>
+		<url-pattern>/IdiomaServiceServlet</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
@@ -86,22 +86,12 @@
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>AplicarFiltreServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.AplicarFiltreServiceServlet</servlet-class>
+		<servlet-name>AplicarCanviServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.AplicarCanviServiceServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>AplicarFiltreServiceServlet</servlet-name>
-		<url-pattern>/AplicarFiltreServiceServlet</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>CanviarCoordenadesServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.CanviarCoordenadesServiceServlet</servlet-class>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>CanviarCoordenadesServiceServlet</servlet-name>
-		<url-pattern>/CanviarCoordenadesServiceServlet</url-pattern>
+		<servlet-name>AplicarCanviServiceServlet</servlet-name>
+		<url-pattern>/AplicarCanviServiceServlet</url-pattern>
 	</servlet-mapping>
 </web-app>

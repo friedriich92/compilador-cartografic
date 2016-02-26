@@ -367,7 +367,7 @@
 	{
 		console.log("postFilesData");
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/ImportFileServiceServlet?name='+userSession,
+			url: 'http://localhost/compilador-cartografic/ImportarFitxerServiceServlet?name='+userSession, //+'&filename='+file2uploadName
 	        type: 'POST',
 	        data: data,
 	        cache: false,
@@ -412,7 +412,7 @@
 	};
 	function uploadToDatabase(filename) {
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/CarregadorFitxersVectorialsServiceServlet',
+			url: 'http://localhost/compilador-cartografic/CarregadorDeFitxersVectorialsServiceServlet',
 	        type: 'POST',
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {
