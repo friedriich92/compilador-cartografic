@@ -143,3 +143,11 @@
   height: 30px;
   position: absolute;
 }
+
+.ui-aplicar-canvi-boto {
+	margin-right: 40px;
+}
+
+.ui-textarea {
+	resize: none;
+}

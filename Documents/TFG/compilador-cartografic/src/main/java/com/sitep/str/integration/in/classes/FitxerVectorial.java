@@ -6,8 +6,4 @@ public class FitxerVectorial extends Fitxer {
 		super();
 	}
 
-	public FitxerVectorial(int idFitxer, boolean modificat, ExtensioDeFitxer extensioDeFitxer) {
-		super(idFitxer, modificat, extensioDeFitxer);
-	}
-	
 }

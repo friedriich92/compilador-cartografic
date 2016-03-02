@@ -1,5 +1,11 @@
 package com.sitep.str.integration.in;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
@@ -33,6 +39,7 @@ public class STRServicesIntegration{
 	}
 
 	private DataSource dataSource;
+	private Connection connection = null;
 	
 	public void loadData() {
 		try {
@@ -42,11 +49,35 @@ public class STRServicesIntegration{
 			System.out.println("DONE STRServicesIntegration.java");
 			AplicarCanviService<FitxerVersio> ap = new AplicarCanviServiceImpl();
 			ap.printSomething();
+//			prova();
 //			UsuariService usuariService = new UsuariServiceImpl();
 //			usuariService.registerUser2(new BigInteger(20, random).toString(32), "12345", "ucomp@gmail.com", "analista"); // Arreglar
 		} catch (Exception tr) {
 			System.out.println("Error loading data: " + tr);
 		}
+	}
+	
+	@SuppressWarnings({ "unused", "null" })
+	public void prova() {
+		DBConnection();
+		PreparedStatement pstmt1 = null;
+		String sql1, almostFinal, finalResponse;
+		int numberOfRows = 0;
+		sql1 = finalResponse = almostFinal = "";
+		ResultSet rs = null;
+		try {
+			System.out.println(finalResponse);
+		} catch (Exception e) {
+	      e.printStackTrace();
+	    } finally {
+	    	try {
+	    	  rs.close();
+	    	  pstmt1.close();
+	    	  connection.close();
+	    	  } catch (SQLException e) {
+	    		  e.printStackTrace();
+	    		  }
+	    	}
 	}
 	
 	public java.sql.Date getCurrentDatetime() {
@@ -89,5 +120,32 @@ public class STRServicesIntegration{
 
 	public String getOrigens() {
 		return origens;
+	}
+	
+	public void DBConnection() {
+		System.out.println("PostgreSQL " + "JDBC Connection Testing");
+		try {
+			Class.forName("org.postgresql.Driver");
+		} catch (ClassNotFoundException e) {
+			System.out.println("Where is your PostgreSQL JDBC Driver? Include in your library path!");
+			e.printStackTrace();
+			return;
+		}
+		System.out.println("PostgreSQL JDBC Driver Registered!");
+		connection = null;
+		try {
+			connection = DriverManager.getConnection(
+					"jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+
+		} catch (SQLException e) {
+			System.out.println("Connection Failed! Check output console");
+			e.printStackTrace();
+			return;
+		}
+		if (connection != null) {
+			System.out.println("You made it, take control your database now!");
+		} else {
+			System.out.println("Failed to make connection!");
+		}
 	}
 }

@@ -27,6 +27,7 @@ public class CarregadorDeFitxersVectorialsServiceServlet extends HttpServlet {
 		fileNameWithoutExtension = FilenameUtils.removeExtension(fileName);
 		System.out.println("filenameWithoutExtension" + fileNameWithoutExtension);
 		System.out.println("filename" + fileName);
-		carregadorFitxersVectorial.vectoriseAndUploadFileToDatabase(fileName, fileNameWithoutExtension);
+		carregadorFitxersVectorial.vectoriseAndUploadFileToDatabase(fileName, fileNameWithoutExtension, response);
 	}
+	
 }

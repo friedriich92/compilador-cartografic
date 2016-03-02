@@ -4,3 +4,5 @@ var file2uploadName;
 var filesUploaded = 1;
 var today;
 var userSession = "ebs4";
+var optionText;
+var optionChange;

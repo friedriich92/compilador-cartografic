@@ -6,7 +6,4 @@ public class FitxerCapa extends Fitxer {
 		super();
 	}
 
-	public FitxerCapa(int idFitxer, boolean modificat, ExtensioDeFitxer extensioDeFitxer) {
-		super(idFitxer, modificat, extensioDeFitxer);
-	}
 }

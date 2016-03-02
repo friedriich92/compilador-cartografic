@@ -97,7 +97,7 @@
 			</div>
 		</div>
       <div class="jumbotron">
-      	<h2 class="ui-opcio-a" id="opcio-a">M&egrave;tode A</h2>
+      	<h2 class="ui-opcio-a" id="opcio-a">M&egrave;tode Principal</h2>
 <!--         <h3 class="ui-importacio" id="importacio">ImportaciÃ³</h3> -->
         <p class="lead ui-importacio-text" id="importacio-text">Selecciona un fitxer (formats: SHP, OSM, XML o CSV)</p>
         <form method="POST" enctype="multipart/form-data">
@@ -114,6 +114,7 @@
 							<th class="text-center" id="taula-atribut2">Fitxer</th>
 							<th class="text-center">Hora</th>
 							<th class="text-center" id="taula-atribut4">Selecci&oacute;</th>
+							<th class="text-center" id="taula-atribut5">Filtres (#Files)</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -125,11 +126,45 @@
 			</div>
 		</div>
 	  	</div>
+	  	<button type="button" class="btn btn-info btn-lg ui-aplicar-canvi-boto" data-toggle="modal" data-target="#myModal">Aplicar Canvi</button>
 	  	<a class="btn btn-lg btn-success ui-exportar-boto" id="exportar-boto1" role="button" onclick="myClickFunction6()">Exportar</a>
       	<p class="ui-exporta-fitxer" id="exporta-fitxer"></p>
       </div>
+      <!-- Modal -->
+      <div class="modal fade" id="myModal" role="dialog">
+       <div class="modal-dialog"> 
+      <!-- Modal content-->
+        <div class="modal-content">
+         <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Aplicar Canvi</h4>
+         </div>
+         <div class="modal-body">
+          <p>Tria el canvi a realitzar en el fitxer:</p>
+            <form role="form">
+			    <div class="radio">
+			      <label><input type="radio" onClick="myClickFunction17()" id="radioCoordenades" name="optradio">Coordenades</label>
+			      <textarea class="form-control ui-textarea" rows="1" id="commentCoordenades" placeholder="EPSG:4326" disabled></textarea>
+			    </div>
+			    <div class="radio">
+			      <label><input type="radio" onClick="myClickFunction18()" id="radioEstil" name="optradio">Estil</label>
+			      <textarea class="form-control ui-textarea" rows="1" id="commentEstil" placeholder="street=blue" disabled></textarea>
+			    </div>
+			    <div class="radio">
+			      <label><input type="radio" onClick="myClickFunction19()" id="radioFiltre" name="optradio">Filtre</label>
+			      <textarea class="form-control ui-textarea" rows="1" id="commentFiltre" placeholder="amenity.school" disabled></textarea>
+			    </div>
+		  	</form>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default" onClick="myClickFunction20()" data-dismiss="modal">Aplicar</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>  
+    </div>
+  	</div>
       <div class="jumbotron">
-        <h2 class="ui-opcio-a" id="opcio-b">M&egrave;tode B</h2>
+        <h2 class="ui-opcio-a" id="opcio-b">M&egrave;tode Opcional</h2>
 <!--         <h3 class="ui-modificacio" id="modificacio">ImportaciÃ³</h3> -->
         <p class="lead ui-importacio-text" id="importacio-text2">Selecciona una porci&oacute; del mapa:</p>
 		<div class="row-fluid">
@@ -265,35 +300,7 @@
 	        	$("#exporta-fitxer-mapa").css("font-size", "13px");
 	        }
 	     });
-	}; 
-	function myClickFunction7() {
-		console.log("next-coordenades");
-		if ($("#coordenades-opcio").text().indexOf("--") == 0) $("#coordenades-opcio").text("C1");
-		else if ($("#coordenades-opcio").text().indexOf("C1") == 0) $("#coordenades-opcio").text("C2");
-		else if ($("#coordenades-opcio").text().indexOf("C2") == 0) $("#coordenades-opcio").text("C3");
-		else if ($("#coordenades-opcio").text().indexOf("C3") == 0) $("#coordenades-opcio").text("--");
-	}; 
-	function myClickFunction8() {
-		console.log("next-estils");
-		if ($("#estils-opcio").text().indexOf("--") == 0) $("#estils-opcio").text("E1");
-		else if ($("#estils-opcio").text().indexOf("E1") == 0) $("#estils-opcio").text("E2");
-		else if ($("#estils-opcio").text().indexOf("E2") == 0) $("#estils-opcio").text("E3");
-		else if ($("#estils-opcio").text().indexOf("E3") == 0) $("#estils-opcio").text("--");
-	}; 
-	function myClickFunction9() {
-		console.log("next-formats");
-		if ($("#formats-opcio").text().indexOf("--") == 0) $("#formats-opcio").text("SHP");
-		else if ($("#formats-opcio").text().indexOf("SHP") == 0) $("#formats-opcio").text("OSM");
-		else if ($("#formats-opcio").text().indexOf("OSM") == 0) $("#formats-opcio").text("XML");
-		else if ($("#formats-opcio").text().indexOf("XML") == 0) $("#formats-opcio").text("--");
-	}; 
-	function myClickFunction10() {
-		console.log("next-filtres");
-		if ($("#filtres-opcio").text().indexOf("---") == 0) $("#filtres-opcio").text("FL1");
-		else if ($("#filtres-opcio").text().indexOf("FL1") == 0) $("#filtres-opcio").text("FL2");
-		else if ($("#filtres-opcio").text().indexOf("FL2") == 0) $("#filtres-opcio").text("FL3");
-		else if ($("#filtres-opcio").text().indexOf("FL3") == 0) $("#filtres-opcio").text("---");
-	}; 
+	};
 	function myClickFunction11() {
 		idiomaVariable = 0;
 		console.log("idioma-catala");
@@ -351,6 +358,95 @@
 	function myClickFunction15() {
 		$("#entrar-formulari").hide();
 	};
+	function myClickFunction17() {
+		$("#commentCoordenades").attr("disabled", false); 
+		$("#commentEstil").attr("disabled", true);
+		$("#commentFiltre").attr("disabled", true);
+	};
+	function myClickFunction18() {
+		$("#commentCoordenades").attr("disabled", true); 
+		$("#commentEstil").attr("disabled", false);
+		$("#commentFiltre").attr("disabled", true);
+	};
+	function myClickFunction19() {
+		$("#commentCoordenades").attr("disabled", true); 
+		$("#commentEstil").attr("disabled", true);
+		$("#commentFiltre").attr("disabled", false);
+	};
+	function myClickFunction20() {
+		if ($('#radioCoordenades').is(":checked")) {
+			optionChange = "coord";
+			optionText = $("#commentCoordenades").val();
+		}
+		else if ($('#radioEstil').is(":checked")) {
+			optionChange = "estil";
+			optionText = $("#commentEstil").val();
+		}
+		else if ($('#radioFiltre').is(":checked")) {
+			optionChange = "filtre";
+			optionText = $("#commentFiltre").val();
+		}
+		var howManyCheckboxesChecked = 0;
+		var numberOfFile = null;
+		for (var i = 1; i <= filesUploaded; i++) {
+			if ($("#checkbox-file" + i).prop('checked') == true) {
+				++howManyCheckboxesChecked;
+				numberOfFile = i;
+			}
+		}
+		if (howManyCheckboxesChecked < 1) {
+			$("#exporta-fitxer").text("No s'ha seleccionat cap fitxer!");
+        	$("#exporta-fitxer").css("color", "red");
+        	$("#exporta-fitxer").css("font-size", "13px");
+		}
+		else if (howManyCheckboxesChecked == 1) {
+			var fileNameString = $("#file-name" + numberOfFile).text();
+			var fileNameStringEmpty = "";
+			console.log(fileNameString.valueOf() + " ==? " + fileNameStringEmpty.valueOf());
+			console.log(fileNameString.valueOf() == fileNameStringEmpty.valueOf());
+			if (fileNameString.valueOf() == fileNameStringEmpty.valueOf()) {
+				$("#exporta-fitxer").text("S'ha seleccionat una columna buida!");
+	        	$("#exporta-fitxer").css("color", "red");
+	        	$("#exporta-fitxer").css("font-size", "13px");
+			}
+			else {
+				try {
+					$.ajax({
+						url: 'http://localhost/compilador-cartografic/AplicarCanviServiceServlet?name='+fileNameString+'&user='+userSession+'&info='+optionText+'&c='+optionChange,
+						type: 'POST',
+// 						data: '',
+						success: function(data, textStatus, jqXHR) {
+							console.log("UsuariServiceServlet success " + data);
+							if (data.indexOf("SI") == 0) {
+								$("#exporta-fitxer").text("El canvi s'ha realitzat correctament.");
+					        	$("#exporta-fitxer").css("color", "green");
+					        	$("#exporta-fitxer").css("font-size", "13px");
+							}
+							else {
+								$("#user-login-text").css("color", "red");
+								if (optionChange.indexOf("coord") == 0)
+									$("#user-login-text").text("Les coordenades introduides no permeten realitzar el canvi.");
+								else if (optionChange.indexOf("estil") == 0)
+									$("#user-login-text").text("L'estil introduit no permet realitzar el canvi.");
+								else if (optionChange.indexOf("filtre") == 0)
+									$("#user-login-text").text("El filtre introduit no permet realitzar el canvi.");
+								$("#user-login-text").css("font-size", "13px");
+								}
+							},
+							error: function(jqXHR, textStatus, errorThrown) {
+								console.log("AplicarCanviServiceServle error" + data);
+								}
+							});
+					}
+				catch (e) { throw new Error(e.message); }
+			}
+		}
+		else {
+			$("#exporta-fitxer").text("S'ha seleccionat mes d'un fitxer a la vegada!");
+        	$("#exporta-fitxer").css("color", "red");
+        	$("#exporta-fitxer").css("font-size", "13px");
+		}
+	};
 	function uploadFile(event) {
 // 		alert("HOLA");
 		event.stopPropagation(); 
@@ -384,7 +480,7 @@
 	        		$("#file-hour" + today).text(today);
 	        	}
 	        	else {
-		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded+1) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td>");
+		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded+1) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td></td>");
 		            $('#tab_logic').append('<tr id="addr' + (filesUploaded + 1) + '"></tr>');
 	        	}
 	        	filesUploaded++;
@@ -402,7 +498,7 @@
 	        		$("#file-hour" + filesUploaded).text(today);
 	        	}
 	        	else {
-		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td>");
+		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td></td>");
 		            $('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');
 	        	}
 	            filesUploaded++;
@@ -417,6 +513,7 @@
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {
 				console.log("uploadToDatabase success");
+				$("#file-filter" + filesUploaded).text(data);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log("uploadToDatabase error");
@@ -509,7 +606,7 @@
     });
     $(document).ready(function(){
     	for (var i = 1; i <= 3; i++) {
-        	$('#addr'+i).html("<td>"+ i +"</td><td id='file-name"+i+"'>" + "" + "</td><td id='file-hour"+i+"'>" + "" + "</td><td><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td>");
+        	$('#addr'+i).html("<td>"+ i +"</td><td id='file-name"+i+"'>" + "" + "</td><td id='file-hour"+i+"'>" + "" + "</td><td><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td id='file-filter"+i+"'>" + "" + "</td>");
             $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
     	}
   	});

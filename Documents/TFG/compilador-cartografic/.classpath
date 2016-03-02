@@ -30,5 +30,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/fprat/Downloads/postgresql-9.3-1104.jdbc41.jar"/>
+	<classpathentry kind="lib" path="C:/Users/fprat/Downloads/xsd2pgschema-1.9.4/xsd2pgschema.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

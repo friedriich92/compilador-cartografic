@@ -54,7 +54,7 @@ public class ImportarFitxerServiceImpl implements ImportarFitxerService {
 		    		System.out.println("SQL Statement: " + sql1);
 		    		
 		    		pstmt1 = connectionImportFileService.prepareStatement(sql1);
-		    		pstmt1.setString(1, fileName);
+		    		pstmt1.setString(1, fileName); // Cal afegir l'usuari i la versió
 		    		pstmt1.setDate(2, new java.sql.Date(today.getTime()));
 		    		pstmt1.setString(3, userName);
 		    		pstmt1.setString(4, tableName);
