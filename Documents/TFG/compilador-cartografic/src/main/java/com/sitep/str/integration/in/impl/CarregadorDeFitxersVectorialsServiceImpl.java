@@ -16,8 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
 
 import com.sitep.str.integration.in.CarregadorDeFitxersVectorialsService;
+import com.sitep.str.integration.in.classes.FitxerVectorial;
 
-public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFitxersVectorialsService {
+public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFitxersVectorialsService<FitxerVectorial> {
 
 	Connection carregadorDeFitxersVectorialsConnection = null;
 	
@@ -39,7 +40,7 @@ public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFit
 			} else if (extension.equalsIgnoreCase("kml")) {
 				System.out.println("ogr2ogr -f \"PostgreSQL\" PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" /files/"+fileName+" -nln "+fileNameWithoutExtension);
 				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"PostgreSQL\" PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" /files/"+fileName+" -nln "+fileNameWithoutExtension);
-			} else if (extension.equalsIgnoreCase("osm.pbf")) {
+			} else if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz") || extension.equalsIgnoreCase("osm")) {
 				//pb = new ProcessBuilder("/bin/sh", "-c", "osm2pgsql -c -d osm -U postgres -H localhost -S /home/tecnic/default.style /files/"+fileName); */
 				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension+".shp /files/"+fileName);
 			}
@@ -57,9 +58,9 @@ public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFit
 		    printStream(inputStream);
 		    
 		    // [OPCIONAL] POSAR EL FITXER OSM CONVERTIT A SHP A LA BASE DE DADES
-		    if (extension.equalsIgnoreCase("osm.pbf")) {
+		    if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz") || extension.equalsIgnoreCase("osm")) {
 		    	pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+
-		    			fileNameWithoutExtension+"/"+fileNameWithoutExtension+".shp public."+fileNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
+		    			fileNameWithoutExtension+".shp/points.shp public."+fileNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
 				System.out.println("Run (carregarFitxerVectorial) OSM " + pb.toString());
 				process = pb.start();
 
@@ -85,19 +86,17 @@ public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFit
 				// 3.1 COLUMNES
 				sql1 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?";
 				pstmt1 = carregadorDeFitxersVectorialsConnection.prepareStatement(sql1);
-				pstmt1.setString(1, fileNameWithoutExtension);
+				pstmt1.setString(1, fileNameWithoutExtension.toLowerCase());
 				rs = pstmt1.executeQuery();
-				while (rs.next()) almostFinalResponse += (rs.getString(1) + ", ");
+				while (rs.next())
+					almostFinalResponse += (rs.getString(1) + ", ");
 				finalResponse = almostFinalResponse.substring(0, almostFinalResponse.length()-2);
-				
 				// 3.2 FILES
 			    sql1 = "SELECT COUNT(*) FROM " + fileNameWithoutExtension;
-				System.out.println(sql1);
 				pstmt1 = carregadorDeFitxersVectorialsConnection.prepareStatement(sql1);
 				rs = pstmt1.executeQuery();
 				if (rs.next()) numberOfRows = rs.getInt(1);
-				finalResponse += " (" + numberOfRows + ")";
-				
+				finalResponse += " (" + numberOfRows + ")";				
 				
 			    // 4. SEND WHAT HAPPENED => data
 				response.setContentType("text/html");

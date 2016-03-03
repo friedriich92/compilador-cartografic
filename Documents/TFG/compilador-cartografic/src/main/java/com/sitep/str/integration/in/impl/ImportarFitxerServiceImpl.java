@@ -20,8 +20,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 
 import com.sitep.str.integration.in.ImportarFitxerService;
+import com.sitep.str.integration.in.classes.Fitxer;
 
-public class ImportarFitxerServiceImpl implements ImportarFitxerService {
+public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> {
 
 	static Connection connectionImportFileService = null;
 	

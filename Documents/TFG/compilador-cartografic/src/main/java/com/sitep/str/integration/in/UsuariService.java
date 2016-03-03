@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
 
-public interface UsuariService {
+public interface UsuariService<Usuari> {
 
 	public void DBConnection();
 	

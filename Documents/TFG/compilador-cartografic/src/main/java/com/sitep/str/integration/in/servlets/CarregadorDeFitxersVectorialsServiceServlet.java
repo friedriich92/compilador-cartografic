@@ -11,12 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
 
 import com.sitep.str.integration.in.CarregadorDeFitxersVectorialsService;
+import com.sitep.str.integration.in.classes.FitxerVectorial;
 import com.sitep.str.integration.in.impl.CarregadorDeFitxersVectorialsServiceImpl;
 
 public class CarregadorDeFitxersVectorialsServiceServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private CarregadorDeFitxersVectorialsService carregadorFitxersVectorial = new CarregadorDeFitxersVectorialsServiceImpl();
+	private CarregadorDeFitxersVectorialsService<FitxerVectorial> carregadorFitxersVectorial = new CarregadorDeFitxersVectorialsServiceImpl();
 	
 	protected void doPost( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		StringBuilder buffer = new StringBuilder();

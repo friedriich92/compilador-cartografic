@@ -6,8 +6,9 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.sitep.str.integration.in.IdiomaService;
+import com.sitep.str.integration.in.classes.Idioma;
 
-public class IdiomaServiceImpl implements IdiomaService {
+public class IdiomaServiceImpl implements IdiomaService<Idioma> {
 
 	public void exportFormat(HttpServletRequest request) throws IOException {
 		StringBuilder buffer = new StringBuilder();

@@ -8,8 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.sitep.str.integration.in.UsuariService;
+import com.sitep.str.integration.in.classes.Usuari;
 
-public class UsuariServiceImpl implements UsuariService {
+public class UsuariServiceImpl implements UsuariService<Usuari> {
 
 	static Connection connectionUsuariService = null;
 	

@@ -152,7 +152,7 @@
 			    </div>
 			    <div class="radio">
 			      <label><input type="radio" onClick="myClickFunction19()" id="radioFiltre" name="optradio">Filtre</label>
-			      <textarea class="form-control ui-textarea" rows="1" id="commentFiltre" placeholder="amenity.school" disabled></textarea>
+			      <textarea class="form-control ui-textarea" rows="1" id="commentFiltre" placeholder="rows=20, tables=tablename, rows=20;tables=tablename" disabled></textarea>
 			    </div>
 		  	</form>
         </div>
@@ -480,7 +480,7 @@
 	        		$("#file-hour" + today).text(today);
 	        	}
 	        	else {
-		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded+1) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td></td>");
+		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded+1) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td id='file-filter"+filesUploaded+"'>" + "" + "</td>");
 		            $('#tab_logic').append('<tr id="addr' + (filesUploaded + 1) + '"></tr>');
 	        	}
 	        	filesUploaded++;
@@ -498,7 +498,7 @@
 	        		$("#file-hour" + filesUploaded).text(today);
 	        	}
 	        	else {
-		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td></td>");
+		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td id='file-filter"+filesUploaded+"'>" + "" + "</td>");
 		            $('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');
 	        	}
 	            filesUploaded++;
@@ -513,7 +513,7 @@
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {
 				console.log("uploadToDatabase success");
-				$("#file-filter" + filesUploaded).text(data);
+				$("#file-filter" + (filesUploaded-1)).text(data);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log("uploadToDatabase error");

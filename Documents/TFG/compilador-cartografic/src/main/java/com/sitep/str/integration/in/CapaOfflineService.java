@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-public interface CapaOfflineService {
+public interface CapaOfflineService<FitxerCapa> {
 	
 	public void DBConnection();
 	

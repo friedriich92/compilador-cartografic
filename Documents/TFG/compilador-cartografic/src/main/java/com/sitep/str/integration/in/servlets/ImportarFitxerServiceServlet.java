@@ -9,12 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sitep.str.integration.in.ImportarFitxerService;
+import com.sitep.str.integration.in.classes.Fitxer;
 import com.sitep.str.integration.in.impl.ImportarFitxerServiceImpl;
 
 public class ImportarFitxerServiceServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private ImportarFitxerService importarFitxerService = new ImportarFitxerServiceImpl();
+	private ImportarFitxerService<Fitxer> importarFitxerService = new ImportarFitxerServiceImpl();
 	
 	protected void doPost(HttpServletRequest request,
 			 HttpServletResponse response) throws ServletException, IOException {

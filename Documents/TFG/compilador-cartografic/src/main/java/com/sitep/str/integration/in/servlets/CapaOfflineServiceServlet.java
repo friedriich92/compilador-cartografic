@@ -10,12 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
 
 import com.sitep.str.integration.in.CapaOfflineService;
+import com.sitep.str.integration.in.classes.FitxerCapa;
 import com.sitep.str.integration.in.impl.CapaOfflineServiceImpl;
 
 public class CapaOfflineServiceServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private CapaOfflineService capaOffline = new CapaOfflineServiceImpl();
+	private CapaOfflineService<FitxerCapa> capaOffline = new CapaOfflineServiceImpl();
 
 	protected void doGet( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String fileName, fileNameWithoutExtension, extension, geometry;

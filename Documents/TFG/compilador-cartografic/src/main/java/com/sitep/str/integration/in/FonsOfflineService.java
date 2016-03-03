@@ -6,7 +6,7 @@ import java.io.InputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface FonsOfflineService {
+public interface FonsOfflineService<FitxerFons> {
 	
 	/**
 	 * getFonsOffline: funci� per a realitzar la conversi� d'un fitxer d'OpenStreetMaps (.osm)
