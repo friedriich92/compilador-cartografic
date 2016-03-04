@@ -417,21 +417,29 @@
 // 						data: '',
 						success: function(data, textStatus, jqXHR) {
 							console.log("UsuariServiceServlet success " + data);
-							if (data.indexOf("SI") == 0) {
-								$("#exporta-fitxer").text("El canvi s'ha realitzat correctament.");
-					        	$("#exporta-fitxer").css("color", "green");
-					        	$("#exporta-fitxer").css("font-size", "13px");
-							}
-							else {
-								$("#user-login-text").css("color", "red");
-								if (optionChange.indexOf("coord") == 0)
-									$("#user-login-text").text("Les coordenades introduides no permeten realitzar el canvi.");
-								else if (optionChange.indexOf("estil") == 0)
-									$("#user-login-text").text("L'estil introduit no permet realitzar el canvi.");
-								else if (optionChange.indexOf("filtre") == 0)
-									$("#user-login-text").text("El filtre introduit no permet realitzar el canvi.");
-								$("#user-login-text").css("font-size", "13px");
+							if (optionChange.indexOf("coord") == 0) {
+								if (data.indexOf("SI") == 0) {
+									$("#exporta-fitxer").text("El canvi s'ha realitzat correctament.");
+						        	$("#exporta-fitxer").css("color", "green");
+						        	$("#exporta-fitxer").css("font-size", "13px");
 								}
+								else {
+									$("#user-login-text").css("color", "red");
+									if (optionChange.indexOf("coord") == 0)
+										$("#user-login-text").text("Les coordenades introduides no permeten realitzar el canvi.");
+									else if (optionChange.indexOf("estil") == 0)
+										$("#user-login-text").text("L'estil introduit no permet realitzar el canvi.");
+									else if (optionChange.indexOf("filtre") == 0)
+										$("#user-login-text").text("El filtre introduit no permet realitzar el canvi.");
+									$("#user-login-text").css("font-size", "13px");								
+								}
+							}
+							else if (optionChange.indexOf("filtre") == 0) {
+								$("#file-filter" + (numberOfFile)).text(data);
+								}
+							else {
+								/* Not implemented yet */
+							}
 							},
 							error: function(jqXHR, textStatus, errorThrown) {
 								console.log("AplicarCanviServiceServle error" + data);
@@ -475,7 +483,7 @@
 	        	$("#puja-fitxer").css("color", "green");
 	        	$("#puja-fitxer").text("El fitxer " + file2uploadName + " s'ha pujat correctament.");
 	        	$("#puja-fitxer").css("font-size", "13px");
-	        	if (filesUploaded == 1 || filesUploaded == 2 || filesUploaded == 3) {
+	        	if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
 	        		$("#file-name" + filesUploaded).text(file2uploadName);
 	        		$("#file-hour" + today).text(today);
 	        	}
@@ -490,10 +498,9 @@
 	        	console.log('ERRORS: ' + textStatus);
 	        	DateTime();
 	        	$("#puja-fitxer").css("color", "green"); // red
-// 	        	$("#puja-fitxer").text("El fitxer " + file2uploadName + " no s'ha pogut pujar correctament.");
 	        	$("#puja-fitxer").text("El fitxer " + file2uploadName + " s'ha pujat correctament.");
 	        	$("#puja-fitxer").css("font-size", "13px");
-	        	if (filesUploaded == 1 || filesUploaded == 2 || filesUploaded == 3) {
+	        	if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
 		        	$("#file-name" + filesUploaded).text(file2uploadName);
 	        		$("#file-hour" + filesUploaded).text(today);
 	        	}
@@ -605,7 +612,7 @@
       view: view
     });
     $(document).ready(function(){
-    	for (var i = 1; i <= 3; i++) {
+    	for (var i = 1; i <= nombreDeFiles; i++) {
         	$('#addr'+i).html("<td>"+ i +"</td><td id='file-name"+i+"'>" + "" + "</td><td id='file-hour"+i+"'>" + "" + "</td><td><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td id='file-filter"+i+"'>" + "" + "</td>");
             $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
     	}

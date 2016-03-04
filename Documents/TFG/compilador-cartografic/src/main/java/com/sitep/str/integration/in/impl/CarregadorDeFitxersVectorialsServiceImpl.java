@@ -43,6 +43,8 @@ public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFit
 			} else if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz") || extension.equalsIgnoreCase("osm")) {
 				//pb = new ProcessBuilder("/bin/sh", "-c", "osm2pgsql -c -d osm -U postgres -H localhost -S /home/tecnic/default.style /files/"+fileName); */
 				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension+".shp /files/"+fileName);
+			} else if (extension.equalsIgnoreCase("csv")) {
+				pb = new ProcessBuilder("/bin/sh", "-c", "/home/tecnic/csv2psql-master/src/csv2psql/./csv2psql.py --schema=public /files/"+fileName+" | psql -h localhost -d osm -U postgres");
 			}
 			System.out.println("Run (carregarFitxerVectorial) command " + pb.toString());
 			Process process = pb.start();
