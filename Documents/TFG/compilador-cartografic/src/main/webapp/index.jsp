@@ -13,14 +13,20 @@
 	<script src="./js/jquery.validate.min.js"></script>
 	<script src="./js/ol.js"></script>
 	<script src="./js/funcions.js"></script>
+	<script src="./js/jquery.backstretch.js"></script>
 	<!-- rel -->
 	<link rel="shortcut icon" href="./img/logo.ico">
 	<link rel="stylesheet" href="./css/bootstrap.min.css">
 	<link rel="stylesheet" href="./css/estils.css">
 	<link rel="stylesheet" href="./css/jumbotron-narrow.css">
 	<link rel="stylesheet" href="./css/ol.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:bold" rel="stylesheet" type="text/css">
+ 	<link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+ 	<%@ page import="java.util.*" %>
+	<%@ page import="javax.sql.*;" %>
 </head>
 <body>
+	<div class="container white-bg">
     <div class="container">
       <div class="header clearfix">
         <nav>
@@ -28,19 +34,25 @@
             <li role="presentation" class="active" id="registre" onclick="myClickFunction()"><a id="registre-text" href="#">Registrar-se</a></li>
             <li role="presentation"><a href="#" id="entrar" onclick="myClickFunction2()">Entrar</a></li>
             <li class="dropdown" id="idioma">
-			  <button class="btn btn-default dropdown-toggle" onclick="myClickFunction3()" type="button" id="idioma-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+			  <button class="btn btn-default dropdown-toggle ui-idioma-boto-ppal" onclick="myClickFunction3()" type="button" id="idioma-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 			    Idioma
 			    <span class="caret"></span>
 			  </button>
 			  <ul class="dropdown-menu" aria-labelledby="idioma-menu">
-			    <li><a href="#" class="ui-idioma-boto" onclick="myClickFunction11()" id="idioma-catala">CA</a></li>
+			    <li>
+			    	<a href="#" class="ui-idioma-boto" onclick="myClickFunction11()" id="idioma-catala">CA
+			    	<img src="./img/catalan_flag.png" class="ui-img-idioma"></a>
+			    </li>
 			    <li role="separator" class="divider"></li>
-			    <li><a href="#" class="ui-idioma-boto" onclick="myClickFunction12()" id="idioma-castellano">ES</a></li>
+			    <li>
+			    	<a href="#" class="ui-idioma-boto" onclick="myClickFunction12()" id="idioma-castellano">ES
+			    	<img src="./img/spain.png" class="ui-img-idioma"></a>
+			    </li>
 			  </ul>
 			</li>
           </ul>
         </nav>
-        <h3 class="text-muted" id="titol">Compilador Cartogr&agrave;fic</h3>
+        <h3 class="text-muted ui-title" id="titol">Compilador Cartogr&agrave;fic</h3>
       </div>
       <div class="text-center ui-entrar-formulari" id="entrar-formulari">
       	<div class="logo ui-entrar-text" id="entrar-text">Entrar
@@ -100,16 +112,18 @@
       	<h2 class="ui-opcio-a" id="opcio-a">M&egrave;tode Principal</h2>
 <!--         <h3 class="ui-importacio" id="importacio">ImportaciÃ³</h3> -->
         <p class="lead ui-importacio-text" id="importacio-text">Selecciona un fitxer (formats: SHP, OSM, XML o CSV)</p>
-        <form method="POST" enctype="multipart/form-data">
+        <div class="text-center ui-file-upload-container">
+        <form class="text-center ui-boto-pujar-fitxer" method="POST" enctype="multipart/form-data">
 			<input type="file" name="fileUploader" id="fileUploader" class="ui-boto-pujar-fitxer"/>
 	  	</form>
+	  	</div>
 	  	<p class="ui-puja-fitxer" id="puja-fitxer"></p>
 	  	<div class="container ui-container-table" id="container-table">
    		 <div class="row clearfix">
 			<div class="col-md-12 column">
-				<table class="table table-bordered table-hover" id="tab_logic">
+				<table class="table table-bordered table-hover ui-table-files" id="tab_logic">
 					<thead>
-						<tr >
+						<tr>
 							<th class="text-center">#</th>
 							<th class="text-center" id="taula-atribut2">Fitxer</th>
 							<th class="text-center">Hora</th>
@@ -126,8 +140,8 @@
 			</div>
 		</div>
 	  	</div>
-	  	<button type="button" class="btn btn-info btn-lg ui-aplicar-canvi-boto" data-toggle="modal" data-target="#myModal">Aplicar Canvi</button>
-	  	<a class="btn btn-lg btn-success ui-exportar-boto" id="exportar-boto1" role="button" onclick="myClickFunction6()">Exportar</a>
+	  	<button type="button" class="btn btn-primary btn-lg ui-aplicar-canvi-boto" data-toggle="modal" data-target="#myModal">Aplicar Canvi</button>
+	  	<button type="button" class="btn btn-primary btn-lg ui-exportar-boto" id="exportar-boto1" role="button" onclick="myClickFunction6()">Exportar</button>
       	<p class="ui-exporta-fitxer" id="exporta-fitxer"></p>
       </div>
       <!-- Modal -->
@@ -137,7 +151,7 @@
         <div class="modal-content">
          <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Aplicar Canvi</h4>
+          <h4 class="modal-title"><b>Aplicar Canvi</b></h4>
          </div>
          <div class="modal-body">
           <p>Tria el canvi a realitzar en el fitxer:</p>
@@ -164,8 +178,12 @@
     </div>
   	</div>
       <div class="jumbotron">
-        <h2 class="ui-opcio-a" id="opcio-b">M&egrave;tode Opcional</h2>
+      	<div class="container">
+      	<button class="ui-option-method-button" id="option-method-button" onclick="myClickFunction21()"></button>
+        <h2 class="ui-opcio-b" id="opcio-b">M&egrave;tode Opcional</h2>
 <!--         <h3 class="ui-modificacio" id="modificacio">ImportaciÃ³</h3> -->
+		</div>
+		<div class="ui-option-method container" id="option-method">
         <p class="lead ui-importacio-text" id="importacio-text2">Selecciona una porci&oacute; del mapa:</p>
 		<div class="row-fluid">
 	  		<div class="span12">
@@ -185,15 +203,58 @@
 <!-- 		</table> -->
 <!--         <p><a class="btn btn-lg btn-success" id="modificacio-boto" href="#" role="button" onclick="myClickFunction5()">Aplicar canvi</a></p> -->
 <!--       </div> -->
-    	<a class="btn btn-lg btn-success ui-exportar-boto" id="exportar-boto" role="button" onclick="myClickFunction6b()">Exportar</a>
+    	<a class="btn btn-lg btn-primary ui-exportar-boto2" id="exportar-boto" role="button" onclick="myClickFunction6b()">Exportar</a>
     	<div id="myProgress" class="ui-myProgress"><div id="myBar" class="ui-myBar"></div></div>
     	<p class="ui-exporta-fitxer-mapa" id="exporta-fitxer-mapa"></p>
     </div>
-    <footer class="footer">
+    </div>
+        <footer class="footer">
     	<p>&copy; 2015 SITEP, Inc.</p>
     </footer>
+    </div>
     <!-- /container -->
     <script>
+    $.backstretch("./img/map.jpg");
+    <%!
+    public int getNumberOfFiles(String username) {
+		java.sql.PreparedStatement pstmt1 = null;
+		java.sql.Connection conn = null;
+		String sql1;
+		String url, id, pass, finalResponse, limit, tables, info2, almostFinalResponse;
+		System.out.println("username: " + username);
+		url = "jdbc:postgresql://192.122.214.77:5432/osm";
+		id = "postgres";
+		pass = "SiteP0305";
+		finalResponse = limit = tables = almostFinalResponse = "";
+		java.sql.ResultSet rs = null;
+		int countNumber2, numberOfRows;
+		numberOfRows = 0;
+		countNumber2 = 10;
+		ProcessBuilder pb = null;
+    	try {
+    		Class.forName("org.postgresql.Driver");
+    		conn = java.sql.DriverManager.getConnection(url, id, pass);
+    		String nomTaula = "loaded_objects";
+    		sql1 = "SELECT COUNT(*) FROM " + nomTaula + " WHERE username = ?";
+    		pstmt1 = conn.prepareStatement(sql1);
+    		pstmt1.setString(1, username);
+    		rs = pstmt1.executeQuery();
+    	    if (rs.next()) countNumber2 = rs.getInt(1);
+    	} catch (Exception e) {
+		      e.printStackTrace();
+		    } finally {
+		    	try {
+		    	  rs.close();
+		    	  pstmt1.close();
+		    	  conn.close();
+		    	  } catch (java.sql.SQLException e) {
+		    		  e.printStackTrace();
+		    		  }
+		    	}
+    	
+    	return countNumber2;
+    }
+    %>
 	function myClickFunction() {
 		console.log("registre");
 		$("#registre-formulari").show();
@@ -455,6 +516,19 @@
         	$("#exporta-fitxer").css("font-size", "13px");
 		}
 	};
+	function myClickFunction21() {
+		var stringOfImage = $("#option-method-button").css('background-image');
+		if (stringOfImage.search("arrow-up.png") != -1) {
+			var imgUrl = './img/arrow-down.png';
+			$("#option-method-button").css('background-image', 'url(' + imgUrl + ')');
+			$("#option-method").hide();
+		}
+		else {
+			var imgUrl = './img/arrow-up.png';
+			$("#option-method-button").css('background-image', 'url(' + imgUrl + ')');
+			$("#option-method").show();
+		}
+	};
 	function uploadFile(event) {
 // 		alert("HOLA");
 		event.stopPropagation(); 
@@ -488,7 +562,7 @@
 	        		$("#file-hour" + today).text(today);
 	        	}
 	        	else {
-		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded+1) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td id='file-filter"+filesUploaded+"'>" + "" + "</td>");
+		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded+1) +"</td><td class='bk-td'>" + file2uploadName + "</td><td class='bk-td'>" + today + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
 		            $('#tab_logic').append('<tr id="addr' + (filesUploaded + 1) + '"></tr>');
 	        	}
 	        	filesUploaded++;
@@ -549,6 +623,13 @@
 						++entryVariable;
 						console.log("entrar (myClickFunction15): " +entryVariable);
 						$("#entrar").text("Log out");
+						$.post("http://localhost/compilador-cartografic/index.jsp?userSession="+userSession);
+						<%
+							String username = request.getParameter("userSession");
+							int nfiles = getNumberOfFiles(username); 
+						%>
+						var s = <%= nfiles %>;
+						alert("JSP PROVA: " + s);
 						return true;
 						}
 					else {
@@ -613,7 +694,7 @@
     });
     $(document).ready(function(){
     	for (var i = 1; i <= nombreDeFiles; i++) {
-        	$('#addr'+i).html("<td>"+ i +"</td><td id='file-name"+i+"'>" + "" + "</td><td id='file-hour"+i+"'>" + "" + "</td><td><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td id='file-filter"+i+"'>" + "" + "</td>");
+        	$('#addr'+i).html("<td>"+ i +"</td><td class='bk-td' id='file-name"+i+"'>" + "" + "</td><td class='bk-td' id='file-hour"+i+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+i+"'>" + "" + "</td>");
             $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
     	}
   	});

@@ -1,25 +1,79 @@
 @CHARSET "ISO-8859-1";
 /* @import url(http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,700); */
 
+body { 
+    background: url('../img/cream_dust.png') repeat 0 0;
+}
+
+h2 { 
+    text-shadow: 1px 1px 1px #ccc;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', Georgia, Times, serif;
+}
+
+p, div {
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+}
+
+#map {
+	border: 1px solid #949494;
+    box-shadow : 0 1px 5px rgba(0,0,0,0.45);
+}
+
+.ui-title {
+	text-shadow: 1px 1px 1px #ccc;
+}
+
+.ui-option-method-button {
+	position: relative;
+    width: 30px;
+    height: 30px;
+/*     border: 1px solid gray; */
+    background: url('../img/arrow-up.png');
+    background-color: lightgray;
+    background-position:center;
+	background-repeat: no-repeat;
+	box-shadow : 0 1px 5px rgba(0,0,0,0.45);
+}
+
+.jumbotron {
+   background: rgb(220, 218, 218); /* This is for ie8 and below */
+   background: rgba(220, 218, 218, 0.5); 
+}
+
+.ui-table-files {
+	box-shadow: 0 0 1em 0em #ccc;
+}
+
+.container-narrow {
+    background: url('../img/cream_dust_transparent.png') repeat 0 0;
+}
+
 .ui-principal {
 	height: 600px;
 	width: 800px;
 	background-color: #d7ebff;
 }
 
-.ui-exportar-boto {
+.ui-exportar-boto,.ui-exportar-boto2 {
 	position: relative;
-/* 	right: -300px; */
-/* 	background-color: #808080; */
-/* 	border-color: #808080; */
-/* 	left: 40px; */
     padding-bottom: 15px;
-/* 	color: #333; */
+    box-shadow: 0 3px 0 0 #42a0ff;
+    background: #80bfff;
+    border-color: transparent;
+    text-shadow: 2px 2px 2px #42a0ff;
+}
+
+.ui-exportar-boto2 {
+    margin-top: 20px;
 }
 
 .ui-exportar-boto:hover {
-	background-color: #6b6b6b;
-	border-color: #6b6b6b;
+	background-color: #42a0ff;
+	border-color: transparent;
+	color: ;
 }
 
 .ui-canvi {
@@ -38,24 +92,29 @@
 	background-repeat: no-repeat;
 }
 
-.ui-idioma-boto {
-	
+.bk-td {
+	background: #f5f5f5;
 }
 
 .ui-entrar-text {
 	margin-bottom: 10px;
 }
 
+.ui-idioma-boto-ppal {
+	height: 40px;
+}
+
 .ui-entrar-formulari {
 	width: 180px;
 	padding: 12px;
-    border: 1px solid rgba(204, 204, 204, 0.36);
+    border: 1px solid #949494;
     border-radius: 5px;
     background: #dbdbdb;
     margin-top: -47px;
     position: absolute;
-    margin-left: 438px;
+    margin-left: 409px;
     z-index: 100;
+    box-shadow : 0 1px 5px rgba(0,0,0,0.45);
 }
 
 .ui-entrar-formulari-boto {
@@ -69,13 +128,14 @@
 
 .ui-registre-formulari {
 	padding: 12px;
-    border: 1px solid rgba(204, 204, 204, 0.36);
+    border: 1px solid #949494;
     border-radius: 5px;
     background: #dbdbdb;
-    margin-left: 366px;
+    margin-left: 288px;
     margin-top: -48px;
     position: absolute;
     z-index: 100;
+    box-shadow : 0 1px 5px rgba(0,0,0,0.45);
 }
 
 .ui-registre-formulari-boto {
@@ -94,12 +154,21 @@
 }
 
 .ui-boto-pujar-fitxer {
-	position: relative;
-    left: 150px;
-    padding-bottom: 15px;
+	margin: 0 auto;
+}
+
+.ui-file-upload-container {
+	padding-bottom: 20px;
 }
 
 .ui-opcio-a {
+	font-weight: bold;
+	color: #626262;
+	border-bottom: 1px solid;
+	padding-bottom: 17px;
+}
+
+.ui-opcio-b {
 	font-weight: bold;
 	color: #626262;
 	border-bottom: 1px solid;
@@ -116,7 +185,8 @@
 }
 
 .ui-map {
-	padding-bottom: 20px;
+/* 	padding-bottom: 20px; */
+
 }
 
 .ui-exporta-fitxer {
@@ -146,8 +216,37 @@
 
 .ui-aplicar-canvi-boto {
 	margin-right: 40px;
+    box-shadow: 0 3px 0 0 #1188ff;
+    background: #3399ff;
+    border-color: transparent;
+    text-shadow: 2px 2px 2px #0070df;
+/* 	color: #333; */
+}
+
+.ui-aplicar-canvi-boto:hover {
+	background-color: #0080ff;
+	border-color: transparent;
+}
+
+.white-bg {
+	background: rgba(255, 255, 255, 0.8) !important;
+	background-size:40px 40px;
 }
 
 .ui-textarea {
 	resize: none;
+}
+
+.ui-img-idioma {
+	width : 20px;
+	height : 20px;
+/* 	background-image : url('../img/catalan_flag.png'); */
+/* 	position: relative; */
+/* 	display : inline-block; */
+	margin-top: -3px;
+}
+
+.ui-idioma-boto {
+/* 	position: relative; */
+/* 	display: inline-block; */
 }
