@@ -22,8 +22,6 @@
 	<link rel="stylesheet" href="./css/ol.css">
 	<link href="https://fonts.googleapis.com/css?family=Roboto:bold" rel="stylesheet" type="text/css">
  	<link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
- 	<%@ page import="java.util.*" %>
-	<%@ page import="javax.sql.*;" %>
 </head>
 <body>
 	<div class="container white-bg">
@@ -108,10 +106,14 @@
 				</form>
 			</div>
 		</div>
+	  <div class="container ui-container-online">
+	  	<img class="ui-icona-persona" src="./img/offline.png" id="icona-persona"></img>
+	  	<p class="ui-nom-persona" id="nom-persona">Offline</p>
+	  </div>
       <div class="jumbotron">
       	<h2 class="ui-opcio-a" id="opcio-a">M&egrave;tode Principal</h2>
 <!--         <h3 class="ui-importacio" id="importacio">ImportaciÃ³</h3> -->
-        <p class="lead ui-importacio-text" id="importacio-text">Selecciona un fitxer (formats: SHP, OSM, XML o CSV)</p>
+        <p class="lead ui-importacio-text" id="importacio-text">Selecciona un fitxer (formats: SHP, OSM, KML o CSV)</p>
         <div class="text-center ui-file-upload-container">
         <form class="text-center ui-boto-pujar-fitxer" method="POST" enctype="multipart/form-data">
 			<input type="file" name="fileUploader" id="fileUploader" class="ui-boto-pujar-fitxer"/>
@@ -141,7 +143,7 @@
 		</div>
 	  	</div>
 	  	<button type="button" class="btn btn-primary btn-lg ui-aplicar-canvi-boto" data-toggle="modal" data-target="#myModal">Aplicar Canvi</button>
-	  	<button type="button" class="btn btn-primary btn-lg ui-exportar-boto" id="exportar-boto1" role="button" onclick="myClickFunction6()">Exportar</button>
+	  	<button type="button" class="btn btn-primary btn-lg ui-exportar-boto" id="exportar-boto1" role="button" onclick="myClickFunction6()">Exportar .py</button>
       	<p class="ui-exporta-fitxer" id="exporta-fitxer"></p>
       </div>
       <!-- Modal -->
@@ -161,7 +163,7 @@
 			      <textarea class="form-control ui-textarea" rows="1" id="commentCoordenades" placeholder="EPSG:4326" disabled></textarea>
 			    </div>
 			    <div class="radio">
-			      <label><input type="radio" onClick="myClickFunction18()" id="radioEstil" name="optradio">Estil</label>
+			      <label><input type="radio" onClick="myClickFunction18()" id="radioEstil" name="optradio" disabled>Estil</label>
 			      <textarea class="form-control ui-textarea" rows="1" id="commentEstil" placeholder="street=blue" disabled></textarea>
 			    </div>
 			    <div class="radio">
@@ -179,7 +181,7 @@
   	</div>
       <div class="jumbotron">
       	<div class="container">
-      	<button class="ui-option-method-button" id="option-method-button" onclick="myClickFunction21()"></button>
+      	<button class="ui-option-method-button pull-right" id="option-method-button" onclick="myClickFunction21()"><p id="option-method-button-text" class="ui-option-method-button-text"></p></button>
         <h2 class="ui-opcio-b" id="opcio-b">M&egrave;tode Opcional</h2>
 <!--         <h3 class="ui-modificacio" id="modificacio">ImportaciÃ³</h3> -->
 		</div>
@@ -190,71 +192,18 @@
 	    	<div id="map" class="ui-map"></div>
 	  		</div>
 		</div>
-<!-- 		<div class="row-fluid"> -->
-<!--         <p class="lead" id="modificacio-text">Triar format de sortida:</p> -->
-<!--         <table class="table"> -->
-<!-- 		    <tbody> -->
-<!-- 		        <tr> -->
-<!-- 		            <td id="formats">Format</td> -->
-<!-- 		            <td id="formats-opcio">--</td> -->
-<!-- 		            <td id="formats-boto" class="ui-seguent-boto" role="button" onclick="myClickFunction9()"></td> -->
-<!-- 		        </tr> -->
-<!-- 		    </tbody> -->
-<!-- 		</table> -->
-<!--         <p><a class="btn btn-lg btn-success" id="modificacio-boto" href="#" role="button" onclick="myClickFunction5()">Aplicar canvi</a></p> -->
-<!--       </div> -->
-    	<a class="btn btn-lg btn-primary ui-exportar-boto2" id="exportar-boto" role="button" onclick="myClickFunction6b()">Exportar</a>
+    	<a class="btn btn-lg btn-primary ui-exportar-boto2" id="exportar-boto" role="button" onclick="myClickFunction6b()">Exportar .map</a>
     	<div id="myProgress" class="ui-myProgress"><div id="myBar" class="ui-myBar"></div></div>
     	<p class="ui-exporta-fitxer-mapa" id="exporta-fitxer-mapa"></p>
     </div>
     </div>
         <footer class="footer">
-    	<p>&copy; 2015 SITEP, Inc.</p>
+    	<p>&copy; 2015-2016 SITEP, Inc.</p>
     </footer>
     </div>
     <!-- /container -->
     <script>
-    $.backstretch("./img/map.jpg");
-    <%!
-    public int getNumberOfFiles(String username) {
-		java.sql.PreparedStatement pstmt1 = null;
-		java.sql.Connection conn = null;
-		String sql1;
-		String url, id, pass, finalResponse, limit, tables, info2, almostFinalResponse;
-		System.out.println("username: " + username);
-		url = "jdbc:postgresql://192.122.214.77:5432/osm";
-		id = "postgres";
-		pass = "SiteP0305";
-		finalResponse = limit = tables = almostFinalResponse = "";
-		java.sql.ResultSet rs = null;
-		int countNumber2, numberOfRows;
-		numberOfRows = 0;
-		countNumber2 = 10;
-		ProcessBuilder pb = null;
-    	try {
-    		Class.forName("org.postgresql.Driver");
-    		conn = java.sql.DriverManager.getConnection(url, id, pass);
-    		String nomTaula = "loaded_objects";
-    		sql1 = "SELECT COUNT(*) FROM " + nomTaula + " WHERE username = ?";
-    		pstmt1 = conn.prepareStatement(sql1);
-    		pstmt1.setString(1, username);
-    		rs = pstmt1.executeQuery();
-    	    if (rs.next()) countNumber2 = rs.getInt(1);
-    	} catch (Exception e) {
-		      e.printStackTrace();
-		    } finally {
-		    	try {
-		    	  rs.close();
-		    	  pstmt1.close();
-		    	  conn.close();
-		    	  } catch (java.sql.SQLException e) {
-		    		  e.printStackTrace();
-		    		  }
-		    	}
-    	
-    	return countNumber2;
-    }
-    %>
+    $.backstretch("./img/globe.jpg");
 	function myClickFunction() {
 		console.log("registre");
 		$("#registre-formulari").show();
@@ -268,6 +217,8 @@
 			$("#lg_username").text("");
 			$("#lg_password").text("");
 			entryVariable = 0;
+			$("#icona-persona").attr("src","./img/offline.png");
+			$("#nom-persona").text("Offline");
 		}
 		else {
 			$("#entrar-formulari").show();
@@ -373,7 +324,7 @@
 		$("#taula-atribut4").text("Seleccio");
 		$("#registre-text").text("Registrar-se");
 		$("#importacio").text("Importacio");
-		$("#importacio-text").text("Selecciona un fitxer (formats: SHP, OSM, XML o CSV)");
+		$("#importacio-text").text("Selecciona un fitxer (formats: SHP, OSM, KML o CSV)");
 		$("#modificacio").text("Modificacio");
 		$("#modificacio-text").text("Coordenades, estil, format y filtre.");
 		$("#canvi").text("Canvis");
@@ -396,7 +347,7 @@
 		$("#taula-atribut4").text("Seleccion");
 		$("#registre-text").text("Registrarse");
 		$("#importacio").text("Importacion");
-		$("#importacio-text").text("Selecciona un fichero (formatos: SHP, OSM, XML o CSV)");
+		$("#importacio-text").text("Selecciona un fichero (formatos: SHP, OSM, KML o CSV)");
 		$("#modificacio").text("Modificacion");
 		$("#modificacio-text").text("Coordenadas, estilo, formato y filtro.");
 		$("#canvi").text("Cambios");
@@ -518,15 +469,17 @@
 	};
 	function myClickFunction21() {
 		var stringOfImage = $("#option-method-button").css('background-image');
-		if (stringOfImage.search("arrow-up.png") != -1) {
-			var imgUrl = './img/arrow-down.png';
-			$("#option-method-button").css('background-image', 'url(' + imgUrl + ')');
-			$("#option-method").hide();
-		}
-		else {
+		if (stringOfImage.search("arrow-down.png") != -1) {
 			var imgUrl = './img/arrow-up.png';
 			$("#option-method-button").css('background-image', 'url(' + imgUrl + ')');
+// 			$("#option-method-button-text").text("Replegar");
 			$("#option-method").show();
+		}
+		else {
+			var imgUrl = './img/arrow-down.png';
+			$("#option-method-button").css('background-image', 'url(' + imgUrl + ')');
+// 			$("#option-method-button-text").text("Desplegar");
+			$("#option-method").hide();
 		}
 	};
 	function uploadFile(event) {
@@ -612,24 +565,42 @@
 			var userInformation = "1," + $("#lg_username").val() + "," + $("#lg_password").val();
 			console.log("userInformation: " + userInformation);
 			$.ajax({
-				url: 'http://localhost/compilador-cartografic/UsuariServiceServlet',
+				url: 'http://localhost/compilador-cartografic/UsuariServiceServlet?userSession='+userSession,
 				type: 'POST',
 				data: userInformation,
 				success: function(data, textStatus, jqXHR) {
 					console.log("UsuariServiceServlet success " + data);
-					if (data.indexOf("SI") == 0) {
+					if (data.indexOf("NO") == -1) {
 						$("#user-login-text").text("");
 						myClickFunction15();
 						++entryVariable;
 						console.log("entrar (myClickFunction15): " +entryVariable);
 						$("#entrar").text("Log out");
-						$.post("http://localhost/compilador-cartografic/index.jsp?userSession="+userSession);
-						<%
-							String username = request.getParameter("userSession");
-							int nfiles = getNumberOfFiles(username); 
-						%>
-						var s = <%= nfiles %>;
-						alert("JSP PROVA: " + s);
+						alert(data);
+						$("#icona-persona").attr("src","./img/online.png");
+						$("#nom-persona").text(userSession);
+						if (data.indexOf(";") > -1) {
+// 							var repeats = data.match(/;/gi).length;
+							var dataVector = data.split(';');
+							for(var i = 0; i < dataVector.length; i++) {
+								var dataVectorRow = dataVector[i].split("'");
+					        	if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
+						        	$("#file-name" + filesUploaded).text(dataVectorRow[0]);
+					        		$("#file-hour" + filesUploaded).text(dataVectorRow[1]);
+					        		$("#file-filter" + filesUploaded).text(dataVectorRow[2]);
+					        		++filesUploaded;
+					        	}
+							}
+						}
+						else {
+							var dataVectorRow = data.split("'");
+				        	if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
+					        	$("#file-name" + filesUploaded).text(dataVectorRow[0]);
+				        		$("#file-hour" + filesUploaded).text(dataVectorRow[1]);
+				        		$("#file-filter" + filesUploaded).text(dataVectorRow[2]);
+				        		++filesUploaded;
+				        	}
+						}
 						return true;
 						}
 					else {
@@ -698,6 +669,7 @@
             $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
     	}
   	});
+    $("#option-method").hide();
     </script>
   </body>
 </html>

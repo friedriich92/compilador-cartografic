@@ -15,4 +15,6 @@ public interface UsuariService<Usuari> {
 	public void registerUser2(String username, String password, String email, String role) throws IOException, SQLException;
 
 	public int getUserConfirmation(String userInformation) throws SQLException;
+
+	public String getFiles(String userName);
 }

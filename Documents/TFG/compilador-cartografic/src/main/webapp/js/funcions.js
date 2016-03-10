@@ -15,5 +15,5 @@ function DateTime() {
     curMinute = objToday.getMinutes() < 10 ? "0" + objToday.getMinutes() : objToday.getMinutes(),
     curSeconds = objToday.getSeconds() < 10 ? "0" + objToday.getSeconds() : objToday.getSeconds(),
     curMeridiem = objToday.getHours() > 12 ? "PM" : "AM";
-    today = curHour + ":" + curMinute + ":" + curSeconds + curMeridiem + " " + dayOfMonth + "/" + curMonth + "/" + curYear;
+    today = /*curHour + ":" + curMinute + ":" + curSeconds + curMeridiem + " " +*/ curYear + "-" + curMonth + "-" + dayOfMonth;
 }

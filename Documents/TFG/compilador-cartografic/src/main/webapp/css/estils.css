@@ -20,6 +20,9 @@ p, div {
 #map {
 	border: 1px solid #949494;
     box-shadow : 0 1px 5px rgba(0,0,0,0.45);
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
 }
 
 .ui-title {
@@ -28,14 +31,21 @@ p, div {
 
 .ui-option-method-button {
 	position: relative;
-    width: 30px;
-    height: 30px;
-/*     border: 1px solid gray; */
-    background: url('../img/arrow-up.png');
-    background-color: lightgray;
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: url('../img/arrow-down.png');
+/*     background-color: lightgray; */
     background-position:center;
 	background-repeat: no-repeat;
-	box-shadow : 0 1px 5px rgba(0,0,0,0.45);
+/* 	box-shadow : 0 1px 5px rgba(0,0,0,0.45); */
+}
+
+.ui-option-method-button-text {
+	font-size: 14px !important;
+/*     margin-top: 0px; */
+    margin-left: 18px;
+    font-weight: bold !important;
 }
 
 .jumbotron {
@@ -155,10 +165,19 @@ p, div {
 
 .ui-boto-pujar-fitxer {
 	margin: 0 auto;
+/* 	width: 117px; */
+/*     height: 50px; */
+/*     border-radius: 7px; */
 }
 
 .ui-file-upload-container {
 	padding-bottom: 20px;
+}
+
+.fileUpload {
+	width: 100px;
+    height: 50px;
+    border-radius: 7px;
 }
 
 .ui-opcio-a {
@@ -249,4 +268,19 @@ p, div {
 .ui-idioma-boto {
 /* 	position: relative; */
 /* 	display: inline-block; */
+}
+
+.ui-nom-persona {
+	display: inline-block;
+}
+
+.ui-icona-persona {
+	width: 15px; /*or your image's width*/
+	height: 15px; /*or your image's height*/
+	margin-top: -5px;
+	display: inline-block;
+}
+
+.ui-container-online {
+/* 	border: 1px solid black; */
 }

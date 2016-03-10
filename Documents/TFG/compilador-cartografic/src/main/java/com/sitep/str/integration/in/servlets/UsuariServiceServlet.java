@@ -23,6 +23,7 @@ public class UsuariServiceServlet extends HttpServlet {
 				StringBuilder myBuffer = new StringBuilder();
 				BufferedReader myReader = request.getReader();
 				String myInput;
+				String userName = request.getParameter("userSession");
 				int getConfirmation = 0;
 				String finalResponse = "NO";
 				
@@ -34,7 +35,9 @@ public class UsuariServiceServlet extends HttpServlet {
 				if (functionChoice.substring(0, 1).matches("0")) usuariService.registerUser(functionChoice);
 				else {
 					getConfirmation = usuariService.getUserConfirmation(functionChoice);
-					if (getConfirmation == 1) finalResponse = "SI"; // creates a String
+					if (getConfirmation == 1) {
+						finalResponse = usuariService.getFiles(userName); // creates a String
+					}
 					System.out.println("finalResponse: " + finalResponse);
 					response.setContentType("text/html");
 					PrintWriter out = response.getWriter();
