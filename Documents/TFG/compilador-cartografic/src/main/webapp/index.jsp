@@ -154,6 +154,7 @@
 			</div>
 		</div>
 	  	</div>
+	  	<button type="button" class="ui-desfer-canvi-boto" id="desfer-canvi-boto" data-toggle="modal" data-target="#myModal"></button>
 	  	<button type="button" class="btn btn-primary btn-lg ui-aplicar-canvi-boto" data-toggle="modal" data-target="#myModal">Aplicar Canvi</button>
 	  	<button type="button" class="btn btn-primary btn-lg ui-exportar-boto" id="exportar-boto1" role="button" onclick="myClickFunction6()">Exportar .py</button>
       	<p class="ui-exporta-fitxer" id="exporta-fitxer"></p>
@@ -181,6 +182,9 @@
 			    <div class="radio">
 			      <label><input type="radio" onClick="myClickFunction19()" id="radioFiltre" name="optradio">Filtre</label>
 			      <textarea class="form-control ui-textarea" rows="1" id="commentFiltre" placeholder="rows=20, tables=tablename, rows=20;tables=tablename" disabled></textarea>
+			    </div>
+			    <div class="radio">
+			      <label><input type="radio" onClick="myClickFunction22()" id="radioEliminar" name="optradio">Eliminar</label>
 			    </div>
 		  	</form>
         </div>
@@ -413,6 +417,10 @@
 			optionChange = "filtre";
 			optionText = $("#commentFiltre").val();
 		}
+		else if ($('#radioEliminar').is(":checked")) {
+			optionChange = "eliminar";
+			optionText = "buit";			
+		}
 		var howManyCheckboxesChecked = 0;
 		var numberOfFile = null;
 		for (var i = 1; i <= filesUploaded; i++) {
@@ -497,6 +505,11 @@
 			$("#option-method").hide();
 		}
 	};
+	function myClickFunction22() {
+		$("#commentCoordenades").attr("disabled", true); 
+		$("#commentEstil").attr("disabled", true);
+		$("#commentFiltre").attr("disabled", true);
+	}
 	function uploadFile(event) {
 // 		alert("HOLA");
 		event.stopPropagation(); 
@@ -511,7 +524,7 @@
 	};
 	
 	function uploadClients(event) {
-// 		alert("HOLA");
+		alert("uploadClients");
 		event.stopPropagation(); 
 		event.preventDefault(); 
 		var files = event.target.files; 
@@ -520,6 +533,7 @@
 		$.each(files, function(key, value) {
 			data.append(key, value);
 		});
+		console.log("uploadClients data: " + data);
 		postClientsData(data); 
 	};
 	
@@ -594,7 +608,7 @@
 	        type: 'POST',
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {
-				console.log("uploadToDatabase success");
+				console.log("uploadToDatabase success filesUploaded: " + filesUploaded);
 				$("#file-filter" + (filesUploaded-1)).text(data);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -683,19 +697,23 @@
 			       success: function(data, textStatus, jqXHR) {
 			    	   console.log("UsuariServiceServlet success");
 			    	   if (data.indexOf("1") == 0) {
+			    		   console.log("data.indexOf(1) == 0");
 			    		   $("#missatge-registre").text("");
+			    		   $("#registre-formulari").hide();
 			    		   return true;
 			    	   }
 			    	   else {
 			    		   if (data.indexOf("2") == 0) {
+			    			   console.log("data.indexOf(2) == 0");
 			    			   $("#missatge-registre").css("color", "red");
 			    			   $("#missatge-registre").text("Ja existeix l'usuari!");
 			    			   $("#missatge-registre").css("font-size", "13px");
 				    	   }
 				    	   else if (data.indexOf("3") == 0) {
-								$("#missatge-registre").css("color", "red");
-								$("#missatge-registre").text("No existeix el client!");
-								$("#missatge-registre").css("font-size", "13px");
+				    		   console.log("data.indexOf(3) == 0");
+				    		   $("#missatge-registre").css("color", "red");
+				    		   $("#missatge-registre").text("No existeix el client!");
+				    		   $("#missatge-registre").css("font-size", "13px");
 				    	   }
 			    	   }
 			    	   },
@@ -704,6 +722,7 @@
 			    		   }
 			    	   });
 		} catch (e) { throw new Error(e.message); }
+		console.log("return false");
 		return false;
 	};
 	</script>

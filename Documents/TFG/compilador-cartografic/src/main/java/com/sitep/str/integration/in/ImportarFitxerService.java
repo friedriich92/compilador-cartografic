@@ -9,6 +9,7 @@ public interface ImportarFitxerService<Fitxer> {
 	
 	public void importFile(HttpServletRequest request, String userName) throws IOException, SQLException;
 	
-	public void DBConnection();
-	
+	public void addFitxer(Fitxer fitxer);
+
+	public void deleteFitxer(String fileName, String username);
 }

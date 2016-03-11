@@ -7,12 +7,13 @@ public class Usuari {
 	boolean connectat;
 	RolDeUsuari rol; 
 	Idioma idioma;
+	String client;
 	
 	public Usuari() {
 		super();
 	}
 
-	public Usuari(String identificadorDeUsuari, String contrasenya, String email, boolean connectat, RolDeUsuari rol, Idioma idioma) {
+	public Usuari(String identificadorDeUsuari, String contrasenya, String email, boolean connectat, RolDeUsuari rol, Idioma idioma, String client) {
 		super();
 		this.identificadorDeUsuari = identificadorDeUsuari;
 		this.contrasenya = contrasenya;
@@ -20,6 +21,7 @@ public class Usuari {
 		this.connectat = connectat;
 		this.rol = rol;
 		this.idioma = idioma;
+		this.client = client;
 	}
 
 	/**
@@ -104,5 +106,19 @@ public class Usuari {
 	 */
 	public void setIdioma(Idioma idioma) {
 		this.idioma = idioma;
+	}
+
+	/**
+	 * @return the client
+	 */
+	public String getClient() {
+		return client;
+	}
+
+	/**
+	 * @param client the client to set
+	 */
+	public void setClient(String client) {
+		this.client = client;
 	}
 }

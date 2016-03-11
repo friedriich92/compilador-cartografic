@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.sitep.str.integration.in.UsuariService;
+import com.sitep.str.integration.in.classes.Idioma;
+import com.sitep.str.integration.in.classes.RolDeUsuari;
 import com.sitep.str.integration.in.classes.Usuari;
 
 public class UsuariServiceImpl implements UsuariService<Usuari> {
@@ -68,29 +70,19 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
 			// Existeix el client?
      		String sql1 = "SELECT COUNT(*) FROM client WHERE identificadordeclient = ?";
     		pstmt1 = conn.prepareStatement(sql1);
-    		pstmt1.setString(1, username);
+    		pstmt1.setString(1, client);
     		rs = pstmt1.executeQuery();
     	    if (rs.next()) count = rs.getInt(1);
 			if (count == 1) { // Existeix el client
 				System.out.println("Existeix el client");
 	     		sql1 = "SELECT COUNT(*) FROM usuari WHERE identificadordeusuari = ?";
 	    		pstmt1 = conn.prepareStatement(sql1);
-	    		pstmt1.setString(1, client);
+	    		pstmt1.setString(1, username);
 	    		rs = pstmt1.executeQuery();
 	    	    if (rs.next()) count = rs.getInt(1);
 	    	    if (count == 0) { // No existeix l'usuari => Afegir Usuari
 	    	    	System.out.println("No existeix l'usuari");
-	    			String columnsDest = "identificadordeusuari, contrasenya, email, rol, idioma, client";
-	    			sql1 = "INSERT INTO usuari (" + columnsDest + ") VALUES (?, ?, ?, ?, ?, ?)";
-	    			System.out.println("SQL Statement: " + sql1);
-	    			pstmt1 = conn.prepareStatement(sql1);
-	    			pstmt1.setString(1, username);
-	    			pstmt1.setString(2, password);
-	    			pstmt1.setString(3, email);
-	    			pstmt1.setString(4, role);
-	    			pstmt1.setString(5, "encatala");
-	    			pstmt1.setString(6, client);
-	    			pstmt1.executeUpdate();
+	    	    	addUsuari(new Usuari(username, password, email, false, new RolDeUsuari(role), new Idioma("encatala"), client));
 	    			responseValue = 1; // Usuari creat
 	    	    }
 	    	    else {
@@ -115,34 +107,6 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
 		return responseValue;
 	}
 
-	public void registerUser2(String username, String password, String email, String role) throws IOException, SQLException {
-		PreparedStatement pstmt1 = null;
-		try {
-			DBConnection();
-			String nomTaula = "ccusers";
-			String columnsDest = "username, password, email, role";
-			String sql1 = "INSERT INTO " + nomTaula + " (" + columnsDest + ") VALUES (?, ?, ?, ?)";
-			System.out.println("SQL Statement: " + sql1);
-			pstmt1 = connectionUsuariService.prepareStatement(sql1);
-			pstmt1.setString(1, username);
-			pstmt1.setString(2, password);
-			pstmt1.setString(3, email);
-			pstmt1.setString(4, role);
-			pstmt1.executeUpdate();
-			pstmt1.close();
-			connectionUsuariService.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				pstmt1.close();
-				connectionUsuariService.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					}
-		}
-	}
-
 	public int getUserConfirmation(String userInformation) throws SQLException {
 		System.out.println("String field " + userInformation + " readed.");
 		
@@ -161,8 +125,7 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
 		PreparedStatement pstmt1 = null;
 		try {
 			DBConnection();
-			String nomTaula = "usuari";
-			String sql1 = "SELECT COUNT(*) FROM " + nomTaula + " WHERE username = ? AND password = ?";
+			String sql1 = "SELECT COUNT(*) FROM usuari WHERE identificadordeusuari = ? AND contrasenya = ?";
 			System.out.println("SQL Statement: " + sql1);
 			pstmt1 = connectionUsuariService.prepareStatement(sql1);
 			pstmt1.setString(1, username);
@@ -198,12 +161,11 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
 		rs = rs2 = null;
 		numberOfRows = loopNumber = 0;
 		countNumber2 = 10;
-		String nomTaula = "loaded_objects";
     	try {
      		Class.forName("org.postgresql.Driver");
      		conn = java.sql.DriverManager.getConnection(url, id, pass);
      		// 1. #ARXIUS
-    		sql1 = "SELECT COUNT(*) FROM " + nomTaula + " WHERE username = ?";
+    		sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ?";
     		pstmt1 = conn.prepareStatement(sql1);
     		pstmt1.setString(1, userName);
     		rs = pstmt1.executeQuery();
@@ -221,9 +183,10 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
     	    try {
     	    	if (countNumber2 > 0) {
         		// 2. DADES DELS ARXIUS
-        		sql1 = "SELECT filename, date, tablename FROM " + nomTaula + " WHERE username = ?";
+        		sql1 = "SELECT idfitxer, date, nomfitxer FROM fitxer WHERE idusuari = ? AND numerodeversio = ?";
         		pstmt1 = conn.prepareStatement(sql1);
         		pstmt1.setString(1, userName);
+        		pstmt1.setInt(2, 1);
         		rs = pstmt1.executeQuery();
         	    while (rs.next()) { // 3. PER A CADA ARXIU
         	    	++loopNumber;
@@ -271,6 +234,37 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
 		    	}
     	System.out.println("9. theFinalResponse: " + theFinalResponse);
     	return theFinalResponse;
+	}
+	
+	public void addUsuari(Usuari usuari) {
+		Connection usuari_connection = null;
+		String sql_line = "";
+		PreparedStatement preparedStatement = null;
+		try {
+			Class.forName("org.postgresql.Driver");
+			usuari_connection = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+			String columnsDest = "identificadordeusuari, contrasenya, email, connectat, rol, idioma, client";
+			sql_line = "INSERT INTO usuari (" + columnsDest + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
+			System.out.println("addUsuari SQL Statement: " + sql_line);
+			preparedStatement = usuari_connection.prepareStatement(sql_line);
+			preparedStatement.setString(1, usuari.getIdentificadorDeUsuari());
+			preparedStatement.setString(2, usuari.getContrasenya());
+			preparedStatement.setString(3, usuari.getEmail());
+			preparedStatement.setBoolean(4, usuari.isConnectat());
+			preparedStatement.setString(5, usuari.getRol().toString());
+			preparedStatement.setString(6, usuari.getIdioma().toString());
+			preparedStatement.setString(7, usuari.getClient());
+			preparedStatement.executeUpdate();
+		} catch (Exception e) {
+		      e.printStackTrace();
+		    } finally {
+		    	try {
+		    	  preparedStatement.close();
+		    	  usuari_connection.close();
+		    	  } catch (java.sql.SQLException e) {
+		    		  e.printStackTrace();
+		    		  }
+		    	}
 	}
 
 }

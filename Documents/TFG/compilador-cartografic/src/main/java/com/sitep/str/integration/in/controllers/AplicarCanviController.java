@@ -52,6 +52,9 @@ public class AplicarCanviController {
 
 	public void applyFilter(String fileName, String fileNameWithoutExtension, String extension, String info, String username, HttpServletResponse response) {
 		aplicarCanvi.applyFilter(fileName, fileNameWithoutExtension, extension, info, username, response);
-		
+	}
+
+	public void deleteFile(String fileName, String username) {
+		aplicarCanvi.deleteFile(fileName, username);
 	}
 }

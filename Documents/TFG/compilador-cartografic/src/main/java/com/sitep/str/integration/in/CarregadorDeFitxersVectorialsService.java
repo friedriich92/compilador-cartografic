@@ -11,5 +11,4 @@ public interface CarregadorDeFitxersVectorialsService<FitxerVectorial> {
 
 	public void printStream (InputStream stream) throws IOException;
 	
-	public void DBConnection();
 }

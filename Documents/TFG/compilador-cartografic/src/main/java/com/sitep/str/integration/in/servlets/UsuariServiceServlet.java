@@ -58,9 +58,5 @@ public class UsuariServiceServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 		}
-		
-		public void registerUser2(String username, String password, String email, String role) throws IOException, SQLException {
-			usuariService.registerUser2(username, password, email, role);
-		}
 
 }

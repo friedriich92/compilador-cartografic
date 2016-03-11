@@ -42,6 +42,8 @@ public class AplicarCanviServiceServlet extends HttpServlet {
 				aplicarCanvi.changeCS(fileName, fileNameWithoutExtension, extension, info, username, response);
 			else if (c.equalsIgnoreCase("filtre"))
 				aplicarCanvi.applyFilter(fileName, fileNameWithoutExtension, extension, info, username, response);
+			else if (c.equalsIgnoreCase("eliminar"))
+				aplicarCanvi.deleteFile(fileName, username);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {

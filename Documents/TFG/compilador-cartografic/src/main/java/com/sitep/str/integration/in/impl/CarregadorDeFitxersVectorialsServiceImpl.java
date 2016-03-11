@@ -20,8 +20,6 @@ import com.sitep.str.integration.in.classes.FitxerVectorial;
 
 public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFitxersVectorialsService<FitxerVectorial> {
 
-	Connection carregadorDeFitxersVectorialsConnection = null;
-	
 	public void vectoriseAndUploadFileToDatabase(String fileName, String fileNameWithoutExtension, HttpServletResponse response) {
 		try {
 			// 1. EXTREURE LA INFORMACIÓ NECESSÀRIA
@@ -30,7 +28,10 @@ public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFit
 					" fileNameWithoutExtension: " + fileNameWithoutExtension + " extension: "
 					+ extension);
 			System.out.println("shp = " + extension.equalsIgnoreCase("shp") +
-					"or kml = " + extension.equalsIgnoreCase("kml"));
+					" or kml = " + extension.equalsIgnoreCase("kml") + " or csv" +
+					extension.equalsIgnoreCase("csv") + " or osm " + 
+					extension.equalsIgnoreCase("pbf") + extension.equalsIgnoreCase("bz") +
+					extension.equalsIgnoreCase("osm"));
 			ProcessBuilder pb = null;
 			
 			// 2. IMPORTAR A LA BASE DE DADES
@@ -78,28 +79,33 @@ public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFit
 		    }
 		    
 		    // 3. AGAFAR LES COLUMNES QUE ES PODRAN FILTRAR & EL # DE FILES
-			DBConnection();
+		    Connection carregadorDeFitxersVectorialsConnection = null;
 			PreparedStatement pstmt1 = null;
 			String sql1, almostFinalResponse, finalResponse;
 			sql1 = finalResponse = almostFinalResponse = "";
 			int numberOfRows = 0;
 			ResultSet rs = null;
 			try {
+				Class.forName("org.postgresql.Driver");
+				carregadorDeFitxersVectorialsConnection = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
 				// 3.1 COLUMNES
 				sql1 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?";
+				System.out.println(sql1 + " " + fileNameWithoutExtension.toLowerCase());
 				pstmt1 = carregadorDeFitxersVectorialsConnection.prepareStatement(sql1);
 				pstmt1.setString(1, fileNameWithoutExtension.toLowerCase());
 				rs = pstmt1.executeQuery();
 				while (rs.next())
 					almostFinalResponse += (rs.getString(1) + ", ");
+				System.out.println("almostFinalResponse: " + almostFinalResponse);
 				finalResponse = almostFinalResponse.substring(0, almostFinalResponse.length()-2);
 				// 3.2 FILES
 			    sql1 = "SELECT COUNT(*) FROM " + fileNameWithoutExtension;
+			    System.out.println(sql1 + " " + fileNameWithoutExtension);
 				pstmt1 = carregadorDeFitxersVectorialsConnection.prepareStatement(sql1);
 				rs = pstmt1.executeQuery();
 				if (rs.next()) numberOfRows = rs.getInt(1);
 				finalResponse += " (" + numberOfRows + ")";				
-				
+				System.out.println("finalResponse: " + finalResponse);
 			    // 4. SEND WHAT HAPPENED => data
 				response.setContentType("text/html");
 				PrintWriter out = response.getWriter();
@@ -120,33 +126,6 @@ public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFit
 		}
 		catch (Exception evt) {
 			System.out.println("Error CarregadorFitxersVectorials: " + evt);
-		}
-	}
-	
-	public void DBConnection() {
-		System.out.println("PostgreSQL " + "JDBC Connection Testing");
-		try {
-			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
-			System.out.println("Where is your PostgreSQL JDBC Driver? Include in your library path!");
-			e.printStackTrace();
-			return;
-		}
-		System.out.println("PostgreSQL JDBC Driver Registered!");
-		carregadorDeFitxersVectorialsConnection = null;
-		try {
-			carregadorDeFitxersVectorialsConnection = DriverManager.getConnection(
-					"jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
-
-		} catch (SQLException e) {
-			System.out.println("Connection Failed! Check output console");
-			e.printStackTrace();
-			return;
-		}
-		if (carregadorDeFitxersVectorialsConnection != null) {
-			System.out.println("You made it, take control your database now!");
-		} else {
-			System.out.println("Failed to make connection!");
 		}
 	}
 

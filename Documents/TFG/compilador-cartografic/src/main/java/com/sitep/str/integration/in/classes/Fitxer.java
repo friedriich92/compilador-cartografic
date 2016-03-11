@@ -1,27 +1,38 @@
 package com.sitep.str.integration.in.classes;
 
+import java.sql.Date;
+
 public class Fitxer {
 	String idFitxer;
-	boolean modificat;
+	String idUsuari;
+	int numeroDeVersio;
+	Date date;
+	String nomDeFitxer;
 	ExtensioDeFitxer extensioDeFitxer;
-	int idUsuari;
-
+	boolean modificat;
+	
 	public Fitxer() {
 		super();
 	}
 
 	/**
 	 * @param idFitxer
-	 * @param modificat
-	 * @param extensioDeFitxer
 	 * @param idUsuari
+	 * @param numeroDeVersio
+	 * @param date
+	 * @param nomDeFitxer
+	 * @param extensioDeFitxer
+	 * @param modificat
 	 */
-	public Fitxer(String idFitxer, boolean modificat, ExtensioDeFitxer extensioDeFitxer, int idUsuari) {
+	public Fitxer(String idFitxer, String idUsuari, int numeroDeVersio, Date date, String nomDeFitxer, ExtensioDeFitxer extensioDeFitxer, boolean modificat) {
 		super();
 		this.idFitxer = idFitxer;
-		this.modificat = modificat;
-		this.extensioDeFitxer = extensioDeFitxer;
 		this.idUsuari = idUsuari;
+		this.numeroDeVersio = numeroDeVersio;
+		this.date = date;
+		this.nomDeFitxer = nomDeFitxer;
+		this.extensioDeFitxer = extensioDeFitxer;
+		this.modificat = modificat;
 	}
 
 	/**
@@ -39,17 +50,59 @@ public class Fitxer {
 	}
 
 	/**
-	 * @return the modificat
+	 * @return the idUsuari
 	 */
-	public boolean isModificat() {
-		return modificat;
+	public String getIdUsuari() {
+		return idUsuari;
 	}
 
 	/**
-	 * @param modificat the modificat to set
+	 * @param idUsuari the idUsuari to set
 	 */
-	public void setModificat(boolean modificat) {
-		this.modificat = modificat;
+	public void setIdUsuari(String idUsuari) {
+		this.idUsuari = idUsuari;
+	}
+
+	/**
+	 * @return the numeroDeVersio
+	 */
+	public int getNumeroDeVersio() {
+		return numeroDeVersio;
+	}
+
+	/**
+	 * @param numeroDeVersio the numeroDeVersio to set
+	 */
+	public void setNumeroDeVersio(int numeroDeVersio) {
+		this.numeroDeVersio = numeroDeVersio;
+	}
+
+	/**
+	 * @return the date
+	 */
+	public java.sql.Date getDate() {
+		return date;
+	}
+
+	/**
+	 * @param date the date to set
+	 */
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	/**
+	 * @return the nomDeFitxer
+	 */
+	public String getNomDeFitxer() {
+		return nomDeFitxer;
+	}
+
+	/**
+	 * @param nomDeFitxer the nomDeFitxer to set
+	 */
+	public void setNomDeFitxer(String nomDeFitxer) {
+		this.nomDeFitxer = nomDeFitxer;
 	}
 
 	/**
@@ -66,11 +119,18 @@ public class Fitxer {
 		this.extensioDeFitxer = extensioDeFitxer;
 	}
 
-	public int getIdUsuari() {
-		return idUsuari;
+	/**
+	 * @return the modificat
+	 */
+	public boolean isModificat() {
+		return modificat;
 	}
 
-	public void setIdUsuari(int idUsuari) {
-		this.idUsuari = idUsuari;
+	/**
+	 * @param modificat the modificat to set
+	 */
+	public void setModificat(boolean modificat) {
+		this.modificat = modificat;
 	}
+	
 }

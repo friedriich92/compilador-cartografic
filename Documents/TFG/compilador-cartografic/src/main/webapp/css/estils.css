@@ -299,3 +299,15 @@ p, div {
 	margin-left: 100px;
     margin-top: -66px;
 }
+
+.ui-desfer-canvi-boto {
+	background: url('../img/undo.png');
+    width: 50px;
+    height: 50px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: darkgray;
+    padding: 20px 24px;
+    margin-right: 35px;
+    border-radius: 6px;
+}

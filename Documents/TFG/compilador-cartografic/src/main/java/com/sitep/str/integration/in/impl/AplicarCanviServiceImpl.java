@@ -6,21 +6,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FilenameUtils;
-
 import com.sitep.str.integration.in.AplicarCanviService;
+import com.sitep.str.integration.in.ImportarFitxerService;
+import com.sitep.str.integration.in.classes.ExtensioDeFitxer;
+import com.sitep.str.integration.in.classes.Fitxer;
 import com.sitep.str.integration.in.classes.FitxerVersio;
 
 public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio> {
 	
-	static Connection aplicarCanviConnection = null;
+	@SuppressWarnings("rawtypes")
+	ImportarFitxerService importarFitxer = new ImportarFitxerServiceImpl();
 	
 	public void printSomething() {
 		System.out.println("OK");
@@ -52,8 +53,9 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	public void changeCS(String fileName, String fileNameWithoutExtension, String extension, String coordenades, String username, HttpServletResponse response) throws SQLException, IOException, InterruptedException {
-		DBConnection();
+		Connection aplicarCanviConnection = null;
 		PreparedStatement pstmt1 = null;
 		String sql1, finalResponse;
 		sql1 = finalResponse = "";
@@ -61,13 +63,15 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		int countNumber2 = 0;
 		ProcessBuilder pb = null;
 		try {
+			Class.forName("org.postgresql.Driver");
+			aplicarCanviConnection = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
 			// 1. CHECK IF THE 2ND VERSIONS ALREADY EXIST OR NOT & DROP TABLES
 		    // -- Versió 2
-			String nomTaula = "loaded_objects";
-			sql1 = "SELECT COUNT(*) FROM " + nomTaula + " WHERE username = ? AND filename = ?";
+			sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
 			pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
 			pstmt1.setString(1, username);
-			pstmt1.setString(2, fileName+"2");
+			pstmt1.setString(2, fileNameWithoutExtension+"2");
+			pstmt1.setInt(3, 2);
 			rs = pstmt1.executeQuery();
 		    if (rs.next())
 		    	countNumber2 = rs.getInt(1);
@@ -173,19 +177,10 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		    inputStream = process.getInputStream();
 		    printStream(inputStream);
 		    
-		    // 5. INSERT INTO BD (loaded_objects)
+		    // 5. INSERT INTO BD (fitxer)
 		    java.util.Date today = new java.util.Date();
-    		nomTaula = "loaded_objects";
-    		String columnsDest = "filename, date, username, tablename";
-    		sql1 = "INSERT INTO " + nomTaula + " (" + columnsDest + ") VALUES (?, ?, ?, ?)";
-    		System.out.println("SQL Statement: " + sql1);
-			
-    		pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
-    		pstmt1.setString(1, fileName+"2"); // Cal afegir l'usuari i la versió
-    		pstmt1.setDate(2, new java.sql.Date(today.getTime()));
-    		pstmt1.setString(3, username);
-    		pstmt1.setString(4, fileNameWithoutExtension+"2");
-    		pstmt1.executeUpdate();
+		    importarFitxer.addFitxer(new Fitxer(fileNameWithoutExtension+"2."+extension, username, 2, new java.sql.Date(today.getTime()),
+		    		fileNameWithoutExtension+"2", new ExtensioDeFitxer(extension), true));
 		    
 		    // 6. SEND WHAT HAPPENED => data
 			response.setContentType("text/html");
@@ -213,39 +208,13 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 	    in.close();
 	}
 
-	public void DBConnection() {
-		System.out.println("PostgreSQL " + "JDBC Connection Testing");
-		try {
-			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
-			System.out.println("Where is your PostgreSQL JDBC Driver? Include in your library path!");
-			e.printStackTrace();
-			return;
-		}
-		System.out.println("PostgreSQL JDBC Driver Registered!");
-		aplicarCanviConnection = null;
-		try {
-			aplicarCanviConnection = DriverManager.getConnection(
-					"jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
-
-		} catch (SQLException e) {
-			System.out.println("Connection Failed! Check output console");
-			e.printStackTrace();
-			return;
-		}
-		if (aplicarCanviConnection != null) {
-			System.out.println("You made it, take control your database now!");
-		} else {
-			System.out.println("Failed to make connection!");
-		}
-	}
-
+	@SuppressWarnings("unchecked")
 	public void applyFilter(String fileName, String fileNameWithoutExtension, String extension, String info, String username, HttpServletResponse response) {
-		DBConnection();
+		Connection aplicarCanviConnection = null;
 		PreparedStatement pstmt1 = null;
 		String sql1;
 		String finalResponse, limit, tables, info2, almostFinalResponse;
-		finalResponse = limit = tables = almostFinalResponse = "";
+		finalResponse = sql1 = limit = tables = almostFinalResponse = "";
 		ResultSet rs = null;
 		int countNumber2, numberOfRows;
 		countNumber2 = numberOfRows = 0;
@@ -253,11 +222,13 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		try {
 			// 1. CHECK IF THE 2ND VERSIONS ALREADY EXIST OR NOT
 		    // -- Versió 2
-			String nomTaula = "loaded_objects";
-			sql1 = "SELECT COUNT(*) FROM " + nomTaula + " WHERE username = ? AND filename = ?";
+			Class.forName("org.postgresql.Driver");
+			aplicarCanviConnection = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+			sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
 			pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
 			pstmt1.setString(1, username);
-			pstmt1.setString(2, fileName+"2");
+			pstmt1.setString(2, fileNameWithoutExtension+"2");
+			pstmt1.setInt(3,  2);
 			rs = pstmt1.executeQuery();
 		    if (rs.next()) countNumber2 = rs.getInt(1);
 			
@@ -341,7 +312,7 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 				pstmt1.execute();				
 			}
 		    
-		    // 5. INSERT INTO TABLES (BD version1/2 and loaded_objects)
+		    // 5. INSERT INTO TABLES (BD version1/2 and fitxer)
 			// 5.1 FILE 1 is now FILE2 before changing coordinates
 		    // Aquesta no funciona perque falta guardar el fitxer 2, només es guarda el tercer
 		    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+fileNameWithoutExtension+"2.shp public."+fileNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
@@ -373,20 +344,11 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		    inputStream = process.getInputStream();
 		    printStream(inputStream);
 		    
-		    // [OPCIONAL] 5.3 INSERT INTO BD (loaded_objects)
+		    // [OPCIONAL] 5.3 INSERT INTO BD (fitxer)
 		    if (countNumber2 == 0) {
 		    	java.util.Date today = new java.util.Date();
-	    		nomTaula = "loaded_objects";
-	    		String columnsDest = "filename, date, username, tablename";
-	    		sql1 = "INSERT INTO " + nomTaula + " (" + columnsDest + ") VALUES (?, ?, ?, ?)";
-	    		System.out.println("SQL Statement: " + sql1);
-				
-	    		pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
-	    		pstmt1.setString(1, fileName+"2"); // Cal afegir l'usuari i la versió
-	    		pstmt1.setDate(2, new java.sql.Date(today.getTime()));
-	    		pstmt1.setString(3, username);
-	    		pstmt1.setString(4, fileNameWithoutExtension+"2");
-	    		pstmt1.executeUpdate();
+		    	importarFitxer.addFitxer(new Fitxer(fileNameWithoutExtension+"2."+extension, username, 2, new java.sql.Date(today.getTime()),
+			    		fileNameWithoutExtension+"2", new ExtensioDeFitxer(extension), true));
 		    }
     		
 		    // 6. SEND WHAT HAPPENED => data
@@ -421,5 +383,9 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		    		  e.printStackTrace();
 		    		  }
 		    	}
+	}
+
+	public void deleteFile(String fileName, String username) {
+		importarFitxer.deleteFitxer(fileName, username);
 	}
 }
