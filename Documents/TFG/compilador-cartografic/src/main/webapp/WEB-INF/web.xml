@@ -94,4 +94,14 @@
 		<servlet-name>AplicarCanviServiceServlet</servlet-name>
 		<url-pattern>/AplicarCanviServiceServlet</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ClientServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.ClientServiceServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>ClientServiceServlet</servlet-name>
+		<url-pattern>/ClientServiceServlet</url-pattern>
+	</servlet-mapping>
 </web-app>

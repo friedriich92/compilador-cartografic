@@ -32,8 +32,15 @@ public class UsuariServiceServlet extends HttpServlet {
 				String functionChoice = myBuffer.toString();
 				System.out.println("function choice " + functionChoice.substring(0, 1) + ".");
 				
-				if (functionChoice.substring(0, 1).matches("0")) usuariService.registerUser(functionChoice);
-				else {
+				if (functionChoice.substring(0, 1).matches("0")) {
+					int registerOption = usuariService.registerUser(functionChoice);
+					System.out.println("registerResponse: " + String.valueOf(registerOption));
+					response.setContentType("text/html");
+					PrintWriter out = response.getWriter();
+					out.append(String.valueOf(registerOption));
+					out.close(); // to the response
+				}
+				else if (functionChoice.substring(0, 1).matches("1")) {
 					getConfirmation = usuariService.getUserConfirmation(functionChoice);
 					if (getConfirmation == 1) {
 						finalResponse = usuariService.getFiles(userName); // creates a String
@@ -43,6 +50,9 @@ public class UsuariServiceServlet extends HttpServlet {
 					PrintWriter out = response.getWriter();
 					out.append(finalResponse);
 					out.close(); // to the response
+				}
+				else {
+					
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();

@@ -56,6 +56,8 @@
       	<div class="logo ui-entrar-text" id="entrar-text">Entrar
       	<button type="submit" class="close" data-dismiss="modal" aria-label="Close" onclick="myClickFunction13()"><span aria-hidden="true">&times;</span></button>
       	</div>
+<!--       	<div class="ui-arrow-up"></div> -->
+<!-- 			<img class="ui-icona-entrar" src="./img/pestanya.png" id="icona-entrar"></img> -->
       		<div class="login-form-1">
       			<form id="login-form" class="text-left" onsubmit="return enterValidation()">
       				<div class="login-form-main-message"></div>
@@ -80,13 +82,17 @@
       	<div class="logo ui-formulari-registre-text" id="registre-formulari-text">Registre
       	<button type="submit" class="close" data-dismiss="modal" aria-label="Close" onclick="myClickFunction14()"><span aria-hidden="true">&times;</span></button>
       	</div>
+<!--       		<img class="ui-icona-registrar" src="./img/pestanya.png" id="icona-registrar"></img> -->
       		<div class="login-form-1">
-      			<form id="register-form" class="text-left">
+      			<form id="register-form" class="text-left"  onsubmit="return registerValidation()">
       				<div class="login-form-main-message"></div>
 						<div class="main-login-form">
 							<div class="login-group">
 						<div class="form-group">
 							<input type="text" class="form-control" id="rg_username" name="lg_username" placeholder="Username">
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="rg_client" name="lg_client" placeholder="Client">
 						</div>
 						<div class="form-group">
 							<label for="lg_password" class="sr-only" id="registre-contrasenya">Password</label>
@@ -100,6 +106,7 @@
 							<label for="lg_rol" class="sr-only" id="registre-contrasenya">Rol</label>
 							<input type="text" class="form-control" id="rg_rol" name="lg_rol" placeholder="Role">
 						</div>
+						<p id="missatge-registre" class="ui-missatge-registre"></p>
 					</div>
 					<button type="submit" class="login-button ui-registre-formulari-boto">Sign In<i class="fa fa-chevron-right"></i></button>
 						</div>
@@ -109,6 +116,11 @@
 	  <div class="container ui-container-online">
 	  	<img class="ui-icona-persona" src="./img/offline.png" id="icona-persona"></img>
 	  	<p class="ui-nom-persona" id="nom-persona">Offline</p>
+	  </div>
+	  <div class="text-center ui-file-upload-container2" id="file-upload-container2"><b>Importa els contactes</b>
+        <form class="text-center ui-boto-pujar-fitxer" method="POST" enctype="multipart/form-data">
+			<input type="file" name="fileUploader2" id="fileUploader2" class="ui-boto-pujar-fitxer"/>
+	  	</form>
 	  </div>
       <div class="jumbotron">
       	<h2 class="ui-opcio-a" id="opcio-a">M&egrave;tode Principal</h2>
@@ -219,6 +231,7 @@
 			entryVariable = 0;
 			$("#icona-persona").attr("src","./img/offline.png");
 			$("#nom-persona").text("Offline");
+			$("#file-upload-container2").hide();
 		}
 		else {
 			$("#entrar-formulari").show();
@@ -362,10 +375,12 @@
 	function myClickFunction13() {
 		console.log("entrar-close");
 		$("#entrar-formulari").hide();
+		$("#user-login-text").text("");
 	};
 	function myClickFunction14() {
 		console.log("registre-close");
 		$("#registre-formulari").hide();
+		$("#missatge-registre").text("");
 	};
 	function myClickFunction15() {
 		$("#entrar-formulari").hide();
@@ -494,6 +509,20 @@
 		});
 		postFilesData(data); 
 	};
+	
+	function uploadClients(event) {
+// 		alert("HOLA");
+		event.stopPropagation(); 
+		event.preventDefault(); 
+		var files = event.target.files; 
+		var data = new FormData();
+		file2uploadName = files[0].name;
+		$.each(files, function(key, value) {
+			data.append(key, value);
+		});
+		postClientsData(data); 
+	};
+	
 	function postFilesData(data)
 	{
 		console.log("postFilesData");
@@ -540,6 +569,25 @@
 	        }
 	     });
 	};
+	function postClientsData(data)
+	{
+		console.log("postFilesData");
+		$.ajax({
+			url: 'http://localhost/compilador-cartografic/ClientServiceServlet?name='+userSession, //+'&filename='+file2uploadName
+	        type: 'POST',
+	        data: data,
+	        cache: false,
+	        dataType: 'json',
+	        processData: false, 
+	        contentType: false, 
+	        success: function(data, textStatus, jqXHR) {
+	        	console.log("Clients pujats");
+	        },
+	        error: function(jqXHR, textStatus, errorThrown) {
+	        	console.log("Clients pujats amb error")
+	        }
+	     });
+	};
 	function uploadToDatabase(filename) {
 		$.ajax({
 			url: 'http://localhost/compilador-cartografic/CarregadorDeFitxersVectorialsServiceServlet',
@@ -555,9 +603,11 @@
 				});
 	};
 	$('#fileUploader').on('change', uploadFile);
+	$('#fileUploader2').on('change', uploadClients);
 	$("#entrar-formulari").hide();
 	$("#registre-formulari").hide();
 	$("#myProgress").hide();
+	$("#file-upload-container2").hide();
 	function enterValidation(evt) {
 		try {
 			userSession = $("#lg_username").val();
@@ -601,6 +651,8 @@
 				        		++filesUploaded;
 				        	}
 						}
+						$("#user-login-text").text("");
+						if (userSession.indexOf("admin") == 0) $("#file-upload-container2").show();
 						return true;
 						}
 					else {
@@ -617,24 +669,43 @@
 		catch (e) { throw new Error(e.message); }
 		return false;
 	};
-	$("#register-form").submit(function(e) {
-		console.log("Nom: " + $("#rg_username").val() + ", Pass: " + $("#rg_password").val() + ", Email: " +
-			$("#rg_email").val() + ", Rol: " + $("#rg_rol").val());
-		var userInformation = "0," + $("#rg_username").val() + "," + $("#rg_password").val() + "," + 
-			$("#rg_email").val() + "," + $("#rg_rol").val();
-		console.log("userInformation: " + userInformation);
-		$.ajax({
-			url: 'http://localhost/compilador-cartografic/UsuariServiceServlet',
-		       type: 'POST',
-		       data: userInformation,
-		       success: function(data, textStatus, jqXHR) {
-		    	   console.log("UsuariServiceServlet success");
-		    	   },
-		    	   error: function(jqXHR, textStatus, errorThrown) {
-		    		   console.log("UsuariServiceServlet error");
-		    		   }
-		    	   });
-	});
+	function registerValidation(evt) {
+		try {
+			console.log("Nom: " + $("#rg_username").val() + ", Pass: " + $("#rg_password").val() + ", Email: " +
+				$("#rg_email").val() + ", Rol: " + $("#rg_rol").val() + ", Client: " + $("#rg_client").val());
+			var userInformation = "0," + $("#rg_username").val() + "," + $("#rg_password").val() + "," + 
+				$("#rg_email").val() + "," + $("#rg_rol").val() + "," + $("#rg_client").val();
+			console.log("userInformation: " + userInformation);
+			$.ajax({
+				url: 'http://localhost/compilador-cartografic/UsuariServiceServlet',
+			       type: 'POST',
+			       data: userInformation,
+			       success: function(data, textStatus, jqXHR) {
+			    	   console.log("UsuariServiceServlet success");
+			    	   if (data.indexOf("1") == 0) {
+			    		   $("#missatge-registre").text("");
+			    		   return true;
+			    	   }
+			    	   else {
+			    		   if (data.indexOf("2") == 0) {
+			    			   $("#missatge-registre").css("color", "red");
+			    			   $("#missatge-registre").text("Ja existeix l'usuari!");
+			    			   $("#missatge-registre").css("font-size", "13px");
+				    	   }
+				    	   else if (data.indexOf("3") == 0) {
+								$("#missatge-registre").css("color", "red");
+								$("#missatge-registre").text("No existeix el client!");
+								$("#missatge-registre").css("font-size", "13px");
+				    	   }
+			    	   }
+			    	   },
+			    	   error: function(jqXHR, textStatus, errorThrown) {
+			    		   console.log("UsuariServiceServlet error");
+			    		   }
+			    	   });
+		} catch (e) { throw new Error(e.message); }
+		return false;
+	};
 	</script>
     <script>
     var madrid = ol.proj.fromLonLat([2.1533203124999, 41.41845703125]);

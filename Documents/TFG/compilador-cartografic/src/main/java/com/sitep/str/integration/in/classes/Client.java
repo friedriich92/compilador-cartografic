@@ -1,7 +1,7 @@
 package com.sitep.str.integration.in.classes;
 
 public class Client {
-	int identificadorDeClient;
+	String identificadorDeClient;
 	String empresa;
 	String telefon;
 	String adreça;
@@ -11,14 +11,14 @@ public class Client {
 	}
 
 	/**
-	 * @param identificadorDeClient
+	 * @param identificadordeclient2
 	 * @param empresa
 	 * @param telefon
 	 * @param adreça
 	 */
-	public Client(int identificadorDeClient, String empresa, String telefon, String adreça) {
+	public Client(String identificadordeclient2, String empresa, String telefon, String adreça) {
 		super();
-		this.identificadorDeClient = identificadorDeClient;
+		this.identificadorDeClient = identificadordeclient2;
 		this.empresa = empresa;
 		this.telefon = telefon;
 		this.adreça = adreça;
@@ -27,14 +27,14 @@ public class Client {
 	/**
 	 * @return the identificadorDeClient
 	 */
-	public int getIdentificadorDeClient() {
+	public String getIdentificadorDeClient() {
 		return identificadorDeClient;
 	}
 
 	/**
 	 * @param identificadorDeClient the identificadorDeClient to set
 	 */
-	public void setIdentificadorDeClient(int identificadorDeClient) {
+	public void setIdentificadorDeClient(String identificadorDeClient) {
 		this.identificadorDeClient = identificadorDeClient;
 	}
 

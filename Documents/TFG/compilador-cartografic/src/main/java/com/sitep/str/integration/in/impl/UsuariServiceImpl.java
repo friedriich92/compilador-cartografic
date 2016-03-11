@@ -41,45 +41,78 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
 		}
 	}
 	
-	public void registerUser(String userInformation) throws IOException, SQLException {
+	public int registerUser(String userInformation) throws IOException, SQLException {
 		System.out.println("String field " + userInformation + " readed.");
+		Connection conn = null;
+		ResultSet rs = null;
 		
 		String[] dataArray =  userInformation.split(",");
-		String username, password, email, role;
-		username = password = email = role = "";
-		int arrayIterator = 0;
+		String username, password, email, role, client;
+		username = password = email = role = client = "";
+		int arrayIterator, count, responseValue;
+		arrayIterator = count = responseValue = 0;
 		
 		for (String s: dataArray) {
 			if (arrayIterator == 1) username = s;
 			else if (arrayIterator == 2) password = s;
 			else if (arrayIterator == 3) email = s;
-			else role = s;
+			else if (arrayIterator == 4) role = s;
+			else client = s;
 			++arrayIterator;
 		}
-		
+		System.out.println(username + password + email + role);
 		PreparedStatement pstmt1 = null;
 		try {
-			DBConnection();
-			String nomTaula = "ccusers";
-			String columnsDest = "username, password, email, role";
-			String sql1 = "INSERT INTO " + nomTaula + " (" + columnsDest + ") VALUES (?, ?, ?, ?)";
-			System.out.println("SQL Statement: " + sql1);
-			pstmt1 = connectionUsuariService.prepareStatement(sql1);
-			pstmt1.setString(1, username);
-			pstmt1.setString(2, password);
-			pstmt1.setString(3, email);
-			pstmt1.setString(4, role);
-			pstmt1.executeUpdate();
+			Class.forName("org.postgresql.Driver");
+     		conn = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+			// Existeix el client?
+     		String sql1 = "SELECT COUNT(*) FROM client WHERE identificadordeclient = ?";
+    		pstmt1 = conn.prepareStatement(sql1);
+    		pstmt1.setString(1, username);
+    		rs = pstmt1.executeQuery();
+    	    if (rs.next()) count = rs.getInt(1);
+			if (count == 1) { // Existeix el client
+				System.out.println("Existeix el client");
+	     		sql1 = "SELECT COUNT(*) FROM usuari WHERE identificadordeusuari = ?";
+	    		pstmt1 = conn.prepareStatement(sql1);
+	    		pstmt1.setString(1, client);
+	    		rs = pstmt1.executeQuery();
+	    	    if (rs.next()) count = rs.getInt(1);
+	    	    if (count == 0) { // No existeix l'usuari => Afegir Usuari
+	    	    	System.out.println("No existeix l'usuari");
+	    			String columnsDest = "identificadordeusuari, contrasenya, email, rol, idioma, client";
+	    			sql1 = "INSERT INTO usuari (" + columnsDest + ") VALUES (?, ?, ?, ?, ?, ?)";
+	    			System.out.println("SQL Statement: " + sql1);
+	    			pstmt1 = conn.prepareStatement(sql1);
+	    			pstmt1.setString(1, username);
+	    			pstmt1.setString(2, password);
+	    			pstmt1.setString(3, email);
+	    			pstmt1.setString(4, role);
+	    			pstmt1.setString(5, "encatala");
+	    			pstmt1.setString(6, client);
+	    			pstmt1.executeUpdate();
+	    			responseValue = 1; // Usuari creat
+	    	    }
+	    	    else {
+	    	    	responseValue = 2; // Ja existeix l'usuari
+	    	    	System.out.println("Ja existeix l'usuari");
+	    	    }
+			}
+			else { // No existeix el client
+				System.out.println("No existeix el client");
+				responseValue = 3;
+			}
 		} catch (Exception e) {
 		      e.printStackTrace();
 	    } finally {
 	    	try {
 	    		pstmt1.close();
-	    		connectionUsuariService.close();
+	    		conn.close();
 	    		} catch (SQLException e) {
 	    			e.printStackTrace();
 	    			}
 	    	}
+		return responseValue;
 	}
 
 	public void registerUser2(String username, String password, String email, String role) throws IOException, SQLException {
@@ -128,7 +161,7 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
 		PreparedStatement pstmt1 = null;
 		try {
 			DBConnection();
-			String nomTaula = "ccusers";
+			String nomTaula = "usuari";
 			String sql1 = "SELECT COUNT(*) FROM " + nomTaula + " WHERE username = ? AND password = ?";
 			System.out.println("SQL Statement: " + sql1);
 			pstmt1 = connectionUsuariService.prepareStatement(sql1);

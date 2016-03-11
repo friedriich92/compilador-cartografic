@@ -120,7 +120,7 @@ p, div {
     border: 1px solid #949494;
     border-radius: 5px;
     background: #dbdbdb;
-    margin-top: -47px;
+    margin-top: -33px;
     position: absolute;
     margin-left: 409px;
     z-index: 100;
@@ -142,7 +142,7 @@ p, div {
     border-radius: 5px;
     background: #dbdbdb;
     margin-left: 288px;
-    margin-top: -48px;
+    margin-top: -33px;
     position: absolute;
     z-index: 100;
     box-shadow : 0 1px 5px rgba(0,0,0,0.45);
@@ -172,6 +172,11 @@ p, div {
 
 .ui-file-upload-container {
 	padding-bottom: 20px;
+}
+
+.ui-file-upload-container2 {
+	padding-bottom: 20px;
+	border: 1px solid black;
 }
 
 .fileUpload {
@@ -283,4 +288,14 @@ p, div {
 
 .ui-container-online {
 /* 	border: 1px solid black; */
+}
+
+.ui-icona-registrar {
+	margin-left: 164px;
+    margin-top: -66px;
+}
+
+.ui-icona-entrar {
+	margin-left: 100px;
+    margin-top: -66px;
 }
