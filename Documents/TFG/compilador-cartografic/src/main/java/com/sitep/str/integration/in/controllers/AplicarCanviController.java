@@ -13,26 +13,6 @@ import com.sitep.str.integration.in.impl.AplicarCanviServiceImpl;
 public class AplicarCanviController {
 
 	AplicarCanviService<FitxerVersio> aplicarCanvi = new AplicarCanviServiceImpl();
-
-	public void addFitxerVersio() {
-		aplicarCanvi.addFitxerVersio();
-	}
-	
-	public void deleteFitxerVersio() {
-		aplicarCanvi.deleteFitxerVersio();
-	}
-	
-	public void listFitxerVersio() {
-		aplicarCanvi.listFitxerVersio();
-	}
-	
-	public void detailFitxerVersio() {
-		aplicarCanvi.detailFitxerVersio();
-	}
-	
-	public void saveFitxerVersio() {
-		aplicarCanvi.saveFitxerVersio();
-	}
 	
 	public void printSomething() {
 		aplicarCanvi.printSomething();
@@ -56,5 +36,9 @@ public class AplicarCanviController {
 
 	public void deleteFile(String fileName, String username) {
 		aplicarCanvi.deleteFile(fileName, username);
+	}
+
+	public String editFile(String fileName, String username) {
+		return aplicarCanvi.editFile(fileName, username);
 	}
 }

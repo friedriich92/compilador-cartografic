@@ -21,7 +21,7 @@ public class ImportarFitxerServiceServlet extends HttpServlet {
 			 HttpServletResponse response) throws ServletException, IOException {
 		try {
 			String userName = request.getParameter("name");
-			importarFitxerService.importFile(request, userName);
+			importarFitxerService.importFile(request, response, userName);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

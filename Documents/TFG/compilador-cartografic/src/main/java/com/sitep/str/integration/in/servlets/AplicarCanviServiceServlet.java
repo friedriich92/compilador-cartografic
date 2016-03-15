@@ -1,6 +1,7 @@
 package com.sitep.str.integration.in.servlets;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 
 import javax.servlet.ServletException;
@@ -18,8 +19,8 @@ public class AplicarCanviServiceServlet extends HttpServlet {
 	AplicarCanviController aplicarCanvi = new AplicarCanviController();
 
 	protected void doPost( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String fileName, fileNameWithoutExtension, extension, username, c, info;
-		extension = username = c = info = "";
+		String fileName, fileNameWithoutExtension, extension, username, c, info, resposta;
+		extension = username = c = info = resposta = "";
 		
 		// Obtenir nom de la taula
 		fileName = request.getParameter("name");
@@ -44,6 +45,13 @@ public class AplicarCanviServiceServlet extends HttpServlet {
 				aplicarCanvi.applyFilter(fileName, fileNameWithoutExtension, extension, info, username, response);
 			else if (c.equalsIgnoreCase("eliminar"))
 				aplicarCanvi.deleteFile(fileName, username);
+			else if (c.equalsIgnoreCase("desfer")) {
+				resposta = aplicarCanvi.editFile(fileName, username);
+				response.setContentType("text/html");
+				PrintWriter out = response.getWriter();
+				out.append(resposta);
+				out.close(); // to the response
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {

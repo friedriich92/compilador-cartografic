@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -27,7 +29,8 @@ import com.sitep.str.integration.in.classes.Fitxer;
 
 public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> {
 	
-	public void importFile(HttpServletRequest request, String userName) throws IOException, SQLException {
+	public void importFile(HttpServletRequest request, HttpServletResponse response, String userName) throws IOException, SQLException {
+		int numeroDeFitxers = 0;
 		try {
 			// Create a new file upload handler 
 			ServletFileUpload upload = new ServletFileUpload();
@@ -58,12 +61,49 @@ public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> 
 	            addFitxer(new Fitxer(item.getName(), userName, 1, new java.sql.Date(today.getTime()),
 	            		FilenameUtils.removeExtension(item.getName()), extensioDeFitxer,
 	            			false));
+	            
+	            // Number of files X User
+	            numeroDeFitxers = fitxersPerUsuari(userName); // La nova fila => abans+1
+	            System.out.println("numeroDeFitxers: " +  numeroDeFitxers);
+				// Write number of files X User
+	            response.setContentType("text/html");
+				PrintWriter out = response.getWriter();
+				out.append(String.valueOf(numeroDeFitxers));
+				out.close(); // to the response
 	        }       
 	    } 
 	    catch (FileUploadException ex)
 	    {
 	        System.out.println("FileUploadException: " + ex);;
 	    }
+	}
+
+	public int fitxersPerUsuari(String userName) {
+        PreparedStatement pstmt1 = null;
+        Connection connectionImportFileService = null;
+        int numberOfRows = 0;
+        ResultSet rs = null;
+        try {
+			Class.forName("org.postgresql.Driver");
+			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+		    String sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ? AND numerodeversio = ?";
+		    System.out.println("fitxersPerUsuari: " + sql1 + " " + userName);
+			pstmt1 = connectionImportFileService.prepareStatement(sql1);
+			pstmt1.setString(1, userName);
+			pstmt1.setInt(2, 1);
+			rs = pstmt1.executeQuery();
+			if (rs.next()) numberOfRows = rs.getInt(1);
+        } catch (Exception e) {
+		      e.printStackTrace();
+	    } finally {
+	    	try {
+	    		pstmt1.close();
+	    		connectionImportFileService.close();
+	    		} catch (SQLException e) {
+	    			e.printStackTrace();
+	    			}
+	    	}
+		return numberOfRows;
 	}
 
 	public void addFitxer(Fitxer fitxer) {
@@ -143,5 +183,62 @@ public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> 
 	    			}
 	    	}
 		
+	}
+	
+	public String editFitxer(String fileName, String username) {
+		System.out.println("editFitxer");
+		PreparedStatement pstmt1 = null;
+        Connection connectionImportFileService = null;
+        String fileNameWithoutExtension, almostFinalResponse, finalResponse;
+        almostFinalResponse = finalResponse = "";
+        fileNameWithoutExtension = FilenameUtils.removeExtension(fileName);
+        ResultSet rs = null;
+        int numberOfRows = 0;
+        try {
+			Class.forName("org.postgresql.Driver");
+			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+        	String sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
+			System.out.println("sql1: " + sql1 + " " + username + " " + fileNameWithoutExtension+"2");
+        	pstmt1 = connectionImportFileService.prepareStatement(sql1);
+			pstmt1.setString(1, username);
+			pstmt1.setString(2, fileNameWithoutExtension+"2");
+			pstmt1.setInt(3, 2);
+			rs = pstmt1.executeQuery();
+			if (rs.next()) numberOfRows = rs.getInt(1);
+			if (numberOfRows == 1) {
+				System.out.println("numberOfRows == 1");
+    			sql1 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?"; // 2
+    			System.out.println("sql2: " + sql1);
+    			pstmt1 = connectionImportFileService.prepareStatement(sql1);
+    			pstmt1.setString(1, fileNameWithoutExtension.toLowerCase());
+    			rs = pstmt1.executeQuery();
+    			while (rs.next())
+    				almostFinalResponse += (rs.getString(1) + ", ");
+    			System.out.println("almostFinalResponse: " + almostFinalResponse);
+    			finalResponse += almostFinalResponse.substring(0, almostFinalResponse.length()-2);
+    			// 3.2 FILES DE LA TAULA DE L'ARXIU
+    		    sql1 = "SELECT COUNT(*) FROM " + fileNameWithoutExtension; // 2
+    		    System.out.println("sql3: " + sql1);
+    		    pstmt1 = connectionImportFileService.prepareStatement(sql1);
+    			rs = pstmt1.executeQuery();
+    			if (rs.next()) numberOfRows = rs.getInt(1);
+    			finalResponse += " (" + numberOfRows + ");";
+			}
+			else { // No s'ha aplicat cap canvi
+				System.out.println("numberOfRows == 0");
+				finalResponse = "NO";
+			}
+        } catch (Exception e) {
+		      e.printStackTrace();
+	    } finally {
+	    	try {
+	    		pstmt1.close();
+	    		connectionImportFileService.close();
+	    		} catch (SQLException e) {
+	    			e.printStackTrace();
+	    			}
+	    	}
+        System.out.println("finalResponse: " + finalResponse);
+        return finalResponse;
 	}
 }

@@ -7,3 +7,4 @@ var userSession = "ebs4";
 var optionText;
 var optionChange;
 var nombreDeFiles = 10;
+var undoActivated = false;

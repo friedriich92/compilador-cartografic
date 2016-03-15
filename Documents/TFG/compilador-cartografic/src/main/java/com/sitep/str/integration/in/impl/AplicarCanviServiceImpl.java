@@ -27,30 +27,10 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		System.out.println("OK");
 	}
 	
-	public void addFitxerVersio() {
-		
-	}
-	
-	public void deleteFitxerVersio() {
-		
-	}
-	
-	public void listFitxerVersio() {
-		
-	}
-	
 	public FitxerVersio getFitxerVersio(String idFitxerVersioV, String idFitxerVersioF) {
 		/* Recorre tots els FitxerVersio i seleccionar aquell que tingui idFitxerVersioV i
 		 * idFitxerVersioF*/
 		return null;
-	}
-
-	public void detailFitxerVersio() {
-		
-	}
-
-	public void saveFitxerVersio() {
-		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -387,5 +367,9 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 
 	public void deleteFile(String fileName, String username) {
 		importarFitxer.deleteFitxer(fileName, username);
+	}
+
+	public String editFile(String fileName, String username) {
+		return importarFitxer.editFitxer(fileName, username);
 	}
 }

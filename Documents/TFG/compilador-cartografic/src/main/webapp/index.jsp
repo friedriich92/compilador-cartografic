@@ -29,8 +29,8 @@
       <div class="header clearfix">
         <nav>
           <ul class="nav nav-pills pull-right">
-            <li role="presentation" class="active" id="registre" onclick="myClickFunction()"><a id="registre-text" href="#">Registrar-se</a></li>
-            <li role="presentation"><a href="#" id="entrar" onclick="myClickFunction2()">Entrar</a></li>
+            <li role="presentation" class="active" id="registre" onclick="clickButtonRegistrar()"><a id="registre-text" href="#">Registrar-se</a></li>
+            <li role="presentation"><a href="#" id="entrar" onclick="clickButtonEntrar()">Entrar</a></li>
             <li class="dropdown" id="idioma">
 			  <button class="btn btn-default dropdown-toggle ui-idioma-boto-ppal" onclick="myClickFunction3()" type="button" id="idioma-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 			    Idioma
@@ -38,12 +38,12 @@
 			  </button>
 			  <ul class="dropdown-menu" aria-labelledby="idioma-menu">
 			    <li>
-			    	<a href="#" class="ui-idioma-boto" onclick="myClickFunction11()" id="idioma-catala">CA
+			    	<a href="#" class="ui-idioma-boto" onclick="translate2Catalan()" id="idioma-catala">CA
 			    	<img src="./img/catalan_flag.png" class="ui-img-idioma"></a>
 			    </li>
 			    <li role="separator" class="divider"></li>
 			    <li>
-			    	<a href="#" class="ui-idioma-boto" onclick="myClickFunction12()" id="idioma-castellano">ES
+			    	<a href="#" class="ui-idioma-boto" onclick="translate2Spanish()" id="idioma-castellano">ES
 			    	<img src="./img/spain.png" class="ui-img-idioma"></a>
 			    </li>
 			  </ul>
@@ -54,7 +54,7 @@
       </div>
       <div class="text-center ui-entrar-formulari" id="entrar-formulari">
       	<div class="logo ui-entrar-text" id="entrar-text">Entrar
-      	<button type="submit" class="close" data-dismiss="modal" aria-label="Close" onclick="myClickFunction13()"><span aria-hidden="true">&times;</span></button>
+      	<button type="submit" class="close" data-dismiss="modal" aria-label="Close" onclick="closeEntrarForm()"><span aria-hidden="true">&times;</span></button>
       	</div>
 <!--       	<div class="ui-arrow-up"></div> -->
 <!-- 			<img class="ui-icona-entrar" src="./img/pestanya.png" id="icona-entrar"></img> -->
@@ -80,7 +80,7 @@
 		</div>
 		<div class="text-center ui-registre-formulari" id="registre-formulari">
       	<div class="logo ui-formulari-registre-text" id="registre-formulari-text">Registre
-      	<button type="submit" class="close" data-dismiss="modal" aria-label="Close" onclick="myClickFunction14()"><span aria-hidden="true">&times;</span></button>
+      	<button type="submit" class="close" data-dismiss="modal" aria-label="Close" onclick="closeRegistrarseForm()"><span aria-hidden="true">&times;</span></button>
       	</div>
 <!--       		<img class="ui-icona-registrar" src="./img/pestanya.png" id="icona-registrar"></img> -->
       		<div class="login-form-1">
@@ -154,9 +154,10 @@
 			</div>
 		</div>
 	  	</div>
-	  	<button type="button" class="ui-desfer-canvi-boto" id="desfer-canvi-boto" data-toggle="modal" data-target="#myModal"></button>
+	  	<p class="ui-user-login-text" id="file-change-text"></p>
+	  	<button type="button" class="ui-desfer-canvi-boto" id="desfer-canvi-boto" onClick="undoChange2File()"></button>
 	  	<button type="button" class="btn btn-primary btn-lg ui-aplicar-canvi-boto" data-toggle="modal" data-target="#myModal">Aplicar Canvi</button>
-	  	<button type="button" class="btn btn-primary btn-lg ui-exportar-boto" id="exportar-boto1" role="button" onclick="myClickFunction6()">Exportar .py</button>
+	  	<button type="button" class="btn btn-primary btn-lg ui-exportar-boto" id="exportar-boto1" role="button" onclick="exportImportedFile()">Exportar .py</button>
       	<p class="ui-exporta-fitxer" id="exporta-fitxer"></p>
       </div>
       <!-- Modal -->
@@ -172,24 +173,24 @@
           <p>Tria el canvi a realitzar en el fitxer:</p>
             <form role="form">
 			    <div class="radio">
-			      <label><input type="radio" onClick="myClickFunction17()" id="radioCoordenades" name="optradio">Coordenades</label>
+			      <label><input type="radio" onClick="enableCoordinates()" id="radioCoordenades" name="optradio">Coordenades</label>
 			      <textarea class="form-control ui-textarea" rows="1" id="commentCoordenades" placeholder="EPSG:4326" disabled></textarea>
 			    </div>
 			    <div class="radio">
-			      <label><input type="radio" onClick="myClickFunction18()" id="radioEstil" name="optradio" disabled>Estil</label>
+			      <label><input type="radio" onClick="enableStyle()" id="radioEstil" name="optradio" disabled>Estil</label>
 			      <textarea class="form-control ui-textarea" rows="1" id="commentEstil" placeholder="street=blue" disabled></textarea>
 			    </div>
 			    <div class="radio">
-			      <label><input type="radio" onClick="myClickFunction19()" id="radioFiltre" name="optradio">Filtre</label>
+			      <label><input type="radio" onClick="enableFilter()" id="radioFiltre" name="optradio">Filtre</label>
 			      <textarea class="form-control ui-textarea" rows="1" id="commentFiltre" placeholder="rows=20, tables=tablename, rows=20;tables=tablename" disabled></textarea>
 			    </div>
 			    <div class="radio">
-			      <label><input type="radio" onClick="myClickFunction22()" id="radioEliminar" name="optradio">Eliminar</label>
+			      <label><input type="radio" onClick="enableDelete()" id="radioEliminar" name="optradio">Eliminar</label>
 			    </div>
 		  	</form>
         </div>
         <div class="modal-footer">
-        <button type="button" class="btn btn-default" onClick="myClickFunction20()" data-dismiss="modal">Aplicar</button>
+        <button type="button" class="btn btn-default" onClick="applyChange2File()" data-dismiss="modal">Aplicar</button>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>  
@@ -197,7 +198,7 @@
   	</div>
       <div class="jumbotron">
       	<div class="container">
-      	<button class="ui-option-method-button pull-right" id="option-method-button" onclick="myClickFunction21()"><p id="option-method-button-text" class="ui-option-method-button-text"></p></button>
+      	<button class="ui-option-method-button pull-right" id="option-method-button" onclick="clickOptionalMethodButton()"><p id="option-method-button-text" class="ui-option-method-button-text"></p></button>
         <h2 class="ui-opcio-b" id="opcio-b">M&egrave;tode Opcional</h2>
 <!--         <h3 class="ui-modificacio" id="modificacio">ImportaciÃ³</h3> -->
 		</div>
@@ -220,14 +221,14 @@
     <!-- /container -->
     <script>
     $.backstretch("./img/globe.jpg");
-	function myClickFunction() {
+	function clickButtonRegistrar() {
 		console.log("registre");
 		$("#registre-formulari").show();
 		$("#entrar-formulari").hide();
 	}; 
-	function myClickFunction2() {
+	function clickButtonEntrar() {
 		++entryVariable;
-		console.log("entrar (myClickFunction2): " +entryVariable);
+		console.log("entrar (clickButtonEntrar): " +entryVariable);
 		if ($("#entrar").text().indexOf("Log out") == 0) {
 			$("#entrar").text("Entrar");
 			$("#lg_username").text("");
@@ -242,14 +243,10 @@
 			$("#registre-formulari").hide();
 		}
 	}; 
-	function myClickFunction3() {
+	/*function myClickFunction3() {
 		console.log("idioma");
-	}; 
-	function myClickFunction4() {
-		console.log("importacio-boto");
-		window.open("http://localhost/compilador-cartografic/CapaOfflineServiceServlet", "CapaOfflineServiceServlet");
-	};
-	function myClickFunction6() {
+	};*/
+	function exportImportedFile() {
 		console.log("exportar-boto1");
 		var howManyCheckboxesChecked = 0;
 		var numberOfFile = null;
@@ -330,7 +327,7 @@
 	        }
 	     });
 	};
-	function myClickFunction11() {
+	function translate2Catalan() {
 		idiomaVariable = 0;
 		console.log("idioma-catala");
 		$("#titol").text("Compilador Cartografic");
@@ -353,7 +350,7 @@
 		$("#modificacio-boto").text("Aplicar canvi");
 		$("#registre-formulari-text").text("Registre");
 	}; 
-	function myClickFunction12() {
+	function translate2Spanish() {
 		idiomaVariable = 1;
 		console.log("idioma-castella");
 		$("#titol").text("Compilador Cartografico");
@@ -376,35 +373,39 @@
 		$("#modificacio-boto").text("Aplicar cambio");
 		$("#registre-formulari-text").text("Registro");
 	};
-	function myClickFunction13() {
+	function closeEntrarForm() {
 		console.log("entrar-close");
 		$("#entrar-formulari").hide();
 		$("#user-login-text").text("");
 	};
-	function myClickFunction14() {
+	function closeRegistrarseForm() {
 		console.log("registre-close");
 		$("#registre-formulari").hide();
 		$("#missatge-registre").text("");
 	};
-	function myClickFunction15() {
+	function hideEntrarForm() {
 		$("#entrar-formulari").hide();
 	};
-	function myClickFunction17() {
+	function enableCoordinates() {
 		$("#commentCoordenades").attr("disabled", false); 
 		$("#commentEstil").attr("disabled", true);
 		$("#commentFiltre").attr("disabled", true);
 	};
-	function myClickFunction18() {
+	function enableStyle() {
 		$("#commentCoordenades").attr("disabled", true); 
 		$("#commentEstil").attr("disabled", false);
 		$("#commentFiltre").attr("disabled", true);
 	};
-	function myClickFunction19() {
+	function enableFilter() {
 		$("#commentCoordenades").attr("disabled", true); 
 		$("#commentEstil").attr("disabled", true);
 		$("#commentFiltre").attr("disabled", false);
 	};
-	function myClickFunction20() {
+	function undoChange2File() {
+		undoActivated = true;
+		applyChange2File();
+	};
+	function applyChange2File() {
 		if ($('#radioCoordenades').is(":checked")) {
 			optionChange = "coord";
 			optionText = $("#commentCoordenades").val();
@@ -420,6 +421,11 @@
 		else if ($('#radioEliminar').is(":checked")) {
 			optionChange = "eliminar";
 			optionText = "buit";			
+		}
+		else if (undoActivated == true) {
+			optionChange = "desfer";
+			optionText = "buit";
+			undoActivated = false;
 		}
 		var howManyCheckboxesChecked = 0;
 		var numberOfFile = null;
@@ -454,30 +460,43 @@
 							console.log("UsuariServiceServlet success " + data);
 							if (optionChange.indexOf("coord") == 0) {
 								if (data.indexOf("SI") == 0) {
-									$("#exporta-fitxer").text("El canvi s'ha realitzat correctament.");
-						        	$("#exporta-fitxer").css("color", "green");
-						        	$("#exporta-fitxer").css("font-size", "13px");
+									$("#file-change-text").text("El canvi de coordenades s'ha realitzat correctament.");
+						        	$("#file-change-text").css("color", "green");
+						        	$("#file-change-text").css("font-size", "13px");
+									}
 								}
-								else {
-									$("#user-login-text").css("color", "red");
-									if (optionChange.indexOf("coord") == 0)
-										$("#user-login-text").text("Les coordenades introduides no permeten realitzar el canvi.");
-									else if (optionChange.indexOf("estil") == 0)
-										$("#user-login-text").text("L'estil introduit no permet realitzar el canvi.");
-									else if (optionChange.indexOf("filtre") == 0)
-										$("#user-login-text").text("El filtre introduit no permet realitzar el canvi.");
-									$("#user-login-text").css("font-size", "13px");								
-								}
-							}
 							else if (optionChange.indexOf("filtre") == 0) {
+								$("#file-change-text").text("El filtre s'ha aplicat correctament.");
+					        	$("#file-change-text").css("color", "green");
+					        	$("#file-change-text").css("font-size", "13px");
 								$("#file-filter" + (numberOfFile)).text(data);
 								}
-							else {
-								/* Not implemented yet */
-							}
+							else if (optionChange.indexOf("eliminar") == 0) {
+								$("#file-change-text").text("El fitxer s'ha eliminat correctament.");
+					        	$("#file-change-text").css("color", "green");
+					        	$("#file-change-text").css("font-size", "13px");
+								}
+							else if (optionChange.indexOf("desfer") == 0) {
+								$("#file-change-text").text("S'ha desfet el canvi del fitxer correctament.");
+					        	$("#file-change-text").css("color", "green");
+					        	$("#file-change-text").css("font-size", "13px");
+					        	$("#file-filter" + (numberOfFile)).text(data);
+								}
 							},
 							error: function(jqXHR, textStatus, errorThrown) {
 								console.log("AplicarCanviServiceServle error" + data);
+								$("#file-change-text").css("color", "red");
+								if (optionChange.indexOf("coord") == 0)
+									$("#file-change-text").text("Les coordenades introduides no permeten realitzar el canvi.");
+// 								else if (optionChange.indexOf("estil") == 0)
+// 									$("#file-change-text").text("L'estil introduit no permet realitzar el canvi.");
+								else if (optionChange.indexOf("filtre") == 0)
+									$("#file-change-text").text("El filtre introduit no permet realitzar el canvi.");
+								else if (optionChange.indexOf("eliminar") == 0)
+									$("#file-change-text").text("No es pot eliminar el fitxer.");			
+								else if (optionChange.indexOf("desfer") == 0)
+									$("#file-change-text").text("No es pot desfer el canvi.");
+								$("#file-change-text").css("font-size", "13px");	
 								}
 							});
 					}
@@ -490,7 +509,7 @@
         	$("#exporta-fitxer").css("font-size", "13px");
 		}
 	};
-	function myClickFunction21() {
+	function clickOptionalMethodButton() {
 		var stringOfImage = $("#option-method-button").css('background-image');
 		if (stringOfImage.search("arrow-down.png") != -1) {
 			var imgUrl = './img/arrow-up.png';
@@ -505,7 +524,7 @@
 			$("#option-method").hide();
 		}
 	};
-	function myClickFunction22() {
+	function enableDelete() {
 		$("#commentCoordenades").attr("disabled", true); 
 		$("#commentEstil").attr("disabled", true);
 		$("#commentFiltre").attr("disabled", true);
@@ -553,14 +572,19 @@
 	        	$("#puja-fitxer").css("color", "green");
 	        	$("#puja-fitxer").text("El fitxer " + file2uploadName + " s'ha pujat correctament.");
 	        	$("#puja-fitxer").css("font-size", "13px");
-	        	if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
+	        	filesUploaded = data;
+	        	/*if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
 	        		$("#file-name" + filesUploaded).text(file2uploadName);
 	        		$("#file-hour" + today).text(today);
 	        	}
-	        	else {
-		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded+1) +"</td><td class='bk-td'>" + file2uploadName + "</td><td class='bk-td'>" + today + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
+	        	else {*/
+	            $('#addr'+filesUploaded).html("<td>"+ filesUploaded +"</td><td class='bk-td' id='file-name"+filesUploaded+"'>" + "" + "</td><td class='bk-td' id='file-hour"+filesUploaded+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
+                $('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');
+                $("#file-name" + filesUploaded).text(file2uploadName);
+	        	$("#file-hour" + filesUploaded).text(today);
+	        		/*$('#addr'+filesUploaded).html("<td>"+ (filesUploaded+1) +"</td><td class='bk-td'>" + file2uploadName + "</td><td class='bk-td'>" + today + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
 		            $('#tab_logic').append('<tr id="addr' + (filesUploaded + 1) + '"></tr>');
-	        	}
+	        	}*/
 	        	filesUploaded++;
 	        	uploadToDatabase(file2uploadName);
 	        },
@@ -570,15 +594,20 @@
 	        	$("#puja-fitxer").css("color", "green"); // red
 	        	$("#puja-fitxer").text("El fitxer " + file2uploadName + " s'ha pujat correctament.");
 	        	$("#puja-fitxer").css("font-size", "13px");
-	        	if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
+	        	filesUploaded = data;
+	        	/*if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
 		        	$("#file-name" + filesUploaded).text(file2uploadName);
 	        		$("#file-hour" + filesUploaded).text(today);
 	        	}
-	        	else {
-		        	$('#addr'+filesUploaded).html("<td>"+ (filesUploaded) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td id='file-filter"+filesUploaded+"'>" + "" + "</td>");
+	        	else {*/
+	            $('#addr'+filesUploaded).html("<td>"+ filesUploaded +"</td><td class='bk-td' id='file-name"+filesUploaded+"'>" + "" + "</td><td class='bk-td' id='file-hour"+filesUploaded+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
+            	$('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');
+		        $("#file-name" + filesUploaded).text(file2uploadName);
+	        	$("#file-hour" + filesUploaded).text(today);
+	                /*$('#addr'+filesUploaded).html("<td>"+ (filesUploaded) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td id='file-filter"+filesUploaded+"'>" + "" + "</td>");
 		            $('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');
 	        	}
-	            filesUploaded++;
+	            filesUploaded++;*/
 	            uploadToDatabase(file2uploadName);
 	        }
 	     });
@@ -609,7 +638,7 @@
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {
 				console.log("uploadToDatabase success filesUploaded: " + filesUploaded);
-				$("#file-filter" + (filesUploaded-1)).text(data);
+				$("#file-filter" + filesUploaded).text(data);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log("uploadToDatabase error");
@@ -636,9 +665,9 @@
 					console.log("UsuariServiceServlet success " + data);
 					if (data.indexOf("NO") == -1) {
 						$("#user-login-text").text("");
-						myClickFunction15();
+						hideEntrarForm();
 						++entryVariable;
-						console.log("entrar (myClickFunction15): " +entryVariable);
+						console.log("entrar (hideEntrarForm): " +entryVariable);
 						$("#entrar").text("Log out");
 						alert(data);
 						$("#icona-persona").attr("src","./img/online.png");
@@ -648,22 +677,29 @@
 							var dataVector = data.split(';');
 							for(var i = 0; i < dataVector.length; i++) {
 								var dataVectorRow = dataVector[i].split("'");
-					        	if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
-						        	$("#file-name" + filesUploaded).text(dataVectorRow[0]);
-					        		$("#file-hour" + filesUploaded).text(dataVectorRow[1]);
-					        		$("#file-filter" + filesUploaded).text(dataVectorRow[2]);
-					        		++filesUploaded;
-					        	}
+					        	/*if (filesUploaded >= 1 && filesUploaded <= dataVectorRow[3]) {*/
+						        $('#addr'+i).html("<td>"+ i+1 +"</td><td class='bk-td' id='file-name"+i+"'>" + "" + "</td><td class='bk-td' id='file-hour"+i+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+i+"'>" + "" + "</td>");
+            					$('#tab_logic').append('<tr id="addr' + i + '"></tr>');	
+					            $("#file-name" + i).text(dataVectorRow[0]);
+					        	$("#file-hour" + i).text(dataVectorRow[1]);
+					        	$("#file-filter" + i).text(dataVectorRow[2]);
+					        		/*++filesUploaded;
+					        	}*/
 							}
 						}
 						else {
-							var dataVectorRow = data.split("'");
-				        	if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
-					        	$("#file-name" + filesUploaded).text(dataVectorRow[0]);
-				        		$("#file-hour" + filesUploaded).text(dataVectorRow[1]);
-				        		$("#file-filter" + filesUploaded).text(dataVectorRow[2]);
-				        		++filesUploaded;
-				        	}
+							if (data.indexOf("'") > -1) {
+								var dataVectorRow = data.split("'");
+					        	/*if (filesUploaded >= 1 && filesUploaded <= dataVectorRow[3]) {*/
+						        filesUploaded = 0;
+					        	$('#addr'+filesUploaded).html("<td>"+ filesUploaded+1 +"</td><td class='bk-td' id='file-name"+filesUploaded+"'>" + "" + "</td><td class='bk-td' id='file-hour"+filesUploaded+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
+            					$('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');	
+					        	$("#file-name0").text(dataVectorRow[0]);
+					        	$("#file-hour0").text(dataVectorRow[1]);
+					        	$("#file-filter0").text(dataVectorRow[2]);
+					        		/*++filesUploaded;
+					        	}*/
+							}
 						}
 						$("#user-login-text").text("");
 						if (userSession.indexOf("admin") == 0) $("#file-upload-container2").show();
@@ -754,10 +790,10 @@
       view: view
     });
     $(document).ready(function(){
-    	for (var i = 1; i <= nombreDeFiles; i++) {
+    	/*for (var i = 1; i <= nombreDeFiles; i++) {
         	$('#addr'+i).html("<td>"+ i +"</td><td class='bk-td' id='file-name"+i+"'>" + "" + "</td><td class='bk-td' id='file-hour"+i+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+i+"'>" + "" + "</td>");
             $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
-    	}
+    	}*/
   	});
     $("#option-method").hide();
     </script>

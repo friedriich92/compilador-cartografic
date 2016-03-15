@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.sitep.str.integration.in.ImportarFitxerService;
 import com.sitep.str.integration.in.UsuariService;
 import com.sitep.str.integration.in.classes.Idioma;
 import com.sitep.str.integration.in.classes.RolDeUsuari;
@@ -15,6 +16,7 @@ import com.sitep.str.integration.in.classes.Usuari;
 public class UsuariServiceImpl implements UsuariService<Usuari> {
 
 	static Connection connectionUsuariService = null;
+	ImportarFitxerService importarFitxer = new ImportarFitxerServiceImpl();
 	
 	public void DBConnection() {
 		System.out.println("PostgreSQL " + "JDBC Connection Testing");
@@ -148,92 +150,88 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
 	}
 
 	public String getFiles(String userName) {
+		boolean does2Exist = false;
+		String name2Use;
 		PreparedStatement pstmt1, pstmt2;
 		pstmt1 = pstmt2 = null;
-		String sql1, sql2, url, id, pass, finalResponse, almostFinalResponse, theFinalResponse;
+		String sql1, sql2, finalResponse, almostFinalResponse, theFinalResponse;
 		Connection conn = null;
 		int countNumber2, numberOfRows, loopNumber;
 		ResultSet rs, rs2;
- 		url = "jdbc:postgresql://192.122.214.77:5432/osm";
- 		id = "postgres";
- 		pass = "SiteP0305";
-		finalResponse = almostFinalResponse = theFinalResponse = "";
+		finalResponse = almostFinalResponse = theFinalResponse = name2Use = "";
 		rs = rs2 = null;
 		numberOfRows = loopNumber = 0;
-		countNumber2 = 10;
+		countNumber2 = importarFitxer.fitxersPerUsuari(userName); // 1. #ARXIUS
+     	System.out.println("countNumber2: " + countNumber2);
     	try {
-     		Class.forName("org.postgresql.Driver");
-     		conn = java.sql.DriverManager.getConnection(url, id, pass);
-     		// 1. #ARXIUS
-    		sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ?";
-    		pstmt1 = conn.prepareStatement(sql1);
-    		pstmt1.setString(1, userName);
-    		rs = pstmt1.executeQuery();
-    	    if (rs.next()) countNumber2 = rs.getInt(1);
-    	} catch (Exception e) {
-		      e.printStackTrace();
-	    } finally {
-	    	try {
-	    	  rs.close();
-	    	  pstmt1.close();
-	    	  } catch (java.sql.SQLException e) {
-	    		  e.printStackTrace();
-	    		  }
-	    	}
-    	    try {
-    	    	if (countNumber2 > 0) {
-        		// 2. DADES DELS ARXIUS
-        		sql1 = "SELECT idfitxer, date, nomfitxer FROM fitxer WHERE idusuari = ? AND numerodeversio = ?";
-        		pstmt1 = conn.prepareStatement(sql1);
-        		pstmt1.setString(1, userName);
-        		pstmt1.setInt(2, 1);
-        		rs = pstmt1.executeQuery();
-        	    while (rs.next()) { // 3. PER A CADA ARXIU
-        	    	++loopNumber;
+    		if (countNumber2 > 0) {
+    			Class.forName("org.postgresql.Driver");
+    			conn = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+
+    			// 2. DADES DELS ARXIUS
+	        	sql1 = "SELECT idfitxer, date, nomfitxer FROM fitxer WHERE idusuari = ? AND numerodeversio = ?";
+	        	pstmt1 = conn.prepareStatement(sql1);
+	        	pstmt1.setString(1, userName);
+	        	pstmt1.setInt(2, 1);
+	        	rs = pstmt1.executeQuery();
+	        	while (rs.next()) { // 3. PER A CADA ARXIU
+	        		++loopNumber;
+	    			try {
+	    				almostFinalResponse += (rs.getString(1) + "'" + rs.getString(2) + "'");
+	            		String fileNameWithoutExtension = rs.getString(3);
+	        			
+	            		// 3.0 EXISTEIX EL FITXER 2?
+	              		sql2 = "SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name = ?)"; // 2
+	            		pstmt2 = conn.prepareStatement(sql2);
+	            		pstmt2.setString(1, fileNameWithoutExtension.toLowerCase() + "2");
+	            		rs2 = pstmt2.executeQuery();
+	            		if (rs2.next()) does2Exist = rs2.getBoolean(1);
+	            		
+	            		if (does2Exist) name2Use = fileNameWithoutExtension.toLowerCase() + "2";
+	            		else name2Use = fileNameWithoutExtension.toLowerCase();
+	            		
+	            		// 3.1 COLUMNES DE LA TAULA DE L'ARXIU
+	            		sql2 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?"; // 2
+	            		pstmt2 = conn.prepareStatement(sql2);
+	            		pstmt2.setString(1, name2Use);
+	            		rs2 = pstmt2.executeQuery();
+	            		while (rs2.next())
+	            			almostFinalResponse += (rs2.getString(1) + ", ");
+	            		finalResponse += almostFinalResponse.substring(0, almostFinalResponse.length()-2);
+	            		
+	            		// 3.2 FILES DE LA TAULA DE L'ARXIU
+	            		sql2 = "SELECT COUNT(*) FROM " + name2Use; // 2
+	            		pstmt2 = conn.prepareStatement(sql2);
+	            		rs2 = pstmt2.executeQuery();
+	            		if (rs2.next()) numberOfRows = rs2.getInt(1);
+	            			finalResponse += " (" + numberOfRows + ");";
+	            			almostFinalResponse = "";
+	    				} catch (Exception e) {
+	    				      e.printStackTrace();
+	    			    } finally {
+	    			    	try {
+	    			    	  rs2.close();
+	    			    	  pstmt2.close();
+	    			    	  } catch (java.sql.SQLException e) {
+	    			    		  e.printStackTrace();
+	    			    		  }
+	    			    	}
+	    				}
+	        	theFinalResponse = finalResponse.substring(0, finalResponse.length()-1);
+	        	}
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    			} finally {
     				try {
-    					almostFinalResponse += (rs.getString(1) + "'" + rs.getString(2) + "'");
-            			String fileNameWithoutExtension = rs.getString(3);
-        				// 3.1 COLUMNES DE LA TAULA DE L'ARXIU
-            			sql2 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?"; // 2
-            			pstmt2 = conn.prepareStatement(sql2);
-            			pstmt2.setString(1, fileNameWithoutExtension.toLowerCase());
-            			rs2 = pstmt2.executeQuery();
-            			while (rs2.next())
-            				almostFinalResponse += (rs2.getString(1) + ", ");
-            			finalResponse += almostFinalResponse.substring(0, almostFinalResponse.length()-2);
-            			// 3.2 FILES DE LA TAULA DE L'ARXIU
-            		    sql2 = "SELECT COUNT(*) FROM " + fileNameWithoutExtension; // 2
-            			pstmt2 = conn.prepareStatement(sql2);
-            			rs2 = pstmt2.executeQuery();
-            			if (rs2.next()) numberOfRows = rs2.getInt(1);
-            			finalResponse += " (" + numberOfRows + ");";
-            			almostFinalResponse = "";
-    				} catch (Exception e) {
-    				      e.printStackTrace();
-    			    } finally {
-    			    	try {
-    			    	  rs2.close();
-    			    	  pstmt2.close();
-    			    	  } catch (java.sql.SQLException e) {
-    			    		  e.printStackTrace();
-    			    		  }
-    			    	}
-        	    }
-        	    theFinalResponse = finalResponse.substring(0, finalResponse.length()-1);
-    	    }
-    	} catch (Exception e) {
-		      e.printStackTrace();
-		    } finally {
-		    	try {
-		    	  rs.close();
-		    	  pstmt1.close();
-		    	  conn.close();
-		    	  } catch (java.sql.SQLException e) {
-		    		  e.printStackTrace();
-		    		  }
-		    	}
+    					rs.close();
+    					pstmt1.close();
+    					conn.close();
+    					} catch (java.sql.SQLException e) {
+    						e.printStackTrace();
+    						}
+    				}
     	System.out.println("9. theFinalResponse: " + theFinalResponse);
-    	return theFinalResponse;
+		return theFinalResponse;
 	}
 	
 	public void addUsuari(Usuari usuari) {

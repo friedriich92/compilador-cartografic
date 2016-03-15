@@ -13,16 +13,6 @@ public interface AplicarCanviService<FitxerVersio> {
 
 	public void printSomething();
 	
-	public void listFitxerVersio();
-	
-	public void addFitxerVersio();
-	
-	public void deleteFitxerVersio();
-	
-	public void detailFitxerVersio();
-
-	public void saveFitxerVersio();
-	
 	public FitxerVersio getFitxerVersio(String idFitxerVersioV, String idFitxerVersioF);
 
 	public void changeCS(String fileName, String fileNameWithoutExtension, String extension, String coordenades, String username, HttpServletResponse response) throws SQLException, IOException, InterruptedException;
@@ -32,4 +22,6 @@ public interface AplicarCanviService<FitxerVersio> {
 	public void applyFilter(String fileName, String fileNameWithoutExtension, String extension, String info, String username, HttpServletResponse response);
 
 	public void deleteFile(String fileName, String username);
+
+	public String editFile(String fileName, String username);
 }
