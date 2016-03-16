@@ -7,13 +7,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.sitep.str.integration.in.FonsOfflineService;
-import com.sitep.str.integration.in.impl.FonsOfflineServiceImpl;
+import com.sitep.str.integration.in.FonsService;
+import com.sitep.str.integration.in.impl.FonsServiceImpl;
 
-public class FonsOfflineServiceServlet extends HttpServlet {
+public class FonsServiceServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	FonsOfflineService fonsOfflineService = new FonsOfflineServiceImpl();
+	FonsService fonsService = new FonsServiceImpl();
 
 	/**
 	 * doGet: servlet per a descarregar el fitxer
@@ -23,7 +23,7 @@ public class FonsOfflineServiceServlet extends HttpServlet {
 	protected void doGet( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		/*try {
 			System.out.println();
-			System.out.println("doGet FonsOffline");
+			System.out.println("doGet Fons");
 			System.out.println("-----------------");
 			
 			ProcessBuilder pb = new ProcessBuilder
@@ -43,12 +43,12 @@ public class FonsOfflineServiceServlet extends HttpServlet {
 		    printStream(inputStream);
 		}
 		catch (Exception evt) {
-			System.out.println("Error (doGet) FonsOffline: " + evt);
+			System.out.println("Error (doGet) Fons: " + evt);
 		}*/
-		fonsOfflineService.getBackgroundOffline(response);
+		fonsService.getBackground(response);
     }
 	
 	protected void doPost( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		fonsOfflineService.getBackgroundOfflinePost(request);
+		fonsService.getBackgroundPost(request);
     }
 }

@@ -21,18 +21,21 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import com.sitep.str.integration.in.FitxerService;
 import com.sitep.str.integration.in.classes.ExtensioDeFitxer;
 import com.sitep.str.integration.in.classes.Fitxer;
+import com.sitep.str.integration.in.classes.InformacioGeografica;
+import com.sitep.str.integration.in.classes.VersioFitxer;
 
 public class FitxerServiceImpl implements FitxerService {
 	
 	public void importFile(HttpServletRequest request, HttpServletResponse response, String userName) throws IOException, SQLException, InterruptedException {
 		int numeroDeFitxers = 0;
-		String fileNameWithoutExtension, extension, exactName, exactNameWithoutExtension;
-		fileNameWithoutExtension = extension = exactName = exactNameWithoutExtension = "";
+		String fileNameWithoutExtension, extension, exactName, exactNameWithoutExtension, filetxt;
+		fileNameWithoutExtension = extension = exactName = exactNameWithoutExtension = filetxt = "";
 		try {
 			// Create a new file upload handler 
 			ServletFileUpload upload = new ServletFileUpload();
@@ -57,6 +60,7 @@ public class FitxerServiceImpl implements FitxerService {
 	            // Canviar el nom del fitxer
 	            fileNameWithoutExtension = FilenameUtils.removeExtension(item.getName());
 	            extension = FilenameUtils.getExtension("/files/"+item.getName());
+	            filetxt = FileUtils.readFileToString(f);
 	            exactName = fileNameWithoutExtension + userName + "." + extension;
 	            exactNameWithoutExtension = fileNameWithoutExtension + userName;
 	            
@@ -81,8 +85,10 @@ public class FitxerServiceImpl implements FitxerService {
 	            System.out.println("File field " + name + " with file name " + item.getName() + " detected.");
 	            
 				// Insert into DB
-	            addFitxer(new Fitxer(item.getName(), userName, 1, new java.sql.Date(today.getTime()),
+	            addFitxer(new Fitxer(exactName, userName, 1, new java.sql.Date(today.getTime()),
 	            		exactNameWithoutExtension.toLowerCase(), extensioDeFitxer, false));
+	            addVersioFitxer(new VersioFitxer(exactName, 1, null, null, null));
+	            addInformacioGeografica(new InformacioGeografica(exactName, filetxt, 1));
 	            
 	            // Number of files X User
 	            numeroDeFitxers = fitxersPerUsuari(userName); // La nova fila => abans+1
@@ -98,6 +104,65 @@ public class FitxerServiceImpl implements FitxerService {
 	    {
 	        System.out.println("FileUploadException: " + ex);;
 	    }
+	}
+
+	public void addInformacioGeografica(InformacioGeografica informacioGeografica) {
+        PreparedStatement pstmt1 = null;
+        Connection connectionImportFileService = null;
+		try {
+			Class.forName("org.postgresql.Driver");
+			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+			
+			String columnsDest = "idinformaciogeografica, informacio, numerodeversio";
+			String sql1 = "INSERT INTO informaciogeografica (" + columnsDest + ") VALUES (?, ?, ?)";
+			System.out.println("SQL Statement: " + sql1);
+			
+			pstmt1 = connectionImportFileService.prepareStatement(sql1);
+			pstmt1.setString(1, informacioGeografica.getIdInformacioGeografica()); // Cal afegir l'usuari i la versió
+			pstmt1.setString(2, informacioGeografica.getInformacio());
+			pstmt1.setInt(3, informacioGeografica.getNumerodeversio());
+			pstmt1.executeUpdate();
+		} catch (Exception e) {
+		      e.printStackTrace();
+	    } finally {
+	    	try {
+	    		pstmt1.close();
+	    		connectionImportFileService.close();
+	    		} catch (SQLException e) {
+	    			e.printStackTrace();
+	    			}
+	    	}
+
+	}
+
+	public void addVersioFitxer(VersioFitxer versioFitxer) {
+        PreparedStatement pstmt1 = null;
+        Connection connectionImportFileService = null;
+		try {
+			Class.forName("org.postgresql.Driver");
+			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+			
+			String columnsDest = "idversiofitxer, numerodeversio, estil, coordenades, filtre";
+			String sql1 = "INSERT INTO versiofitxer (" + columnsDest + ") VALUES (?, ?, ?, ?, ?)";
+			System.out.println("SQL Statement: " + sql1);
+			
+			pstmt1 = connectionImportFileService.prepareStatement(sql1);
+			pstmt1.setString(1, versioFitxer.getIdversiofitxer()); // Cal afegir l'usuari i la versió
+			pstmt1.setInt(2, versioFitxer.getNumerodeversio());
+			pstmt1.setString(3, versioFitxer.getEstil());
+			pstmt1.setString(4, versioFitxer.getCoordenades());
+			pstmt1.setString(5, versioFitxer.getFiltre());
+			pstmt1.executeUpdate();
+		} catch (Exception e) {
+		      e.printStackTrace();
+	    } finally {
+	    	try {
+	    		pstmt1.close();
+	    		connectionImportFileService.close();
+	    		} catch (SQLException e) {
+	    			e.printStackTrace();
+	    			}
+	    	}
 	}
 
 	public int fitxersPerUsuari(String userName) {
@@ -273,5 +338,60 @@ public class FitxerServiceImpl implements FitxerService {
 	    while ((inputLine = in.readLine()) != null)
 	        System.out.println(inputLine);
 	    in.close();
+	}
+
+	public void editVersioFitxer(String fileName, String key, String info) {
+        PreparedStatement pstmt1 = null;
+        Connection connectionImportFileService = null;
+		try {
+			Class.forName("org.postgresql.Driver");
+			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+			
+			String sql1 = "UPDATE versiofitxer SET ? = ? WHERE idversiofitxer = ? AND numerodeversio = ?";
+			System.out.println("SQL Statement editVersioFitxer: " + sql1);
+			
+			pstmt1 = connectionImportFileService.prepareStatement(sql1);
+			pstmt1.setString(1, key); // Cal afegir l'usuari i la versió
+			pstmt1.setString(2, info);
+			pstmt1.setString(3, fileName);
+			pstmt1.setInt(4, 2);
+			pstmt1.executeUpdate();
+		} catch (Exception e) {
+		      e.printStackTrace();
+	    } finally {
+	    	try {
+	    		pstmt1.close();
+	    		connectionImportFileService.close();
+	    		} catch (SQLException e) {
+	    			e.printStackTrace();
+	    			}
+	    	}
+	}
+
+	public void editInformacioGeografica(String fileName, String readFileToString) {
+        PreparedStatement pstmt1 = null;
+        Connection connectionImportFileService = null;
+		try {
+			Class.forName("org.postgresql.Driver");
+			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+			
+			String sql1 = "UPDATE informaciogeografica SET informacio = ? WHERE idinformaciogeografica = ? AND numerodeversio = ?";
+			System.out.println("SQL Statement editInformacioGeografica: " + sql1);
+			
+			pstmt1 = connectionImportFileService.prepareStatement(sql1);
+			pstmt1.setString(1, readFileToString);
+			pstmt1.setString(2, fileName);
+			pstmt1.setInt(3, 2);
+			pstmt1.executeUpdate();
+		} catch (Exception e) {
+		      e.printStackTrace();
+	    } finally {
+	    	try {
+	    		pstmt1.close();
+	    		connectionImportFileService.close();
+	    		} catch (SQLException e) {
+	    			e.printStackTrace();
+	    			}
+	    	}
 	}
 }

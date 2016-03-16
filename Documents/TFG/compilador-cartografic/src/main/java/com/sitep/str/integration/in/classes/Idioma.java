@@ -1,28 +1,65 @@
 package com.sitep.str.integration.in.classes;
 
 public class Idioma {
-	String idioma;
+	int identificador;
+	String encatala;
+	String encastella;
 
 	public Idioma() {
 		super();
 	}
 
-	public Idioma(String idioma) {
+	/**
+	 * @param identificador
+	 * @param encatala
+	 * @param encastella
+	 */
+	public Idioma(int identificador, String encatala, String encastella) {
 		super();
-		this.idioma = idioma;
+		this.identificador = identificador;
+		this.encatala = encatala;
+		this.encastella = encastella;
 	}
 
 	/**
-	 * @return the idioma
+	 * @return the identificador
 	 */
-	public String getIdioma() {
-		return idioma;
+	public int getIdentificador() {
+		return identificador;
 	}
 
 	/**
-	 * @param idioma the idioma to set
+	 * @param identificador the identificador to set
 	 */
-	public void setIdioma(String idioma) {
-		this.idioma = idioma;
+	public void setIdentificador(int identificador) {
+		this.identificador = identificador;
+	}
+
+	/**
+	 * @return the encatala
+	 */
+	public String getEncatala() {
+		return encatala;
+	}
+
+	/**
+	 * @param encatala the encatala to set
+	 */
+	public void setEncatala(String encatala) {
+		this.encatala = encatala;
+	}
+
+	/**
+	 * @return the encastella
+	 */
+	public String getEncastella() {
+		return encastella;
+	}
+
+	/**
+	 * @param encastella the encastella to set
+	 */
+	public void setEncastella(String encastella) {
+		this.encastella = encastella;
 	}
 }

@@ -274,7 +274,7 @@
 	        	$("#exporta-fitxer").css("font-size", "13px");
 			}
 			else {
-				$.get("http://localhost/compilador-cartografic/CapaOfflineServiceServlet?name="+fileNameString);
+				$.get("http://localhost/compilador-cartografic/CapaServiceServlet?name="+fileNameString);
 				$("#exporta-fitxer").text("La descarrega comensara en breus...");
 	        	$("#exporta-fitxer").css("color", "green");
 	        	$("#exporta-fitxer").css("font-size", "13px");
@@ -309,12 +309,12 @@
 			else boundingBoxString += extent[i] + ",";
 		}
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/FonsOfflineServiceServlet',
+			url: 'http://localhost/compilador-cartografic/FonsServiceServlet',
 	        type: 'POST',
 	        data: boundingBoxString,
 	        success: function(data, textStatus, jqXHR) {
 	        	$("#myProgress").hide();
-	        	window.open("http://localhost/compilador-cartografic/FonsOfflineServiceServlet", "FonsOfflineServiceServlet");
+	        	window.open("http://localhost/compilador-cartografic/FonsServiceServlet", "FonsServiceServlet");
 	        	$("#exporta-fitxer-mapa").css("color", "green");
 	        	$("#exporta-fitxer-mapa").text("La desc&agrave;rrega s'inicialitzar&agrave; en breus...");
 	        	for (i = 0; i <= 100; i++) 
@@ -330,6 +330,20 @@
 	     });
 	};
 	function translate2Catalan() {
+    	try {
+			console.log("editIdioma");
+			$.ajax({
+				url: 'http://localhost/compilador-cartografic/IdiomaServiceServlet?info=edit&idioma=encatala',
+			       type: 'POST',
+			       data: userInformation,
+			       success: function(data, textStatus, jqXHR) {
+			    	   console.log("IdiomaServiceServlet (edit) success");
+			    	   },
+			    	   error: function(jqXHR, textStatus, errorThrown) {
+			    		   console.log("IdiomaServiceServlet (edit) error");
+			    		   }
+			    	   });
+		} catch (e) { throw new Error(e.message); }
 		idiomaVariable = 0;
 		console.log("idioma-catala");
 		$("#titol").text("Compilador Cartografic");
@@ -353,6 +367,20 @@
 		$("#registre-formulari-text").text("Registre");
 	}; 
 	function translate2Spanish() {
+    	try {
+			console.log("editIdioma");
+			$.ajax({
+				url: 'http://localhost/compilador-cartografic/IdiomaServiceServlet?info=edit&idioma=encastella',
+			       type: 'POST',
+			       data: userInformation,
+			       success: function(data, textStatus, jqXHR) {
+			    	   console.log("IdiomaServiceServlet (edit) success");
+			    	   },
+			    	   error: function(jqXHR, textStatus, errorThrown) {
+			    		   console.log("IdiomaServiceServlet (edit) error");
+			    		   }
+			    	   });
+		} catch (e) { throw new Error(e.message); }
 		idiomaVariable = 1;
 		console.log("idioma-castella");
 		$("#titol").text("Compilador Cartografico");
@@ -474,6 +502,7 @@
 								$("#file-filter" + (numberOfFile)).text(data);
 								}
 							else if (optionChange.indexOf("eliminar") == 0) {
+								deleteRow(numberOfFile);
 								$("#file-change-text").text("El fitxer s'ha eliminat correctament.");
 					        	$("#file-change-text").css("color", "green");
 					        	$("#file-change-text").css("font-size", "13px");
@@ -671,7 +700,7 @@
 	};
 	function uploadToDatabase(filename) {
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/CarregadorDeFitxersVectorialsServiceServlet?user='+userSession,
+			url: 'http://localhost/compilador-cartografic/VectorialServiceServlet?user='+userSession,
 	        type: 'POST',
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {
@@ -835,6 +864,20 @@
       view: view
     });
     $(document).ready(function(){
+    	try {
+			console.log("addIdioma");
+			$.ajax({
+				url: 'http://localhost/compilador-cartografic/IdiomaServiceServlet?info=add&idioma=encatala',
+			       type: 'POST',
+			       data: userInformation,
+			       success: function(data, textStatus, jqXHR) {
+			    	   console.log("IdiomaServiceServlet success");
+			    	   },
+			    	   error: function(jqXHR, textStatus, errorThrown) {
+			    		   console.log("IdiomaServiceServlet error");
+			    		   }
+			    	   });
+		} catch (e) { throw new Error(e.message); }
     	/*for (var i = 1; i <= nombreDeFiles; i++) {
         	$('#addr'+i).html("<td>"+ i +"</td><td class='bk-td' id='file-name"+i+"'>" + "" + "</td><td class='bk-td' id='file-hour"+i+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+i+"'>" + "" + "</td>");
             $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');

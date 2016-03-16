@@ -14,9 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
-import com.sitep.str.integration.in.CarregadorDeFitxersVectorialsService;
 
-public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFitxersVectorialsService {
+import com.sitep.str.integration.in.VectorialService;
+
+public class VectorialServiceImpl implements VectorialService {
 
 	public void vectoriseAndUploadFileToDatabase(String fileName, String fileNameWithoutExtension, HttpServletResponse response, HttpServletRequest request) {
 		try {

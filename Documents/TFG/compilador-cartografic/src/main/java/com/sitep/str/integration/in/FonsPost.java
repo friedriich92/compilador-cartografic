@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class FonsOfflinePost extends HttpServlet {
+public class FonsPost extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -19,11 +19,11 @@ public class FonsOfflinePost extends HttpServlet {
 	 * @param response
 	 */
 	protected void doPost( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		FonsOfflinePost fonsOfflinePost = new FonsOfflinePost();
-		fonsOfflinePost.getBackgroundOfflinePost(request);
+		FonsPost fonsPost = new FonsPost();
+		fonsPost.getBackgroundPost(request);
     }
 	
-	public void getBackgroundOfflinePost(HttpServletRequest request) {
+	public void getBackgroundPost(HttpServletRequest request) {
 		try {
 			StringBuilder buffer = new StringBuilder();
 			BufferedReader reader = request.getReader();
@@ -43,7 +43,7 @@ public class FonsOfflinePost extends HttpServlet {
 			System.out.println("String field " + data + " readed.");
 			
 			System.out.println();
-			System.out.println("doPost FonsOfflinePost");
+			System.out.println("doPost FonsPost");
 			System.out.println("-----------------");
 			
 			ProcessBuilder pb = new ProcessBuilder
@@ -64,7 +64,7 @@ public class FonsOfflinePost extends HttpServlet {
 		    printStream(inputStream);
 		}
 		catch (Exception evt) {
-			System.out.println("Error (doPost) FonsOfflinePost: " + evt);
+			System.out.println("Error (doPost) FonsPost: " + evt);
 		}
 	}
 	

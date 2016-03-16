@@ -6,7 +6,7 @@ import java.io.InputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface CarregadorDeFitxersVectorialsService {
+public interface VectorialService {
 	
 	public void vectoriseAndUploadFileToDatabase(String filename, String filenameWithoutExtension, HttpServletResponse response, HttpServletRequest request);
 

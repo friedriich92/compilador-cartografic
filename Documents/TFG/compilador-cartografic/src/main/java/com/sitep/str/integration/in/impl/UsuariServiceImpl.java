@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.sitep.str.integration.in.FitxerService;
+import com.sitep.str.integration.in.IdiomaService;
 import com.sitep.str.integration.in.UsuariService;
 import com.sitep.str.integration.in.classes.Idioma;
 import com.sitep.str.integration.in.classes.RolDeUsuari;
@@ -17,33 +18,6 @@ public class UsuariServiceImpl implements UsuariService {
 
 	static Connection connectionUsuariService = null;
 	FitxerService importarFitxer = new FitxerServiceImpl();
-	
-	public void DBConnection() {
-		System.out.println("PostgreSQL " + "JDBC Connection Testing");
-		try {
-			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
-			System.out.println("Where is your PostgreSQL JDBC Driver? Include in your library path!");
-			e.printStackTrace();
-			return;
-		}
-		System.out.println("PostgreSQL JDBC Driver Registered!");
-		connectionUsuariService = null;
-		try {
-			connectionUsuariService = DriverManager.getConnection(
-					"jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
-
-		} catch (SQLException e) {
-			System.out.println("Connection Failed! Check output console");
-			e.printStackTrace();
-			return;
-		}
-		if (connectionUsuariService != null) {
-			System.out.println("You made it, take control your database now!");
-		} else {
-			System.out.println("Failed to make connection!");
-		}
-	}
 	
 	public int registerUser(String userInformation) throws IOException, SQLException {
 		System.out.println("String field " + userInformation + " readed.");
@@ -84,7 +58,7 @@ public class UsuariServiceImpl implements UsuariService {
 	    	    if (rs.next()) count = rs.getInt(1);
 	    	    if (count == 0) { // No existeix l'usuari => Afegir Usuari
 	    	    	System.out.println("No existeix l'usuari");
-	    	    	addUsuari(new Usuari(username, password, email, false, new RolDeUsuari(role), new Idioma("encatala"), client));
+	    	    	addUsuari(new Usuari(username, password, email, false, new RolDeUsuari(role), client));
 	    			responseValue = 1; // Usuari creat
 	    	    }
 	    	    else {
@@ -122,11 +96,12 @@ public class UsuariServiceImpl implements UsuariService {
 			else if (arrayIterator == 2) password = s;
 			++arrayIterator;
 		}
-
-		ResultSet rs = null;
+		Connection connectionUsuariService = null;
 		PreparedStatement pstmt1 = null;
+		ResultSet rs = null;
 		try {
-			DBConnection();
+			Class.forName("org.postgresql.Driver");
+			connectionUsuariService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
 			String sql1 = "SELECT COUNT(*) FROM usuari WHERE identificadordeusuari = ? AND contrasenya = ?";
 			System.out.println("SQL Statement: " + sql1);
 			pstmt1 = connectionUsuariService.prepareStatement(sql1);
@@ -244,8 +219,8 @@ public class UsuariServiceImpl implements UsuariService {
 		try {
 			Class.forName("org.postgresql.Driver");
 			usuari_connection = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
-			String columnsDest = "identificadordeusuari, contrasenya, email, connectat, rol, idioma, client";
-			sql_line = "INSERT INTO usuari (" + columnsDest + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
+			String columnsDest = "identificadordeusuari, contrasenya, email, connectat, rol, client";
+			sql_line = "INSERT INTO usuari (" + columnsDest + ") VALUES (?, ?, ?, ?, ?, ?)";
 			System.out.println("addUsuari SQL Statement: " + sql_line);
 			preparedStatement = usuari_connection.prepareStatement(sql_line);
 			preparedStatement.setString(1, usuari.getIdentificadorDeUsuari());
@@ -253,8 +228,7 @@ public class UsuariServiceImpl implements UsuariService {
 			preparedStatement.setString(3, usuari.getEmail());
 			preparedStatement.setBoolean(4, usuari.isConnectat());
 			preparedStatement.setString(5, usuari.getRol().toString());
-			preparedStatement.setString(6, usuari.getIdioma().toString());
-			preparedStatement.setString(7, usuari.getClient());
+			preparedStatement.setString(6, usuari.getClient());
 			preparedStatement.executeUpdate();
 		} catch (Exception e) {
 		      e.printStackTrace();

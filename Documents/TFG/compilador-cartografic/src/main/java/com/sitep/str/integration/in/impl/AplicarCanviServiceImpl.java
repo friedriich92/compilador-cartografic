@@ -1,6 +1,7 @@
 package com.sitep.str.integration.in.impl;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,15 +13,17 @@ import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
+
 import com.sitep.str.integration.in.AplicarCanviService;
 import com.sitep.str.integration.in.FitxerService;
 import com.sitep.str.integration.in.classes.ExtensioDeFitxer;
 import com.sitep.str.integration.in.classes.Fitxer;
+import com.sitep.str.integration.in.classes.InformacioGeografica;
 import com.sitep.str.integration.in.classes.VersioFitxer;
 
 public class AplicarCanviServiceImpl implements AplicarCanviService {
 	
-	@SuppressWarnings("rawtypes")
 	FitxerService importarFitxer = new FitxerServiceImpl();
 	
 	public void printSomething() {
@@ -33,7 +36,6 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void changeCS(String fileName, String fileNameWithoutExtension, String extension, String coordenades, String username, HttpServletResponse response) throws SQLException, IOException, InterruptedException {
 		Connection aplicarCanviConnection = null;
 		PreparedStatement pstmt1 = null;
@@ -192,7 +194,6 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 	    in.close();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void applyFilter(String fileName, String fileNameWithoutExtension, String extension, String info, String username, HttpServletResponse response) {
 		Connection aplicarCanviConnection = null;
 		PreparedStatement pstmt1 = null;
@@ -332,9 +333,17 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 		    
 		    // [OPCIONAL] 5.3 INSERT INTO BD (fitxer)
 		    if (countNumber2 == 0) {
+		    	File file = new File("/files/"+exactNameWithoutExtension+"3.shp");
 		    	java.util.Date today = new java.util.Date();
 		    	importarFitxer.addFitxer(new Fitxer(exactNameWithoutExtension+"2."+extension, username, 2, new java.sql.Date(today.getTime()),
 		    			exactNameWithoutExtension+"2", new ExtensioDeFitxer(extension), true));
+		    	importarFitxer.addVersioFitxer(new VersioFitxer(exactNameWithoutExtension+"2."+extension, 2, null, null, info));
+		    	importarFitxer.addInformacioGeografica(new InformacioGeografica(exactNameWithoutExtension+"2."+extension, FileUtils.readFileToString(file), 2));
+		    }
+		    else {
+		    	File file = new File("/files/"+exactNameWithoutExtension+"3.shp");
+		    	importarFitxer.editVersioFitxer(exactNameWithoutExtension+"2."+extension, "filtre", info);
+		    	importarFitxer.editInformacioGeografica(exactNameWithoutExtension+"2."+extension, FileUtils.readFileToString(file));		    	
 		    }
     		
 		    // 6. SEND WHAT HAPPENED => data

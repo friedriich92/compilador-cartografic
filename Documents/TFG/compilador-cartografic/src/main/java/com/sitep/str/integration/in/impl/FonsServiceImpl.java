@@ -11,11 +11,11 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.sitep.str.integration.in.FonsOfflineService;
+import com.sitep.str.integration.in.FonsService;
 
-public class FonsOfflineServiceImpl implements FonsOfflineService {
+public class FonsServiceImpl implements FonsService {
 
-	public void getBackgroundOffline(HttpServletResponse response) {
+	public void getBackground(HttpServletResponse response) {
 	       response.setHeader("Content-disposition","attachment; filename=test.map");
 	        File my_file = new File("/home/tecnic/test.map");
 			
@@ -36,7 +36,7 @@ public class FonsOfflineServiceImpl implements FonsOfflineService {
 	        }
 	}
 
-	public void getBackgroundOfflineDirtyVersion() {
+	public void getBackgroundDirtyVersion() {
 		try {
 //			ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", "echo", "This is ProcessBuilder Example from JCG");
 //			ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", "osmosis");
@@ -46,26 +46,26 @@ public class FonsOfflineServiceImpl implements FonsOfflineService {
 			ProcessBuilder pb = new ProcessBuilder
 					("osmosis", "-v", "10", "--read-pbf", 
 						"file=/home/tecnic/sample_osmosis.osm.pbf", "--mapfile-writer", "file=/home/tecnic/test.map");
-//			System.out.println("Command (getFonsOffline): " + pb.command());
-			System.out.println("Run (getFonsOffline) osmosis command");
+//			System.out.println("Command (getFons): " + pb.command());
+			System.out.println("Run (getFons) osmosis command");
 			Process process = pb.start();
 
-		    System.out.println("Error (FonsOffline) stream:");
+		    System.out.println("Error (Fons) stream:");
 		    InputStream errorStream = process.getErrorStream();
 		    printStream(errorStream);
 
 		    process.waitFor();
 
-		    System.out.println("Output (FonsOffline) stream:");
+		    System.out.println("Output (Fons) stream:");
 		    InputStream inputStream = process.getInputStream();
 		    printStream(inputStream);
 		}
 		catch (Exception evt) {
-			System.out.println("Error (getFonsOffline) FonsOffline: " + evt);
+			System.out.println("Error (getFons) Fons: " + evt);
 		}
 	}
 	
-	public void getBackgroundOfflinePost(HttpServletRequest request) {
+	public void getBackgroundPost(HttpServletRequest request) {
 		try {
 			StringBuilder buffer = new StringBuilder();
 			BufferedReader reader = request.getReader();
@@ -85,7 +85,7 @@ public class FonsOfflineServiceImpl implements FonsOfflineService {
 			System.out.println("String field " + data + " readed.");
 			
 			System.out.println();
-			System.out.println("doPost FonsOfflinePost");
+			System.out.println("doPost FonsPost");
 			System.out.println("-----------------");
 			
 			ProcessBuilder pb = new ProcessBuilder
@@ -106,7 +106,7 @@ public class FonsOfflineServiceImpl implements FonsOfflineService {
 		    printStream(inputStream);
 		}
 		catch (Exception evt) {
-			System.out.println("Error (doPost) FonsOfflinePost: " + evt);
+			System.out.println("Error (doPost) FonsPost: " + evt);
 		}
 	}
 

@@ -1,30 +1,37 @@
 package com.sitep.str.integration.in.classes;
 
 public class InformacioGeografica {
-	int idInformacioGeografica;
+	String idInformacioGeografica;
 	String informacio;
+	int numerodeversio;
 	
 	public InformacioGeografica() {
 		super();
 	}
 
-	public InformacioGeografica(int idInformacioGeografica, String informacio) {
+	/**
+	 * @param idInformacioGeografica
+	 * @param informacio
+	 * @param numerodeversio
+	 */
+	public InformacioGeografica(String idInformacioGeografica, String informacio, int numerodeversio) {
 		super();
 		this.idInformacioGeografica = idInformacioGeografica;
 		this.informacio = informacio;
+		this.numerodeversio = numerodeversio;
 	}
 
 	/**
 	 * @return the idInformacioGeografica
 	 */
-	public int getIdInformacioGeografica() {
+	public String getIdInformacioGeografica() {
 		return idInformacioGeografica;
 	}
 
 	/**
 	 * @param idInformacioGeografica the idInformacioGeografica to set
 	 */
-	public void setIdInformacioGeografica(int idInformacioGeografica) {
+	public void setIdInformacioGeografica(String idInformacioGeografica) {
 		this.idInformacioGeografica = idInformacioGeografica;
 	}
 
@@ -40,5 +47,19 @@ public class InformacioGeografica {
 	 */
 	public void setInformacio(String informacio) {
 		this.informacio = informacio;
-	}	
+	}
+
+	/**
+	 * @return the numerodeversio
+	 */
+	public int getNumerodeversio() {
+		return numerodeversio;
+	}
+
+	/**
+	 * @param numerodeversio the numerodeversio to set
+	 */
+	public void setNumerodeversio(int numerodeversio) {
+		this.numerodeversio = numerodeversio;
+	}
 }

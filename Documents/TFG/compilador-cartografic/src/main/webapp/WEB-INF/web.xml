@@ -16,33 +16,33 @@
 	</listener>
 	
 	<servlet>
-		<servlet-name>FonsOfflineServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.FonsOfflineServiceServlet</servlet-class>
+		<servlet-name>FonsServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.FonsServiceServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>FonsOfflineServiceServlet</servlet-name>
-		<url-pattern>/FonsOfflineServiceServlet</url-pattern>
+		<servlet-name>FonsServiceServlet</servlet-name>
+		<url-pattern>/FonsServiceServlet</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>CarregadorDeFitxersVectorialsServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.CarregadorDeFitxersVectorialsServiceServlet</servlet-class>
+		<servlet-name>VectorialServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.VectorialServiceServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>CarregadorDeFitxersVectorialsServiceServlet</servlet-name>
-		<url-pattern>/CarregadorDeFitxersVectorialsServiceServlet</url-pattern>
+		<servlet-name>VectorialServiceServlet</servlet-name>
+		<url-pattern>/VectorialServiceServlet</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>CapaOfflineServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.CapaOfflineServiceServlet</servlet-class>
+		<servlet-name>CapaServiceServlet</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.servlets.CapaServiceServlet</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>CapaOfflineServiceServlet</servlet-name>
-		<url-pattern>/CapaOfflineServiceServlet</url-pattern>
+		<servlet-name>CapaServiceServlet</servlet-name>
+		<url-pattern>/CapaServiceServlet</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
@@ -66,13 +66,13 @@
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>FonsOfflinePost</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.FonsOfflinePost</servlet-class>
+		<servlet-name>FonsPost</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.FonsPost</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>FonsOfflinePost</servlet-name>
-		<url-pattern>/FonsOfflinePost</url-pattern>
+		<servlet-name>FonsPost</servlet-name>
+		<url-pattern>/FonsPost</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>

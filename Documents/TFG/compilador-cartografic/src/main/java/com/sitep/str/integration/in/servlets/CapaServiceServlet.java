@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 
-import com.sitep.str.integration.in.CapaOfflineService;
-import com.sitep.str.integration.in.impl.CapaOfflineServiceImpl;
+import com.sitep.str.integration.in.CapaService;
+import com.sitep.str.integration.in.impl.CapaServiceImpl;
 
-public class CapaOfflineServiceServlet extends HttpServlet {
+public class CapaServiceServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private CapaOfflineService capaOffline = new CapaOfflineServiceImpl();
+	private CapaService capa = new CapaServiceImpl();
 
 	protected void doGet( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String fileName, fileNameWithoutExtension, extension, geometry;
@@ -32,7 +32,11 @@ public class CapaOfflineServiceServlet extends HttpServlet {
         System.out.println("extension: " + extension);
 		if (extension.equalsIgnoreCase("shp")) geometry = "geom"; // geom -> .SHP
 		System.out.println("geometry: " + geometry);
-		capaOffline.getLayerOffline(fileNameWithoutExtension, geometry, response);
+		try {
+			capa.getLayer(fileNameWithoutExtension, geometry, response);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

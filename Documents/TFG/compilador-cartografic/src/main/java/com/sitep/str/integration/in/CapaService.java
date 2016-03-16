@@ -5,11 +5,9 @@ import java.io.InputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-public interface CapaOfflineService {
-	
-	public void DBConnection();
-	
-	public void getLayerOffline(String capa, String atributGeometria, HttpServletResponse response) throws IOException;
+public interface CapaService {
+		
+	public void getLayer(String capa, String atributGeometria, HttpServletResponse response) throws IOException, InterruptedException;
 	
 	public void printStream (InputStream stream) throws IOException;
 
