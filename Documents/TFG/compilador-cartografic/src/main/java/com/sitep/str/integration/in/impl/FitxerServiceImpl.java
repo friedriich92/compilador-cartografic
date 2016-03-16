@@ -2,17 +2,17 @@ package com.sitep.str.integration.in.impl;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,14 +23,16 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 
-import com.sitep.str.integration.in.ImportarFitxerService;
+import com.sitep.str.integration.in.FitxerService;
 import com.sitep.str.integration.in.classes.ExtensioDeFitxer;
 import com.sitep.str.integration.in.classes.Fitxer;
 
-public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> {
+public class FitxerServiceImpl implements FitxerService {
 	
-	public void importFile(HttpServletRequest request, HttpServletResponse response, String userName) throws IOException, SQLException {
+	public void importFile(HttpServletRequest request, HttpServletResponse response, String userName) throws IOException, SQLException, InterruptedException {
 		int numeroDeFitxers = 0;
+		String fileNameWithoutExtension, extension, exactName, exactNameWithoutExtension;
+		fileNameWithoutExtension = extension = exactName = exactNameWithoutExtension = "";
 		try {
 			// Create a new file upload handler 
 			ServletFileUpload upload = new ServletFileUpload();
@@ -52,15 +54,35 @@ public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> 
 	            bout.close();
 	            bin.close();
 	            
+	            // Canviar el nom del fitxer
+	            fileNameWithoutExtension = FilenameUtils.removeExtension(item.getName());
+	            extension = FilenameUtils.getExtension("/files/"+item.getName());
+	            exactName = fileNameWithoutExtension + userName + "." + extension;
+	            exactNameWithoutExtension = fileNameWithoutExtension + userName;
+	            
+				ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "mv /files/" + item.getName() + 
+						" /files/" + exactName);
+				System.out.println("Run (importFile) command " + pb.toString());
+				Process process = pb.start();
+
+				System.out.println("Error (importFile) stream:" + pb.toString());
+				InputStream errorStream = process.getErrorStream();
+				printStream(errorStream);
+
+				process.waitFor();
+
+				System.out.println("Output (importFile) stream:");
+				InputStream inputStream = process.getInputStream();
+				printStream(inputStream);
+	            
 	            // Atributs Fitxer
-	            ExtensioDeFitxer extensioDeFitxer = new ExtensioDeFitxer(FilenameUtils.getExtension("/files/"+item.getName()));
+	            ExtensioDeFitxer extensioDeFitxer = new ExtensioDeFitxer(extension);
 				java.util.Date today = new java.util.Date();
 	            System.out.println("File field " + name + " with file name " + item.getName() + " detected.");
 	            
 				// Insert into DB
 	            addFitxer(new Fitxer(item.getName(), userName, 1, new java.sql.Date(today.getTime()),
-	            		FilenameUtils.removeExtension(item.getName()), extensioDeFitxer,
-	            			false));
+	            		exactNameWithoutExtension.toLowerCase(), extensioDeFitxer, false));
 	            
 	            // Number of files X User
 	            numeroDeFitxers = fitxersPerUsuari(userName); // La nova fila => abans+1
@@ -87,7 +109,7 @@ public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> 
 			Class.forName("org.postgresql.Driver");
 			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
 		    String sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ? AND numerodeversio = ?";
-		    System.out.println("fitxersPerUsuari: " + sql1 + " " + userName);
+		    System.out.println("fitxersPerUsuari: " + sql1 + " " + userName + " " + 1);
 			pstmt1 = connectionImportFileService.prepareStatement(sql1);
 			pstmt1.setString(1, userName);
 			pstmt1.setInt(2, 1);
@@ -142,17 +164,18 @@ public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> 
 		PreparedStatement pstmt1 = null;
         Connection connectionImportFileService = null;
         String fileNameWithoutExtension = FilenameUtils.removeExtension(fileName);
+        String exactNameWithoutExtension = fileNameWithoutExtension + username;;
         try {
 			Class.forName("org.postgresql.Driver");
 			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
 			
 			// Eliminar taules creades del fitxer
 			// Versio 1
-			String sql1 = "DROP TABLE IF EXISTS " + fileNameWithoutExtension;
+			String sql1 = "DROP TABLE IF EXISTS " + exactNameWithoutExtension;
 			pstmt1 = connectionImportFileService.prepareStatement(sql1);
 			pstmt1.execute();	
 			// Versio 2
-			sql1 = "DROP TABLE IF EXISTS " + fileNameWithoutExtension + "2";
+			sql1 = "DROP TABLE IF EXISTS " + exactNameWithoutExtension + "2";
 			pstmt1 = connectionImportFileService.prepareStatement(sql1);
 			pstmt1.execute();	
 			
@@ -161,14 +184,14 @@ public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> 
 			sql1 = "DELETE FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
 			pstmt1 = connectionImportFileService.prepareStatement(sql1);
 			pstmt1.setString(1, username);
-			pstmt1.setString(2, fileNameWithoutExtension);
+			pstmt1.setString(2, exactNameWithoutExtension);
 			pstmt1.setInt(3, 1);
 			int rowsAffected1 = pstmt1.executeUpdate();
 			// Versio 2
 			sql1 = "DELETE FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
 			pstmt1 = connectionImportFileService.prepareStatement(sql1);
 			pstmt1.setString(1, username);
-			pstmt1.setString(2, fileNameWithoutExtension+"2");
+			pstmt1.setString(2, exactNameWithoutExtension+"2");
 			pstmt1.setInt(3, 2);
 			int rowsAffected2 = pstmt1.executeUpdate();
 			System.out.println("rowsAffected 1:" + rowsAffected1 + ", 2:" + rowsAffected2);
@@ -189,19 +212,21 @@ public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> 
 		System.out.println("editFitxer");
 		PreparedStatement pstmt1 = null;
         Connection connectionImportFileService = null;
-        String fileNameWithoutExtension, almostFinalResponse, finalResponse;
+        String fileNameWithoutExtension, almostFinalResponse, finalResponse, exactNameWithoutExtension;
+        // Inicialització
         almostFinalResponse = finalResponse = "";
         fileNameWithoutExtension = FilenameUtils.removeExtension(fileName);
+        exactNameWithoutExtension = fileNameWithoutExtension + username;
         ResultSet rs = null;
         int numberOfRows = 0;
         try {
 			Class.forName("org.postgresql.Driver");
 			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
-        	String sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
-			System.out.println("sql1: " + sql1 + " " + username + " " + fileNameWithoutExtension+"2");
+			String sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
+			System.out.println("sql1: " + sql1 + " " + username + " " + exactNameWithoutExtension+"2");
         	pstmt1 = connectionImportFileService.prepareStatement(sql1);
 			pstmt1.setString(1, username);
-			pstmt1.setString(2, fileNameWithoutExtension+"2");
+			pstmt1.setString(2, exactNameWithoutExtension+"2");
 			pstmt1.setInt(3, 2);
 			rs = pstmt1.executeQuery();
 			if (rs.next()) numberOfRows = rs.getInt(1);
@@ -210,14 +235,14 @@ public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> 
     			sql1 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?"; // 2
     			System.out.println("sql2: " + sql1);
     			pstmt1 = connectionImportFileService.prepareStatement(sql1);
-    			pstmt1.setString(1, fileNameWithoutExtension.toLowerCase());
+    			pstmt1.setString(1, exactNameWithoutExtension.toLowerCase());
     			rs = pstmt1.executeQuery();
     			while (rs.next())
     				almostFinalResponse += (rs.getString(1) + ", ");
     			System.out.println("almostFinalResponse: " + almostFinalResponse);
     			finalResponse += almostFinalResponse.substring(0, almostFinalResponse.length()-2);
     			// 3.2 FILES DE LA TAULA DE L'ARXIU
-    		    sql1 = "SELECT COUNT(*) FROM " + fileNameWithoutExtension; // 2
+    		    sql1 = "SELECT COUNT(*) FROM " + exactNameWithoutExtension; // 2
     		    System.out.println("sql3: " + sql1);
     		    pstmt1 = connectionImportFileService.prepareStatement(sql1);
     			rs = pstmt1.executeQuery();
@@ -240,5 +265,13 @@ public class ImportarFitxerServiceImpl implements ImportarFitxerService<Fitxer> 
 	    	}
         System.out.println("finalResponse: " + finalResponse);
         return finalResponse;
+	}
+	
+	public void printStream(InputStream stream) throws IOException {
+	    BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+	    String inputLine;
+	    while ((inputLine = in.readLine()) != null)
+	        System.out.println(inputLine);
+	    in.close();
 	}
 }

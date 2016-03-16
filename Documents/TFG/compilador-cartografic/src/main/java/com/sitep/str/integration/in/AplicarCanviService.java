@@ -6,14 +6,14 @@ import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.sitep.str.integration.in.classes.FitxerVersio;
+import com.sitep.str.integration.in.classes.VersioFitxer;
 
 @SuppressWarnings("hiding")
-public interface AplicarCanviService<FitxerVersio> {
+public interface AplicarCanviService {
 
 	public void printSomething();
 	
-	public FitxerVersio getFitxerVersio(String idFitxerVersioV, String idFitxerVersioF);
+	public VersioFitxer getFitxerVersio(String idFitxerVersioV, String idFitxerVersioF);
 
 	public void changeCS(String fileName, String fileNameWithoutExtension, String extension, String coordenades, String username, HttpServletResponse response) throws SQLException, IOException, InterruptedException;
 	

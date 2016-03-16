@@ -6,21 +6,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
-
 import com.sitep.str.integration.in.CarregadorDeFitxersVectorialsService;
-import com.sitep.str.integration.in.classes.FitxerVectorial;
 
-public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFitxersVectorialsService<FitxerVectorial> {
+public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFitxersVectorialsService {
 
-	public void vectoriseAndUploadFileToDatabase(String fileName, String fileNameWithoutExtension, HttpServletResponse response) {
+	public void vectoriseAndUploadFileToDatabase(String fileName, String fileNameWithoutExtension, HttpServletResponse response, HttpServletRequest request) {
 		try {
 			// 1. EXTREURE LA INFORMACIÓ NECESSÀRIA
 			String extension = FilenameUtils.getExtension("/files/"+fileName);
@@ -32,20 +30,25 @@ public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFit
 					extension.equalsIgnoreCase("csv") + " or osm " + 
 					extension.equalsIgnoreCase("pbf") + extension.equalsIgnoreCase("bz") +
 					extension.equalsIgnoreCase("osm"));
+			String username = request.getParameter("user");
+			String exactNameWithoutExtension = fileNameWithoutExtension + username;
+			String exactName = fileNameWithoutExtension + username+ "." + extension;
+			System.out.println("exactNameWithoutExtension: " + exactNameWithoutExtension + ", "
+					+ "exactName: " + exactName);
 			ProcessBuilder pb = null;
 			
 			// 2. IMPORTAR A LA BASE DE DADES
 			if (extension.equalsIgnoreCase("shp")) {
-				System.out.println("shp2pgsql -s 26986 /files/"+fileName+" public."+fileNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
-				pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+fileName+" public."+fileNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
+				System.out.println("shp2pgsql -s 26986 /files/"+exactName+" public."+exactNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
+				pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactName+" public."+exactNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
 			} else if (extension.equalsIgnoreCase("kml")) {
-				System.out.println("ogr2ogr -f \"PostgreSQL\" PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" /files/"+fileName+" -nln "+fileNameWithoutExtension);
-				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"PostgreSQL\" PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" /files/"+fileName+" -nln "+fileNameWithoutExtension);
+				System.out.println("ogr2ogr -f \"PostgreSQL\" PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" /files/"+exactName+" -nln "+exactNameWithoutExtension);
+				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"PostgreSQL\" PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" /files/"+exactName+" -nln "+exactNameWithoutExtension);
 			} else if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz") || extension.equalsIgnoreCase("osm")) {
-				//pb = new ProcessBuilder("/bin/sh", "-c", "osm2pgsql -c -d osm -U postgres -H localhost -S /home/tecnic/default.style /files/"+fileName); */
-				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension+".shp /files/"+fileName);
+				//pb = new ProcessBuilder("/bin/sh", "-c", "osm2pgsql -c -d osm -U postgres -H localhost -S /home/tecnic/default.style /files/"+exactName); */
+				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+".shp /files/"+exactName);
 			} else if (extension.equalsIgnoreCase("csv")) {
-				pb = new ProcessBuilder("/bin/sh", "-c", "/home/tecnic/csv2psql-master/src/csv2psql/./csv2psql.py --schema=public /files/"+fileName+" | psql -h localhost -d osm -U postgres");
+				pb = new ProcessBuilder("/bin/sh", "-c", "/home/tecnic/csv2psql-master/src/csv2psql/./csv2psql.py --schema=public /files/"+exactName+" | psql -h localhost -d osm -U postgres");
 			}
 			System.out.println("Run (carregarFitxerVectorial) command " + pb.toString());
 			Process process = pb.start();
@@ -63,7 +66,7 @@ public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFit
 		    // [OPCIONAL] POSAR EL FITXER OSM CONVERTIT A SHP A LA BASE DE DADES
 		    if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz") || extension.equalsIgnoreCase("osm")) {
 		    	pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+
-		    			fileNameWithoutExtension+".shp/points.shp public."+fileNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
+		    			exactNameWithoutExtension+".shp/points.shp public."+exactNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
 				System.out.println("Run (carregarFitxerVectorial) OSM " + pb.toString());
 				process = pb.start();
 
@@ -90,17 +93,17 @@ public class CarregadorDeFitxersVectorialsServiceImpl implements CarregadorDeFit
 				carregadorDeFitxersVectorialsConnection = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
 				// 3.1 COLUMNES
 				sql1 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?";
-				System.out.println(sql1 + " " + fileNameWithoutExtension.toLowerCase());
+				System.out.println(sql1 + " " + exactNameWithoutExtension.toLowerCase());
 				pstmt1 = carregadorDeFitxersVectorialsConnection.prepareStatement(sql1);
-				pstmt1.setString(1, fileNameWithoutExtension.toLowerCase());
+				pstmt1.setString(1, exactNameWithoutExtension.toLowerCase());
 				rs = pstmt1.executeQuery();
 				while (rs.next())
 					almostFinalResponse += (rs.getString(1) + ", ");
 				System.out.println("almostFinalResponse: " + almostFinalResponse);
 				finalResponse = almostFinalResponse.substring(0, almostFinalResponse.length()-2);
 				// 3.2 FILES
-			    sql1 = "SELECT COUNT(*) FROM " + fileNameWithoutExtension;
-			    System.out.println(sql1 + " " + fileNameWithoutExtension);
+			    sql1 = "SELECT COUNT(*) FROM " + exactNameWithoutExtension;
+			    System.out.println(sql1 + " " + exactNameWithoutExtension);
 				pstmt1 = carregadorDeFitxersVectorialsConnection.prepareStatement(sql1);
 				rs = pstmt1.executeQuery();
 				if (rs.next()) numberOfRows = rs.getInt(1);

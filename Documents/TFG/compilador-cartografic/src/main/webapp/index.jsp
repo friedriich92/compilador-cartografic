@@ -145,10 +145,9 @@
 							<th class="text-center" id="taula-atribut5">Filtres (#Files)</th>
 						</tr>
 					</thead>
-					<tbody>
-						<tr id='addr0'>
-						</tr>
-	                    <tr id='addr1'></tr>
+					<tbody id="tbody-table">
+<!-- 						<tr id='addr0'></tr> -->
+<!-- 	                    <tr id='addr1'></tr> -->
 					</tbody>
 				</table>
 			</div>
@@ -230,7 +229,10 @@
 		++entryVariable;
 		console.log("entrar (clickButtonEntrar): " +entryVariable);
 		if ($("#entrar").text().indexOf("Log out") == 0) {
+			$("#tbody-table").empty();
 			$("#entrar").text("Entrar");
+			$("#puja-fitxer").text("");
+			$("#file-change-text").text("");
 			$("#lg_username").text("");
 			$("#lg_password").text("");
 			entryVariable = 0;
@@ -560,7 +562,7 @@
 	{
 		console.log("postFilesData");
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/ImportarFitxerServiceServlet?name='+userSession, //+'&filename='+file2uploadName
+			url: 'http://localhost/compilador-cartografic/FitxerServiceServlet?name='+userSession, //+'&filename='+file2uploadName
 	        type: 'POST',
 	        data: data,
 	        cache: false,
@@ -572,20 +574,40 @@
 	        	$("#puja-fitxer").css("color", "green");
 	        	$("#puja-fitxer").text("El fitxer " + file2uploadName + " s'ha pujat correctament.");
 	        	$("#puja-fitxer").css("font-size", "13px");
-	        	filesUploaded = data;
+	        	if (data == 1) {
+	        		console.log("data == 1");
+	        		filesUploaded = 1;
+	        		for (var i = 0; i <= nombreDeFiles; i++) {
+	                	$('#addr'+i).html("<td>"+ i +"</td><td class='bk-td' id='file-name"+i+"'>" + "" + "</td><td class='bk-td' id='file-hour"+i+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+i+"'>" + "" + "</td>");
+	                    $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
+	                    if (i == 1) {
+	    	        		$("#file-name" + filesUploaded).text(file2uploadName);
+	    	        		$("#file-hour" + filesUploaded).text(today);
+	                    }
+	        		}
+	        	}
+	        	else if (data > 1) {
+	        		console.log("data == " + data);
+	        		filesUploaded = data;
+	        		$("#file-name" + filesUploaded).text(file2uploadName);
+	        		$("#file-hour" + filesUploaded).text(today);
+	        	}
 	        	/*if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
 	        		$("#file-name" + filesUploaded).text(file2uploadName);
-	        		$("#file-hour" + today).text(today);
+	        		$("#file-hour" + filesUploaded).text(today);
 	        	}
-	        	else {*/
+	        	else {
+	        	console.log("success postFilesData: " + filesUploaded);
+	            $('#addr'+filesUploaded).html("<td>"+ filesUploaded +"</td><td class='bk-td' id='file-name"+filesUploaded+"'>" + "" + "</td><td class='bk-td' id='file-hour"+filesUploaded+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
+	            $('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');
 	            $('#addr'+filesUploaded).html("<td>"+ filesUploaded +"</td><td class='bk-td' id='file-name"+filesUploaded+"'>" + "" + "</td><td class='bk-td' id='file-hour"+filesUploaded+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
                 $('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');
                 $("#file-name" + filesUploaded).text(file2uploadName);
 	        	$("#file-hour" + filesUploaded).text(today);
-	        		/*$('#addr'+filesUploaded).html("<td>"+ (filesUploaded+1) +"</td><td class='bk-td'>" + file2uploadName + "</td><td class='bk-td'>" + today + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
+	        		$('#addr'+filesUploaded).html("<td>"+ (filesUploaded+1) +"</td><td class='bk-td'>" + file2uploadName + "</td><td class='bk-td'>" + today + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
 		            $('#tab_logic').append('<tr id="addr' + (filesUploaded + 1) + '"></tr>');
-	        	}*/
-	        	filesUploaded++;
+	        	}
+	        	filesUploaded++;*/
 	        	uploadToDatabase(file2uploadName);
 	        },
 	        error: function(jqXHR, textStatus, errorThrown) {
@@ -594,17 +616,33 @@
 	        	$("#puja-fitxer").css("color", "green"); // red
 	        	$("#puja-fitxer").text("El fitxer " + file2uploadName + " s'ha pujat correctament.");
 	        	$("#puja-fitxer").css("font-size", "13px");
-	        	filesUploaded = data;
+	        	if (data == 1) {
+	        		filesUploaded = 1;
+	        		for (var i = 0; i <= nombreDeFiles; i++) {
+	                	$('#addr'+i).html("<td>"+ i +"</td><td class='bk-td' id='file-name"+i+"'>" + "" + "</td><td class='bk-td' id='file-hour"+i+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+i+"'>" + "" + "</td>");
+	                    $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
+	        			if (i == 1) {
+	    	        		$("#file-name" + filesUploaded).text(file2uploadName);
+	    	        		$("#file-hour" + filesUploaded).text(today);
+	        			}
+	        		}
+	        	}
+	        	else if (data > 1) {
+	        		filesUploaded = data;
+	        		$("#file-name" + filesUploaded).text(file2uploadName);
+	        		$("#file-hour" + filesUploaded).text(today);
+	        	}
 	        	/*if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
 		        	$("#file-name" + filesUploaded).text(file2uploadName);
 	        		$("#file-hour" + filesUploaded).text(today);
 	        	}
-	        	else {*/
+	        	else {
+	        	console.log("error postFilesData: " + filesUploaded);
 	            $('#addr'+filesUploaded).html("<td>"+ filesUploaded +"</td><td class='bk-td' id='file-name"+filesUploaded+"'>" + "" + "</td><td class='bk-td' id='file-hour"+filesUploaded+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
             	$('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');
 		        $("#file-name" + filesUploaded).text(file2uploadName);
 	        	$("#file-hour" + filesUploaded).text(today);
-	                /*$('#addr'+filesUploaded).html("<td>"+ (filesUploaded) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td id='file-filter"+filesUploaded+"'>" + "" + "</td>");
+	                $('#addr'+filesUploaded).html("<td>"+ (filesUploaded) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td id='file-filter"+filesUploaded+"'>" + "" + "</td>");
 		            $('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');
 	        	}
 	            filesUploaded++;*/
@@ -633,7 +671,7 @@
 	};
 	function uploadToDatabase(filename) {
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/CarregadorDeFitxersVectorialsServiceServlet',
+			url: 'http://localhost/compilador-cartografic/CarregadorDeFitxersVectorialsServiceServlet?user='+userSession,
 	        type: 'POST',
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {
@@ -673,33 +711,40 @@
 						$("#icona-persona").attr("src","./img/online.png");
 						$("#nom-persona").text(userSession);
 						if (data.indexOf(";") > -1) {
+			        		for (var i = 0; i <= nombreDeFiles; i++) {
+			                	$('#addr'+i).html("<td>"+ i +"</td><td class='bk-td' id='file-name"+i+"'>" + "" + "</td><td class='bk-td' id='file-hour"+i+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+i+"'>" + "" + "</td>");
+			                    $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
+			        		}
 // 							var repeats = data.match(/;/gi).length;
 							var dataVector = data.split(';');
 							for(var i = 0; i < dataVector.length; i++) {
 								var dataVectorRow = dataVector[i].split("'");
 					        	/*if (filesUploaded >= 1 && filesUploaded <= dataVectorRow[3]) {*/
-						        $('#addr'+i).html("<td>"+ i+1 +"</td><td class='bk-td' id='file-name"+i+"'>" + "" + "</td><td class='bk-td' id='file-hour"+i+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+i+"'>" + "" + "</td>");
-            					$('#tab_logic').append('<tr id="addr' + i + '"></tr>');	
-					            $("#file-name" + i).text(dataVectorRow[0]);
-					        	$("#file-hour" + i).text(dataVectorRow[1]);
-					        	$("#file-filter" + i).text(dataVectorRow[2]);
+	            				filesUploaded = i + 1;
+					        	/*$('#addr'+filesUploaded).html("<td>"+ filesUploaded +"</td><td class='bk-td' id='file-name"+filesUploaded+"'>" + "" + "</td><td class='bk-td' id='file-hour"+filesUploaded+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
+                				$('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');*/
+                                $("#file-name" + filesUploaded).text(dataVectorRow[0]);
+                	        	$("#file-hour" + filesUploaded).text(dataVectorRow[1]);
+                				$("#file-filter" + filesUploaded).text(dataVectorRow[2]);
 					        		/*++filesUploaded;
 					        	}*/
 							}
 						}
-						else {
-							if (data.indexOf("'") > -1) {
-								var dataVectorRow = data.split("'");
-					        	/*if (filesUploaded >= 1 && filesUploaded <= dataVectorRow[3]) {*/
-						        filesUploaded = 0;
-					        	$('#addr'+filesUploaded).html("<td>"+ filesUploaded+1 +"</td><td class='bk-td' id='file-name"+filesUploaded+"'>" + "" + "</td><td class='bk-td' id='file-hour"+filesUploaded+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
-            					$('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');	
-					        	$("#file-name0").text(dataVectorRow[0]);
-					        	$("#file-hour0").text(dataVectorRow[1]);
-					        	$("#file-filter0").text(dataVectorRow[2]);
-					        		/*++filesUploaded;
-					        	}*/
-							}
+						else if (data.indexOf("'") > -1) {
+			        		for (var i = 0; i <= nombreDeFiles; i++) {
+			                	$('#addr'+i).html("<td>"+ i +"</td><td class='bk-td' id='file-name"+i+"'>" + "" + "</td><td class='bk-td' id='file-hour"+i+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+i+"'>" + "" + "</td>");
+			                    $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
+			        		}
+							var dataVectorRow = data.split("'");
+					        /*if (filesUploaded >= 1 && filesUploaded <= dataVectorRow[3]) {*/
+						    filesUploaded = 1;
+					        /*$('#addr'+filesUploaded).html("<td>"+ filesUploaded +"</td><td class='bk-td' id='file-name"+filesUploaded+"'>" + "" + "</td><td class='bk-td' id='file-hour"+filesUploaded+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
+				            $('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');*/					        	$("#file-name0").text(dataVectorRow[0]);
+                            $("#file-name" + filesUploaded).text(dataVectorRow[0]);
+                	        $("#file-hour" + filesUploaded).text(dataVectorRow[1]);
+                			$("#file-filter" + filesUploaded).text(dataVectorRow[2]);
+					        /*++filesUploaded;
+					        }*/
 						}
 						$("#user-login-text").text("");
 						if (userSession.indexOf("admin") == 0) $("#file-upload-container2").show();

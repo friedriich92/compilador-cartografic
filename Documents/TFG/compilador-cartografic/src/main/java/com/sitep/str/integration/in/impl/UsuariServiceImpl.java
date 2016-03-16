@@ -7,16 +7,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.sitep.str.integration.in.ImportarFitxerService;
+import com.sitep.str.integration.in.FitxerService;
 import com.sitep.str.integration.in.UsuariService;
 import com.sitep.str.integration.in.classes.Idioma;
 import com.sitep.str.integration.in.classes.RolDeUsuari;
 import com.sitep.str.integration.in.classes.Usuari;
 
-public class UsuariServiceImpl implements UsuariService<Usuari> {
+public class UsuariServiceImpl implements UsuariService {
 
 	static Connection connectionUsuariService = null;
-	ImportarFitxerService importarFitxer = new ImportarFitxerServiceImpl();
+	FitxerService importarFitxer = new FitxerServiceImpl();
 	
 	public void DBConnection() {
 		System.out.println("PostgreSQL " + "JDBC Connection Testing");
@@ -150,16 +150,17 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
 	}
 
 	public String getFiles(String userName) {
-		boolean does2Exist = false;
-		String name2Use;
+		boolean does2Exist;
+		String name2Use, sql1, sql2, finalResponse, almostFinalResponse, theFinalResponse, exactName;;
 		PreparedStatement pstmt1, pstmt2;
-		pstmt1 = pstmt2 = null;
-		String sql1, sql2, finalResponse, almostFinalResponse, theFinalResponse;
-		Connection conn = null;
 		int countNumber2, numberOfRows, loopNumber;
 		ResultSet rs, rs2;
-		finalResponse = almostFinalResponse = theFinalResponse = name2Use = "";
+		// Inicialització
+		does2Exist = false;
+		finalResponse = almostFinalResponse = theFinalResponse = name2Use = exactName = "";
 		rs = rs2 = null;
+		pstmt1 = pstmt2 = null;
+		Connection conn = null;
 		numberOfRows = loopNumber = 0;
 		countNumber2 = importarFitxer.fitxersPerUsuari(userName); // 1. #ARXIUS
      	System.out.println("countNumber2: " + countNumber2);
@@ -178,17 +179,17 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
 	        		++loopNumber;
 	    			try {
 	    				almostFinalResponse += (rs.getString(1) + "'" + rs.getString(2) + "'");
-	            		String fileNameWithoutExtension = rs.getString(3);
-	        			
+	            		exactName = rs.getString(3);
+	            				
 	            		// 3.0 EXISTEIX EL FITXER 2?
 	              		sql2 = "SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name = ?)"; // 2
 	            		pstmt2 = conn.prepareStatement(sql2);
-	            		pstmt2.setString(1, fileNameWithoutExtension.toLowerCase() + "2");
+	            		pstmt2.setString(1, exactName.toLowerCase() + "2");
 	            		rs2 = pstmt2.executeQuery();
 	            		if (rs2.next()) does2Exist = rs2.getBoolean(1);
 	            		
-	            		if (does2Exist) name2Use = fileNameWithoutExtension.toLowerCase() + "2";
-	            		else name2Use = fileNameWithoutExtension.toLowerCase();
+	            		if (does2Exist) name2Use = exactName.toLowerCase() + "2";
+	            		else name2Use = exactName.toLowerCase();
 	            		
 	            		// 3.1 COLUMNES DE LA TAULA DE L'ARXIU
 	            		sql2 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?"; // 2
@@ -223,9 +224,11 @@ public class UsuariServiceImpl implements UsuariService<Usuari> {
     			e.printStackTrace();
     			} finally {
     				try {
-    					rs.close();
-    					pstmt1.close();
-    					conn.close();
+    					if (countNumber2 > 0) {
+    						rs.close();
+        					pstmt1.close();
+        					conn.close();
+    					}
     					} catch (java.sql.SQLException e) {
     						e.printStackTrace();
     						}

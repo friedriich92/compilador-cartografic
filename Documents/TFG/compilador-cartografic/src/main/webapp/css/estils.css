@@ -221,6 +221,7 @@ p, div {
 	overflow-y: scroll;
     height: 162px;
     margin-bottom: 28px;
+    margin-top: 15px;
 }
 
 .ui-myProgress {

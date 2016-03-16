@@ -3,7 +3,9 @@ package com.sitep.str.integration.in;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public interface UsuariService<Usuari> {
+import com.sitep.str.integration.in.classes.Usuari;
+
+public interface UsuariService {
 		
 	public void DBConnection();
 	

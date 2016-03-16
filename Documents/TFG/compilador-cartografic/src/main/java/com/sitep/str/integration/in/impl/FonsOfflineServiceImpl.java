@@ -12,9 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sitep.str.integration.in.FonsOfflineService;
-import com.sitep.str.integration.in.classes.FitxerFons;
 
-public class FonsOfflineServiceImpl implements FonsOfflineService<FitxerFons> {
+public class FonsOfflineServiceImpl implements FonsOfflineService {
 
 	public void getBackgroundOffline(HttpServletResponse response) {
 	       response.setHeader("Content-disposition","attachment; filename=test.map");

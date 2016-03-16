@@ -17,9 +17,8 @@ import java.sql.SQLException;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sitep.str.integration.in.CapaOfflineService;
-import com.sitep.str.integration.in.classes.FitxerCapa;
 
-public class CapaOfflineServiceImpl implements CapaOfflineService<FitxerCapa> {
+public class CapaOfflineServiceImpl implements CapaOfflineService {
 
 	static Connection connectionCapaOffline = null;
 	

@@ -13,21 +13,21 @@ import java.sql.SQLException;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sitep.str.integration.in.AplicarCanviService;
-import com.sitep.str.integration.in.ImportarFitxerService;
+import com.sitep.str.integration.in.FitxerService;
 import com.sitep.str.integration.in.classes.ExtensioDeFitxer;
 import com.sitep.str.integration.in.classes.Fitxer;
-import com.sitep.str.integration.in.classes.FitxerVersio;
+import com.sitep.str.integration.in.classes.VersioFitxer;
 
-public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio> {
+public class AplicarCanviServiceImpl implements AplicarCanviService {
 	
 	@SuppressWarnings("rawtypes")
-	ImportarFitxerService importarFitxer = new ImportarFitxerServiceImpl();
+	FitxerService importarFitxer = new FitxerServiceImpl();
 	
 	public void printSomething() {
 		System.out.println("OK");
 	}
 	
-	public FitxerVersio getFitxerVersio(String idFitxerVersioV, String idFitxerVersioF) {
+	public VersioFitxer getFitxerVersio(String idFitxerVersioV, String idFitxerVersioF) {
 		/* Recorre tots els FitxerVersio i seleccionar aquell que tingui idFitxerVersioV i
 		 * idFitxerVersioF*/
 		return null;
@@ -37,11 +37,15 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 	public void changeCS(String fileName, String fileNameWithoutExtension, String extension, String coordenades, String username, HttpServletResponse response) throws SQLException, IOException, InterruptedException {
 		Connection aplicarCanviConnection = null;
 		PreparedStatement pstmt1 = null;
-		String sql1, finalResponse;
-		sql1 = finalResponse = "";
 		ResultSet rs = null;
-		int countNumber2 = 0;
 		ProcessBuilder pb = null;
+		int countNumber2;
+		String sql1, finalResponse, exactNameWithoutExtension, exactName;
+		// Inicialització
+		sql1 = finalResponse = "";
+		exactNameWithoutExtension = fileNameWithoutExtension + username;
+		exactName = fileNameWithoutExtension + username+ "." + extension;
+		countNumber2 = 0;
 		try {
 			Class.forName("org.postgresql.Driver");
 			aplicarCanviConnection = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
@@ -50,7 +54,7 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 			sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
 			pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
 			pstmt1.setString(1, username);
-			pstmt1.setString(2, fileNameWithoutExtension+"2");
+			pstmt1.setString(2, exactNameWithoutExtension.toLowerCase()+"2");
 			pstmt1.setInt(3, 2);
 			rs = pstmt1.executeQuery();
 		    if (rs.next())
@@ -62,13 +66,13 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 //			pstmt1.execute();
 			if (countNumber2 != 0) {
 				// -- Versió 2
-				sql1 = "DROP TABLE IF EXISTS " + fileNameWithoutExtension + "2";
+				sql1 = "DROP TABLE IF EXISTS " + exactNameWithoutExtension.toLowerCase() + "2";
 				pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
 				pstmt1.execute();				
 			}
 			
 		    // 2. DELETE FILE #3
-		    pb = new ProcessBuilder("/bin/sh", "-c", "rm /files/"+fileNameWithoutExtension+"3.*");
+		    pb = new ProcessBuilder("/bin/sh", "-c", "rm /files/"+exactNameWithoutExtension.toLowerCase()+"3.*");
 			System.out.println("Run (applyFilter) clean command " + pb.toString());
 			Process process = pb.start();
 	
@@ -85,23 +89,23 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 			// 3. FILE => SHP => CHANGE C.S. (EPSG:4326) => SHP
 			if (extension.equalsIgnoreCase("shp")) {
 				System.out.println("changeCS SHP");
-				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension+"3.shp /files/"+fileName+" -t_srs "+coordenades);
+				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension.toLowerCase()+"3.shp /files/"+exactName+" -t_srs "+coordenades);
 			}
 			else if (extension.equalsIgnoreCase("kml")) {
 				System.out.println("changeCS KML");
-				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension+"3.shp /files/"+fileName+" -t_srs "+coordenades);
+				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension.toLowerCase()+"3.shp /files/"+exactName+" -t_srs "+coordenades);
 			}
 			else if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz") || extension.equalsIgnoreCase("osm")) {
 				// Geometry type of `Geometry Collection' not supported in shapefiles SHPT=POINT/ARC/POLYGON/MULTIPOINT/POINTZ/ARCZ/POLYGONZ/MULTIPOINTZ
 				// pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension+"3.shp /files/"+fileName+" -t_srs "+coordenades);
 				System.out.println("changeCS OSM");
-				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension
-						+".shp/"+fileNameWithoutExtension+"3.shp /files/"+fileNameWithoutExtension+
+				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension
+						+".shp/"+exactNameWithoutExtension+"3.shp /files/"+exactNameWithoutExtension+
 						".shp/points.shp -t_srs "+coordenades);			
 			}
 			else if (extension.equalsIgnoreCase("csv")) {
 				System.out.println("changeCS CSV");
-				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension+"3.shp /files/"+fileName+" -s_srs "+coordenades);
+				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp /files/"+fileName+" -s_srs "+coordenades);
 			}
 			System.out.println("Run (AplicarCanviServiceImpl) 1st command " + pb.toString());
 			process = pb.start();
@@ -120,11 +124,11 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 			// 4.1 FILE 1 is now FILE2 before changing coordinates
 		    // Aquesta no funciona perque falta guardar el fitxer 2, només es guarda el tercer
 		    if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz") || extension.equalsIgnoreCase("osm"))
-			    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+fileNameWithoutExtension+".shp/"+fileNameWithoutExtension+"2.shp public."+fileNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
+			    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+".shp/"+exactNameWithoutExtension+"2.shp public."+exactNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
 		    else if (extension.equalsIgnoreCase("csv"))
-		    	pb = new ProcessBuilder("psql -h localhost -d osm -U postgres -f /files/"+fileNameWithoutExtension+".sql");			    	
+		    	pb = new ProcessBuilder("psql -h localhost -d osm -U postgres -f /files/"+exactNameWithoutExtension+".sql");			    	
 		    else 
-		    	pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+fileNameWithoutExtension+"2.shp public."+fileNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
+		    	pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+"2.shp public."+exactNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
 			System.out.println("Run (AplicarCanviServiceImpl) 2nd command " + pb.toString());
 			process = pb.start();
 	
@@ -140,10 +144,10 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		    
 		    // 4.2 FILE 2 is now FILE3 created after changing coordinates
 		    if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz") || extension.equalsIgnoreCase("osm"))
-			    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+fileNameWithoutExtension+".shp/"+fileNameWithoutExtension+"3.shp public."+fileNameWithoutExtension+"2 | psql -h localhost -d osm -U postgres");
+			    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+".shp/"+exactNameWithoutExtension+"3.shp public."+exactNameWithoutExtension+"2 | psql -h localhost -d osm -U postgres");
 		    else if (extension.equalsIgnoreCase("csv")) { }
 		    else
-		    	pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+fileNameWithoutExtension+"3.shp public."+fileNameWithoutExtension+"2 | psql -h localhost -d osm -U postgres");
+		    	pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+"3.shp public."+exactNameWithoutExtension+"2 | psql -h localhost -d osm -U postgres");
 			System.out.println("Run (AplicarCanviServiceImpl) 3rd command " + pb.toString());
 			process = pb.start();
 	
@@ -159,8 +163,8 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		    
 		    // 5. INSERT INTO BD (fitxer)
 		    java.util.Date today = new java.util.Date();
-		    importarFitxer.addFitxer(new Fitxer(fileNameWithoutExtension+"2."+extension, username, 2, new java.sql.Date(today.getTime()),
-		    		fileNameWithoutExtension+"2", new ExtensioDeFitxer(extension), true));
+		    importarFitxer.addFitxer(new Fitxer(exactNameWithoutExtension+"2."+extension, username, 2, new java.sql.Date(today.getTime()),
+		    		exactNameWithoutExtension+"2", new ExtensioDeFitxer(extension), true));
 		    
 		    // 6. SEND WHAT HAPPENED => data
 			response.setContentType("text/html");
@@ -192,13 +196,15 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 	public void applyFilter(String fileName, String fileNameWithoutExtension, String extension, String info, String username, HttpServletResponse response) {
 		Connection aplicarCanviConnection = null;
 		PreparedStatement pstmt1 = null;
-		String sql1;
-		String finalResponse, limit, tables, info2, almostFinalResponse;
-		finalResponse = sql1 = limit = tables = almostFinalResponse = "";
 		ResultSet rs = null;
-		int countNumber2, numberOfRows;
-		countNumber2 = numberOfRows = 0;
 		ProcessBuilder pb = null;
+		int countNumber2, numberOfRows;
+		String sql1, finalResponse, limit, tables, info2, almostFinalResponse, exactNameWithoutExtension, exactName;
+		// Inicialització
+		finalResponse = sql1 = limit = tables = almostFinalResponse = "";
+		exactNameWithoutExtension = fileNameWithoutExtension + username;
+		exactName = fileNameWithoutExtension + username+ "." + extension;
+		countNumber2 = numberOfRows = 0;
 		try {
 			// 1. CHECK IF THE 2ND VERSIONS ALREADY EXIST OR NOT
 		    // -- Versió 2
@@ -207,13 +213,13 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 			sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
 			pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
 			pstmt1.setString(1, username);
-			pstmt1.setString(2, fileNameWithoutExtension+"2");
+			pstmt1.setString(2, exactNameWithoutExtension+"2");
 			pstmt1.setInt(3,  2);
 			rs = pstmt1.executeQuery();
 		    if (rs.next()) countNumber2 = rs.getInt(1);
 			
 		    // 2. DELETE FILE #3
-		    pb = new ProcessBuilder("/bin/sh", "-c", "rm /files/"+fileNameWithoutExtension+"3.*");
+		    pb = new ProcessBuilder("/bin/sh", "-c", "rm /files/"+exactNameWithoutExtension+"3.*");
 			System.out.println("Run (applyFilter) clean command " + pb.toString());
 			Process process = pb.start();
 	
@@ -245,8 +251,8 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 				        		  if (!retval2.contains("rows")) limit = retval2;
 				        	  }
 				          }
-					pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT "+
-							tables+" from "+fileNameWithoutExtension.toLowerCase()+" limit " + limit +"\"");
+					pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT "+
+							tables+" from "+exactNameWithoutExtension.toLowerCase()+" limit " + limit +"\"");
 					}
 			}
 			else {
@@ -254,15 +260,15 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 					System.out.println("info.contains(tables)" + info);
 					for (String retval: info.split("=", 2))
 				          if (!retval.contains("tables")) tables = retval;
-					pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT "+
-							tables+" FROM "+fileNameWithoutExtension.toLowerCase()+"\"");
+					pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT "+
+							tables+" FROM "+exactNameWithoutExtension.toLowerCase()+"\"");
 				}
 				else if (info.contains("rows")) {
 					System.out.println("info.contains(rows)" + info);
 					for (String retval: info.split("=", 2))
 				          if (!retval.contains("rows")) limit = retval;
-					pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT * FROM "+
-							fileNameWithoutExtension.toLowerCase()+" limit " + limit +"\"");
+					pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT * FROM "+
+							exactNameWithoutExtension.toLowerCase()+" limit " + limit +"\"");
 				}
 			}
 			
@@ -287,7 +293,7 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 			
 			if (countNumber2 != 0) {
 				// -- Versió 2
-				sql1 = "DROP TABLE IF EXISTS " + fileNameWithoutExtension + "2";
+				sql1 = "DROP TABLE IF EXISTS " + exactNameWithoutExtension + "2";
 				pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
 				pstmt1.execute();				
 			}
@@ -295,7 +301,7 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		    // 5. INSERT INTO TABLES (BD version1/2 and fitxer)
 			// 5.1 FILE 1 is now FILE2 before changing coordinates
 		    // Aquesta no funciona perque falta guardar el fitxer 2, només es guarda el tercer
-		    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+fileNameWithoutExtension+"2.shp public."+fileNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
+		    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+"2.shp public."+exactNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
 			System.out.println("Run (applyFilter) 2nd command " + pb.toString());
 			process = pb.start();
 	
@@ -310,7 +316,7 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		    printStream(inputStream);
 		    
 		    // 5.2 FILE 2 is now FILE3 created after changing coordinates
-		    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+fileNameWithoutExtension+"3.shp public."+fileNameWithoutExtension+"2 | psql -h localhost -d osm -U postgres");
+		    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+"3.shp public."+exactNameWithoutExtension+"2 | psql -h localhost -d osm -U postgres");
 			System.out.println("Run (applyFilter) 3rd command " + pb.toString());
 			process = pb.start();
 	
@@ -327,22 +333,22 @@ public class AplicarCanviServiceImpl implements AplicarCanviService<FitxerVersio
 		    // [OPCIONAL] 5.3 INSERT INTO BD (fitxer)
 		    if (countNumber2 == 0) {
 		    	java.util.Date today = new java.util.Date();
-		    	importarFitxer.addFitxer(new Fitxer(fileNameWithoutExtension+"2."+extension, username, 2, new java.sql.Date(today.getTime()),
-			    		fileNameWithoutExtension+"2", new ExtensioDeFitxer(extension), true));
+		    	importarFitxer.addFitxer(new Fitxer(exactNameWithoutExtension+"2."+extension, username, 2, new java.sql.Date(today.getTime()),
+		    			exactNameWithoutExtension+"2", new ExtensioDeFitxer(extension), true));
 		    }
     		
 		    // 6. SEND WHAT HAPPENED => data
 			// 6.1 NOVES COLUMNES
 			sql1 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?";
 			pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
-			pstmt1.setString(1, fileNameWithoutExtension.toLowerCase() + "2");
+			pstmt1.setString(1, exactNameWithoutExtension.toLowerCase() + "2");
 			rs = pstmt1.executeQuery();
 			while (rs.next())
 				almostFinalResponse += (rs.getString(1) + ", ");
 			finalResponse = almostFinalResponse.substring(0, almostFinalResponse.length()-2);
 			
 			// 6.2 NOVES FILES
-		    sql1 = "SELECT COUNT(*) FROM " + fileNameWithoutExtension + "2";
+		    sql1 = "SELECT COUNT(*) FROM " + exactNameWithoutExtension + "2";
 			pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
 			rs = pstmt1.executeQuery();
 			if (rs.next()) numberOfRows = rs.getInt(1);

@@ -8,13 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sitep.str.integration.in.FonsOfflineService;
-import com.sitep.str.integration.in.classes.FitxerFons;
 import com.sitep.str.integration.in.impl.FonsOfflineServiceImpl;
 
 public class FonsOfflineServiceServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	FonsOfflineService<FitxerFons> fonsOfflineService = new FonsOfflineServiceImpl();
+	FonsOfflineService fonsOfflineService = new FonsOfflineServiceImpl();
 
 	/**
 	 * doGet: servlet per a descarregar el fitxer

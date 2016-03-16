@@ -11,13 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 
-import com.sitep.str.integration.in.controllers.AplicarCanviController;
+import com.sitep.str.integration.in.AplicarCanviService;
+import com.sitep.str.integration.in.impl.AplicarCanviServiceImpl;
 
 public class AplicarCanviServiceServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	AplicarCanviController aplicarCanvi = new AplicarCanviController();
-
+	AplicarCanviService aplicarCanvi = new AplicarCanviServiceImpl();
+	
 	protected void doPost( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String fileName, fileNameWithoutExtension, extension, username, c, info, resposta;
 		extension = username = c = info = resposta = "";

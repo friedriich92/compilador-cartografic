@@ -13,7 +13,6 @@ import javax.xml.xpath.XPathExpression;
 
 import org.w3c.dom.Document;
 
-import com.sitep.str.integration.in.classes.FitxerVersio;
 import com.sitep.str.integration.in.impl.AplicarCanviServiceImpl;
 
 public class STRServicesIntegration{
@@ -47,7 +46,7 @@ public class STRServicesIntegration{
 			System.out.println("loadData STRServicesIntegration");
 			System.out.println("-------------------------------");
 			System.out.println("DONE STRServicesIntegration.java");
-			AplicarCanviService<FitxerVersio> ap = new AplicarCanviServiceImpl();
+			AplicarCanviService ap = new AplicarCanviServiceImpl();
 			ap.printSomething();
 //			prova();
 //			UsuariService usuariService = new UsuariServiceImpl();

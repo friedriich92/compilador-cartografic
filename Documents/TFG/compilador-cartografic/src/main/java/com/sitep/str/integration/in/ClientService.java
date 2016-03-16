@@ -6,7 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileUploadException;
 
-public interface ClientService<Client> {
+import com.sitep.str.integration.in.classes.Client;
+
+public interface ClientService {
 
 	void registerClients(HttpServletRequest request) throws IOException, FileUploadException;
 	

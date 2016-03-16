@@ -23,7 +23,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import com.sitep.str.integration.in.ClientService;
 import com.sitep.str.integration.in.classes.Client;
 
-public class ClientServiceImpl implements ClientService<Client> {
+public class ClientServiceImpl implements ClientService {
 
 	public void registerClients(HttpServletRequest request) throws IOException, FileUploadException {
 		// Create a new file upload handler 
