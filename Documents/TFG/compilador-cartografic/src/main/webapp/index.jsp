@@ -142,7 +142,7 @@
 							<th class="text-center" id="taula-atribut2">Fitxer</th>
 							<th class="text-center">Hora</th>
 							<th class="text-center" id="taula-atribut4">Selecci&oacute;</th>
-							<th class="text-center" id="taula-atribut5">Filtres (#Files)</th>
+							<th class="text-center" id="taula-atribut5">Columnes (#Files)</th>
 						</tr>
 					</thead>
 					<tbody id="tbody-table">
@@ -154,9 +154,17 @@
 		</div>
 	  	</div>
 	  	<p class="ui-user-login-text" id="file-change-text"></p>
-	  	<button type="button" class="ui-desfer-canvi-boto" id="desfer-canvi-boto" onClick="undoChange2File()"></button>
-	  	<button type="button" class="btn btn-primary btn-lg ui-aplicar-canvi-boto" data-toggle="modal" data-target="#myModal">Aplicar Canvi</button>
-	  	<button type="button" class="btn btn-primary btn-lg ui-exportar-boto" id="exportar-boto1" role="button" onclick="exportImportedFile()">Exportar .py</button>
+	  	<div class="row-fluid">
+		  	<button type="button" class="btn btn-sq-xs btn-primary btn-square ui-desfer-canvi-boto" id="desfer-canvi-boto" onClick="undoChange2File()">
+		  		<img src="./img/undo.png" title="Desfer canvi" width="30"/>
+		  	</button>
+		  	<button type="button" class="btn btn-sq-xs btn-primary ui-aplicar-canvi-boto" data-toggle="modal" data-target="#myModal">
+		  		<img src="./img/edit.png" title="Modificar fitxer" width="30"/>
+		  	</button>
+		  	<button type="button" class="btn btn-sq-xs btn-primary btn-square ui-exportar-boto" id="exportar-boto1" role="button" onclick="exportImportedFile()">
+      			<img src="./img/export.png" title="Exportar .PY" width="30"/>
+      		</button>
+      	</div>
       	<p class="ui-exporta-fitxer" id="exporta-fitxer"></p>
       </div>
       <!-- Modal -->
@@ -181,7 +189,7 @@
 			    </div>
 			    <div class="radio">
 			      <label><input type="radio" onClick="enableFilter()" id="radioFiltre" name="optradio">Filtre</label>
-			      <textarea class="form-control ui-textarea" rows="1" id="commentFiltre" placeholder="rows=20, tables=tablename, rows=20;tables=tablename" disabled></textarea>
+			      <textarea class="form-control ui-textarea" rows="1" id="commentFiltre" placeholder="rows=20, columns=columnfield(s), rows=20;columns=columnfield(s), columnfield=value" disabled></textarea>
 			    </div>
 			    <div class="radio">
 			      <label><input type="radio" onClick="enableDelete()" id="radioEliminar" name="optradio">Eliminar</label>
@@ -208,7 +216,9 @@
 	    	<div id="map" class="ui-map"></div>
 	  		</div>
 		</div>
-    	<a class="btn btn-lg btn-primary ui-exportar-boto2" id="exportar-boto" role="button" onclick="myClickFunction6b()">Exportar .map</a>
+    	<button type="button" class="btn btn-sq-xs btn-primary ui-exportar-boto2" id="exportar-boto" role="button" onclick="myClickFunction6b()">
+    		<img src="./img/export.png" title="Exportar .MAP" width="30"/>
+    	</button>
     	<div id="myProgress" class="ui-myProgress"><div id="myBar" class="ui-myBar"></div></div>
     	<p class="ui-exporta-fitxer-mapa" id="exporta-fitxer-mapa"></p>
     </div>
@@ -433,29 +443,33 @@
 	};
 	function undoChange2File() {
 		undoActivated = true;
+		optionChange = "desfer";
+		optionText = "buit";
 		applyChange2File();
 	};
 	function applyChange2File() {
-		if ($('#radioCoordenades').is(":checked")) {
-			optionChange = "coord";
-			optionText = $("#commentCoordenades").val();
-		}
-		else if ($('#radioEstil').is(":checked")) {
-			optionChange = "estil";
-			optionText = $("#commentEstil").val();
-		}
-		else if ($('#radioFiltre').is(":checked")) {
-			optionChange = "filtre";
-			optionText = $("#commentFiltre").val();
-		}
-		else if ($('#radioEliminar').is(":checked")) {
-			optionChange = "eliminar";
-			optionText = "buit";			
-		}
-		else if (undoActivated == true) {
-			optionChange = "desfer";
-			optionText = "buit";
-			undoActivated = false;
+		if (!undoActivated) {
+			if ($('#radioCoordenades').is(":checked")) {
+				optionChange = "coord";
+				optionText = $("#commentCoordenades").val();
+			}
+			else if ($('#radioEstil').is(":checked")) {
+				optionChange = "estil";
+				optionText = $("#commentEstil").val();
+			}
+			else if ($('#radioFiltre').is(":checked")) {
+				optionChange = "filtre";
+				optionText = $("#commentFiltre").val();
+			}
+			else if ($('#radioEliminar').is(":checked")) {
+				optionChange = "eliminar";
+				optionText = "buit";			
+			}
+			/*else if (undoActivated == true) {
+				optionChange = "desfer";
+				optionText = "buit";
+				undoActivated = false;
+			}*/
 		}
 		var howManyCheckboxesChecked = 0;
 		var numberOfFile = null;
@@ -511,7 +525,7 @@
 								$("#file-change-text").text("S'ha desfet el canvi del fitxer correctament.");
 					        	$("#file-change-text").css("color", "green");
 					        	$("#file-change-text").css("font-size", "13px");
-					        	$("#file-filter" + (numberOfFile)).text(data);
+					        	if (data.indexOf("NO") == -1) $("#file-filter" + (numberOfFile)).text(data);
 								}
 							},
 							error: function(jqXHR, textStatus, errorThrown) {
@@ -559,7 +573,7 @@
 		$("#commentCoordenades").attr("disabled", true); 
 		$("#commentEstil").attr("disabled", true);
 		$("#commentFiltre").attr("disabled", true);
-	}
+	};
 	function uploadFile(event) {
 // 		alert("HOLA");
 		event.stopPropagation(); 
@@ -869,7 +883,6 @@
 			$.ajax({
 				url: 'http://localhost/compilador-cartografic/IdiomaServiceServlet?info=add&idioma=encatala',
 			       type: 'POST',
-			       data: userInformation,
 			       success: function(data, textStatus, jqXHR) {
 			    	   console.log("IdiomaServiceServlet success");
 			    	   },

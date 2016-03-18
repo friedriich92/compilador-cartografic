@@ -200,9 +200,9 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 		ResultSet rs = null;
 		ProcessBuilder pb = null;
 		int countNumber2, numberOfRows;
-		String sql1, finalResponse, limit, tables, info2, almostFinalResponse, exactNameWithoutExtension, exactName;
+		String sql1, finalResponse, limit, columns, columnfield, value, info2, almostFinalResponse, exactNameWithoutExtension, exactName;
 		// Inicialització
-		finalResponse = sql1 = limit = tables = almostFinalResponse = "";
+		finalResponse = sql1 = limit = columns = columnfield = value = almostFinalResponse = "";
 		exactNameWithoutExtension = fileNameWithoutExtension + username;
 		exactName = fileNameWithoutExtension + username+ "." + extension;
 		countNumber2 = numberOfRows = 0;
@@ -236,14 +236,14 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 		    
 			// 3. APPLY FILTER
 			if (info.contains(";")) {
-				if (info.contains("tables") && info.contains("rows")) {
-					System.out.println("info.contains(tables) && info.contains(rows)");
+				if (info.contains("columns") && info.contains("rows")) {
+					System.out.println("info.contains(columns) && info.contains(rows)");
 					for (String retval: info.split(";", 2)) {
-				          if (retval.contains("tables")) {
+				          if (retval.contains("columns")) {
 				        	  info2 = retval;
 				        	  System.out.println("info2: " + info2);
 				        	  for (String retval2: info2.split("=", 2))
-				        		  if (!retval2.contains("tables")) tables = retval2;
+				        		  if (!retval2.contains("columns")) columns = retval2;
 				          }
 				          else {
 				        	  info2 = retval;
@@ -253,23 +253,36 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 				        	  }
 				          }
 					pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT "+
-							tables+" from "+exactNameWithoutExtension.toLowerCase()+" limit " + limit +"\"");
+							columns+" from "+exactNameWithoutExtension.toLowerCase()+" limit " + limit +"\"");
 					}
 			}
 			else {
-				if (info.contains("tables")) {
-					System.out.println("info.contains(tables)" + info);
-					for (String retval: info.split("=", 2))
-				          if (!retval.contains("tables")) tables = retval;
-					pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT "+
-							tables+" FROM "+exactNameWithoutExtension.toLowerCase()+"\"");
-				}
-				else if (info.contains("rows")) {
-					System.out.println("info.contains(rows)" + info);
-					for (String retval: info.split("=", 2))
-				          if (!retval.contains("rows")) limit = retval;
-					pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT * FROM "+
-							exactNameWithoutExtension.toLowerCase()+" limit " + limit +"\"");
+				if (info.contains("=")) {
+					if (info.contains("columns")) {
+						System.out.println("info.contains(columns)" + info);
+						for (String retval: info.split("=", 2))
+					          if (!retval.contains("columns")) columns = retval;
+						pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT "+
+								columns+" FROM "+exactNameWithoutExtension.toLowerCase()+"\"");
+					}
+					else if (info.contains("rows")) {
+						System.out.println("info.contains(rows)" + info);
+						for (String retval: info.split("=", 2))
+					          if (!retval.contains("rows")) limit = retval;
+						pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT * FROM "+
+								exactNameWithoutExtension.toLowerCase()+" limit " + limit +"\"");
+					}
+					else {
+						System.out.println("info.contains(columnfield)" + info);
+						int i = 0;
+						for (String retval: info.split("=", 2)) {
+					          if (i == 0) columnfield = retval;
+					          else if (i == 1) value = retval;
+					          ++i;
+						}
+						pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp PG:\"host=192.122.214.77 user=postgres dbname=osm password=SiteP0305\" -sql \"SELECT * FROM "+
+								exactNameWithoutExtension.toLowerCase()+" where " + columnfield + " = " + value +"\"");
+					}
 				}
 			}
 			
@@ -338,12 +351,14 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 		    	importarFitxer.addFitxer(new Fitxer(exactNameWithoutExtension+"2."+extension, username, 2, new java.sql.Date(today.getTime()),
 		    			exactNameWithoutExtension+"2", new ExtensioDeFitxer(extension), true));
 		    	importarFitxer.addVersioFitxer(new VersioFitxer(exactNameWithoutExtension+"2."+extension, 2, null, null, info));
-		    	importarFitxer.addInformacioGeografica(new InformacioGeografica(exactNameWithoutExtension+"2."+extension, FileUtils.readFileToString(file), 2));
+		    	importarFitxer.addInformacioGeografica(new InformacioGeografica(exactNameWithoutExtension+"2."+extension, "aquesta es la informacio del fitxer", 2));
+		    	// FileUtils.readFileToString(file) => (FORMAT) ERROR: invalid byte sequence for encoding "UTF8": 0x00
 		    }
 		    else {
 		    	File file = new File("/files/"+exactNameWithoutExtension+"3.shp");
 		    	importarFitxer.editVersioFitxer(exactNameWithoutExtension+"2."+extension, "filtre", info);
-		    	importarFitxer.editInformacioGeografica(exactNameWithoutExtension+"2."+extension, FileUtils.readFileToString(file));		    	
+		    	importarFitxer.editInformacioGeografica(exactNameWithoutExtension+"2."+extension, "aquesta es la informacio del fitxer");
+		    	// FileUtils.readFileToString(file) => (FORMAT) ERROR: invalid byte sequence for encoding "UTF8": 0x00
 		    }
     		
 		    // 6. SEND WHAT HAPPENED => data

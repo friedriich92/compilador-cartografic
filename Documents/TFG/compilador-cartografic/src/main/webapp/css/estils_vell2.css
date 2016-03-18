@@ -17,15 +17,11 @@ p, div {
     font-family: 'Roboto', Helvetica, Arial, sans-serif;
 }
 
-.btn-lg {
-    padding: 13px 16px;
-}
-
 #map {
 	border: 1px solid #949494;
     box-shadow : 0 1px 5px rgba(0,0,0,0.45);
-/*     width: 400px; */
-/*     height: 400px; */
+    width: 400px;
+    height: 400px;
     margin: 0 auto;
 }
 
@@ -72,7 +68,7 @@ p, div {
 }
 
 .ui-exportar-boto,.ui-exportar-boto2 {
-/* 	position: relative; */
+	position: relative;
     padding-bottom: 15px;
     box-shadow: 0 3px 0 0 #42a0ff;
     background: #80bfff;
@@ -225,6 +221,7 @@ p, div {
 	overflow-y: scroll;
     height: 162px;
     margin-bottom: 28px;
+    margin-top: 15px;
 }
 
 .ui-myProgress {
@@ -243,6 +240,7 @@ p, div {
 }
 
 .ui-aplicar-canvi-boto {
+	margin-right: 40px;
     box-shadow: 0 3px 0 0 #1188ff;
     background: #3399ff;
     border-color: transparent;
@@ -304,23 +302,13 @@ p, div {
 }
 
 .ui-desfer-canvi-boto {
-/* 	background: url('../img/undo.png'); */
-/*  width: 50px; */
-/*  height: 50px; */
-/*  background-repeat: no-repeat; */
-/*  background-color: darkgray; */
-/*  padding: 20px 24px; */
-/*  margin-right: 35px; */
-/*  border-radius: 6px; */
-/*  background-position: center; */
-    box-shadow: 0 3px 0 0 #808080;
-    background: #919191;
-    border-color: transparent;
-    text-shadow: 2px 2px 2px #c0c0c0;
-}
-
-.ui-desfer-canvi-boto:hover {
-	background-color: #808080;
-	border-color: transparent;
-	color: white;
+	background: url('../img/undo.png');
+    width: 50px;
+    height: 50px;
+    background-repeat: no-repeat;
+    background-color: darkgray;
+    padding: 20px 24px;
+    margin-right: 35px;
+    border-radius: 6px;
+    background-position: center;
 }

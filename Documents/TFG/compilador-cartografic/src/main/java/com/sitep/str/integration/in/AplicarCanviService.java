@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.sitep.str.integration.in.classes.VersioFitxer;
 
-@SuppressWarnings("hiding")
 public interface AplicarCanviService {
 
 	public void printSomething();
