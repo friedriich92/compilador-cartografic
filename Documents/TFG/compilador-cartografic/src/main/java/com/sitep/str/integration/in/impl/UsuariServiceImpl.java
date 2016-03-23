@@ -126,13 +126,13 @@ public class UsuariServiceImpl implements UsuariService {
 
 	public String getFiles(String userName) {
 		boolean does2Exist;
-		String name2Use, sql1, sql2, finalResponse, almostFinalResponse, theFinalResponse, exactName;;
+		String name2Use, fileNameEdit, fileNameEdit2, sql1, sql2, finalResponse, almostFinalResponse, theFinalResponse, exactName;;
 		PreparedStatement pstmt1, pstmt2;
 		int countNumber2, numberOfRows, loopNumber;
 		ResultSet rs, rs2;
 		// Inicialització
 		does2Exist = false;
-		finalResponse = almostFinalResponse = theFinalResponse = name2Use = exactName = "";
+		finalResponse = fileNameEdit = fileNameEdit2 = almostFinalResponse = theFinalResponse = name2Use = exactName = "";
 		rs = rs2 = null;
 		pstmt1 = pstmt2 = null;
 		Connection conn = null;
@@ -153,7 +153,12 @@ public class UsuariServiceImpl implements UsuariService {
 	        	while (rs.next()) { // 3. PER A CADA ARXIU
 	        		++loopNumber;
 	    			try {
-	    				almostFinalResponse += (rs.getString(1) + "'" + rs.getString(2) + "'");
+	    				fileNameEdit = rs.getString(1);
+	    				System.out.println("fileNameEdit: " + fileNameEdit + " contains: " +
+	    						fileNameEdit.contains(userName));
+	    				if (fileNameEdit.contains(userName)) fileNameEdit2 = fileNameEdit.replace(userName, "");
+	    				System.out.println("New fileNameEdit: " + fileNameEdit2);
+	    				almostFinalResponse += (fileNameEdit2 + "'" + rs.getString(2) + "'");
 	            		exactName = rs.getString(3);
 	            				
 	            		// 3.0 EXISTEIX EL FITXER 2?

@@ -3,7 +3,10 @@ package com.sitep.str.integration.in.impl;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +16,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,9 +38,10 @@ import com.sitep.str.integration.in.classes.VersioFitxer;
 public class FitxerServiceImpl implements FitxerService {
 	
 	public void importFile(HttpServletRequest request, HttpServletResponse response, String userName) throws IOException, SQLException, InterruptedException {
-		int numeroDeFitxers = 0;
-		String fileNameWithoutExtension, extension, exactName, exactNameWithoutExtension, filetxt;
-		fileNameWithoutExtension = extension = exactName = exactNameWithoutExtension = filetxt = "";
+		int numeroDeFitxers, counter;
+		numeroDeFitxers = counter = 0;
+		String fileNameWithoutExtension, itemGetName, extension, exactName, exactNameWithoutExtension, filetxt, zipfiles;
+		fileNameWithoutExtension = itemGetName = extension = exactName = exactNameWithoutExtension = filetxt = zipfiles = "";
 		try {
 			// Create a new file upload handler 
 			ServletFileUpload upload = new ServletFileUpload();
@@ -57,42 +63,131 @@ public class FitxerServiceImpl implements FitxerService {
 	            bout.close();
 	            bin.close();
 	            
-	            // Canviar el nom del fitxer
-	            fileNameWithoutExtension = FilenameUtils.removeExtension(item.getName());
-	            extension = FilenameUtils.getExtension("/files/"+item.getName());
-	            filetxt = FileUtils.readFileToString(f);
-	            exactName = fileNameWithoutExtension + userName + "." + extension;
-	            exactNameWithoutExtension = fileNameWithoutExtension + userName;
+	            // If (zip)
+	            boolean iszip = isZipFile(f);
+	            System.out.println("Is zip? " + iszip);
+	            if (iszip) {
+	            	// Obtenir nom arxius
+	            	zipfiles = getList("/files/"+item.getName());
+	            	for (int i = 0; i < zipfiles.length(); i++) {
+	            	    if (zipfiles.charAt(i) == ';')
+	            	        counter++;
+	            	}
+	            	if (counter >= 2) {
+		            	// Descomprimir arxiu
+		            	ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "unzip /files/" + item.getName() + 
+								" -d /files/");
+						System.out.println("Run (importFile) unzip command " + pb.toString());
+						Process process = pb.start();
+
+						System.out.println("Error (importFile) unzip stream:" + pb.toString());
+						InputStream errorStream = process.getErrorStream();
+						printStream(errorStream);
+
+						process.waitFor();
+
+						System.out.println("Output (importFile) unzip stream:");
+						InputStream inputStream = process.getInputStream();
+						printStream(inputStream);
+	    	    		
+						String[] dataArray =  zipfiles.split(";");
+	    	    		for (String s: dataArray) {
+	    	    			// Canviar el nom del fitxer
+	    	    			if (s.contains("shp") && !s.contains("xml")) {
+	    	    				System.out.println("Contains shp");
+	    	    				itemGetName = s;
+	    			            fileNameWithoutExtension = FilenameUtils.removeExtension(s);
+	    			            extension = FilenameUtils.getExtension("/files/" + s);
+	    			            exactName = fileNameWithoutExtension + userName + "." + extension;
+	    			            exactNameWithoutExtension = fileNameWithoutExtension + userName;
+	    			            System.out.println("itemGetName: " + itemGetName + ", fileNameWithoutExtension: "
+	    			            		+ fileNameWithoutExtension + ", extension: " + extension + ", exactName: "
+	    			            		+ exactName);
+	    	    			}
+	    	    			// Canviar el nom del fitxer
+	    	    			pb = new ProcessBuilder("/bin/sh", "-c", "mv /files/" + s + 
+	    							" /files/" + FilenameUtils.removeExtension(s) + userName + "." + FilenameUtils.getExtension("/files/" + s));
+							System.out.println("Run (importFile) rename command " + pb.toString());
+							process = pb.start();
+
+							System.out.println("Error (importFile) rename stream:" + pb.toString());
+							errorStream = process.getErrorStream();
+							printStream(errorStream);
+
+							process.waitFor();
+
+							System.out.println("Output (importFile) rename stream:");
+							inputStream = process.getInputStream();
+							printStream(inputStream);
+	    	    		}
+	            	}
+	            }
+	            else { // Else (!zip)
+		            // Canviar el nom del fitxer
+	            	itemGetName = item.getName();
+		            fileNameWithoutExtension = FilenameUtils.removeExtension(itemGetName);
+		            extension = FilenameUtils.getExtension("/files/"+itemGetName);
+		            System.out.println("bz2 extension ???: " + extension);
+		            if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz2")) {
+		            	System.out.println("importFile bz2 extension");
+		            	fileNameWithoutExtension = FilenameUtils.removeExtension(fileNameWithoutExtension);
+		            	extension = "osm." + extension;
+		            	System.out.println("importFile fileNameWithoutExtension: " + fileNameWithoutExtension +
+		            			", extension: " + extension);
+		            }
+		            // filetxt = FileUtils.readFileToString(f);
+		            exactName = fileNameWithoutExtension + userName + "." + extension;
+		            exactNameWithoutExtension = fileNameWithoutExtension + userName;
+		            
+					ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "mv /files/" + itemGetName + 
+							" /files/" + exactName);
+					System.out.println("Run (importFile) command " + pb.toString());
+					Process process = pb.start();
+	
+					System.out.println("Error (importFile) stream:" + pb.toString());
+					InputStream errorStream = process.getErrorStream();
+					printStream(errorStream);
+	
+					process.waitFor();
+	
+					System.out.println("Output (importFile) stream:");
+					InputStream inputStream = process.getInputStream();
+					printStream(inputStream);
+	            }
 	            
-				ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "mv /files/" + item.getName() + 
-						" /files/" + exactName);
-				System.out.println("Run (importFile) command " + pb.toString());
-				Process process = pb.start();
-
-				System.out.println("Error (importFile) stream:" + pb.toString());
-				InputStream errorStream = process.getErrorStream();
-				printStream(errorStream);
-
-				process.waitFor();
-
-				System.out.println("Output (importFile) stream:");
-				InputStream inputStream = process.getInputStream();
-				printStream(inputStream);
-	            
-	            // Atributs Fitxer
+	            // Atributs per insertar
 	            ExtensioDeFitxer extensioDeFitxer = new ExtensioDeFitxer(extension);
 				java.util.Date today = new java.util.Date();
-	            System.out.println("File field " + name + " with file name " + item.getName() + " detected.");
+	            System.out.println("File field " + name + " with file name " + itemGetName + " detected.");
 	            
 				// Insert into DB
-	            addFitxer(new Fitxer(exactName, userName, 1, new java.sql.Date(today.getTime()),
-	            		exactNameWithoutExtension.toLowerCase(), extensioDeFitxer, false));
-	            addVersioFitxer(new VersioFitxer(exactName, 1, null, null, null));
-	            addInformacioGeografica(new InformacioGeografica(exactName, "aquesta es la info", 1));
-	            
+	            if (extension.equalsIgnoreCase("osm.pbf") || extension.equalsIgnoreCase("osm.bz2")) {
+		            String type = "";
+	            	for (int j = 0; j < 4; j++) {
+			    		if (j == 0) type = "line";
+			    		else if (j == 1) type = "point";
+			    		else if (j == 2) type = "polygon";
+			    		else type = "roads";
+		            	addFitxer(new Fitxer(fileNameWithoutExtension + type + userName + ".shp", userName, 
+		            			1, new java.sql.Date(today.getTime()), exactNameWithoutExtension.toLowerCase(),
+		            				extensioDeFitxer, false));
+			            addVersioFitxer(new VersioFitxer(fileNameWithoutExtension + type + userName + ".shp",
+			            		1, null, null, null));
+			            addInformacioGeografica(new InformacioGeografica(fileNameWithoutExtension + type + 
+			            		userName + ".shp", "aquesta es la info", 1));
+		            }
+	            }
+	            else {
+		            addFitxer(new Fitxer(exactName, userName, 1, new java.sql.Date(today.getTime()),
+		            		exactNameWithoutExtension.toLowerCase(), extensioDeFitxer, false));
+		            addVersioFitxer(new VersioFitxer(exactName, 1, null, null, null));
+		            addInformacioGeografica(new InformacioGeografica(exactName, "aquesta es la info", 1));
+	            }
 	            // Number of files X User
-	            numeroDeFitxers = fitxersPerUsuari(userName); // La nova fila => abans+1
+	            numeroDeFitxers = fitxersPerUsuari(userName); // La nova fila
+	            if (extension.equalsIgnoreCase("osm.pbf") || extension.equalsIgnoreCase("osm.bz2")) numeroDeFitxers -= 3;
 	            System.out.println("numeroDeFitxers: " +  numeroDeFitxers);
+	            
 				// Write number of files X User
 	            response.setContentType("text/html");
 				PrintWriter out = response.getWriter();
@@ -104,6 +199,28 @@ public class FitxerServiceImpl implements FitxerService {
 	    {
 	        System.out.println("FileUploadException: " + ex);;
 	    }
+	}
+
+	private String getList(String filePath) {
+		FileInputStream fis = null;
+		ZipInputStream zipIs = null;
+		ZipEntry zEntry = null;
+		String entries = "";
+		try {
+			fis = new FileInputStream(filePath);
+            zipIs = new ZipInputStream(new BufferedInputStream(fis));
+            while((zEntry = zipIs.getNextEntry()) != null){
+                entries += (zEntry.getName() + ";");
+            }
+            zipIs.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		if (entries != null && entries.length() > 0 && entries.charAt(entries.length()-1)==';')
+			entries = entries.substring(0, entries.length()-1);
+		return entries;
 	}
 
 	public void addInformacioGeografica(InformacioGeografica informacioGeografica) {
@@ -232,6 +349,7 @@ public class FitxerServiceImpl implements FitxerService {
         String exactNameWithoutExtension = fileNameWithoutExtension + username;
         String extension = FilenameUtils.getExtension("/files/"+fileName);
         String exactName = exactNameWithoutExtension + "." + extension;
+        String exactName2 = exactNameWithoutExtension + "2." + extension;
         try {
 			Class.forName("org.postgresql.Driver");
 			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
@@ -255,7 +373,7 @@ public class FitxerServiceImpl implements FitxerService {
 			// Versio 2
 			sql1 = "DELETE FROM informaciogeografica WHERE idinformaciogeografica = ? AND numerodeversio = ?";
 			pstmt1 = connectionImportFileService.prepareStatement(sql1);
-			pstmt1.setString(1, exactName);
+			pstmt1.setString(1, exactName2);
 			pstmt1.setInt(2, 2);
 			int rowsAffected2 = pstmt1.executeUpdate();
 			System.out.println("informacio geografica rowsAffected 1:" + rowsAffected1 + ", 2:" + rowsAffected2);
@@ -269,7 +387,7 @@ public class FitxerServiceImpl implements FitxerService {
 			// Versio 2
 			sql1 = "DELETE FROM versiofitxer WHERE idversiofitxer = ? AND numerodeversio = ?";
 			pstmt1 = connectionImportFileService.prepareStatement(sql1);
-			pstmt1.setString(1, exactName);
+			pstmt1.setString(1, exactName2);
 			pstmt1.setInt(2, 2);
 			rowsAffected2 = pstmt1.executeUpdate();
 			System.out.println("versiofitxer rowsAffected 1:" + rowsAffected1 + ", 2:" + rowsAffected2);
@@ -425,4 +543,20 @@ public class FitxerServiceImpl implements FitxerService {
 	    			}
 	    	}
 	}
+	
+	public static boolean isZipFile(File file) throws IOException {
+	      if(file.isDirectory()) {
+	          return false;
+	      }
+	      if(!file.canRead()) {
+	          throw new IOException("Cannot read file "+file.getAbsolutePath());
+	      }
+	      if(file.length() < 4) {
+	          return false;
+	      }
+	      DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+	      int test = in.readInt();
+	      in.close();
+	      return test == 0x504b0304;
+	  }
 }

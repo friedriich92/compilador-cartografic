@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface CapaService {
 		
-	public void getLayer(String capa, String atributGeometria, HttpServletResponse response) throws IOException, InterruptedException;
+	public void getLayer(String capa, String filename, String atributGeometria, HttpServletResponse response) throws IOException, InterruptedException;
 	
 	public void printStream (InputStream stream) throws IOException;
 

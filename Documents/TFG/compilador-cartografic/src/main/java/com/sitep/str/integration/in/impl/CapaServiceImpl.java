@@ -19,7 +19,7 @@ import com.sitep.str.integration.in.CapaService;
 
 public class CapaServiceImpl implements CapaService {
 
-	public void getLayer(String capa, String atributGeometria, HttpServletResponse response) throws IOException, InterruptedException {
+	public void getLayer(String capa, String filename, String atributGeometria, HttpServletResponse response) throws IOException, InterruptedException {
 		System.out.println("getCapa");
 		System.out.println("--------------");
 
@@ -74,23 +74,21 @@ public class CapaServiceImpl implements CapaService {
 		InputStream inputStream = process.getInputStream();
 		printStream(inputStream);
 
-		response.setHeader("Content-disposition","attachment; filename=export.py");
+		response.setHeader("Content-disposition","attachment; filename="+filename+"_export.py");
 //		File my_file = new File("C:\\Users\\fprat\\Downloads\\testFile1.py");
         File my_file = new File("/home/tecnic/testFile1.py");
 		
 		// This should send the file to browser
 		OutputStream out = response.getOutputStream();
-		System.out.println("OutputStream");
         FileInputStream in = new FileInputStream(my_file);
-        System.out.println("FileInputStream");
         byte[] buffer = new byte[4096];
         int length;
-        while ((length = in.read(buffer)) > 0) out.write(buffer, 0, length);
-        System.out.println("While");
+        while ((length = in.read(buffer)) > 0){
+           out.write(buffer, 0, length);
+           }
         in.close();
-        System.out.println("in.close();");
         out.flush();
-        System.out.println("out.flush();");
+        System.out.println();
 	}
 
 	public void printStream(InputStream stream) throws IOException {

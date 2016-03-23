@@ -275,6 +275,7 @@
 		}
 		else if (howManyCheckboxesChecked == 1) {
 			var fileNameString = $("#file-name" + numberOfFile).text();
+			var extension = $("#file-name" + numberOfFile).text().split(".")[1];
 			var fileNameStringEmpty = "";
 			console.log(fileNameString.valueOf() + " ==? " + fileNameStringEmpty.valueOf());
 			console.log(fileNameString.valueOf() == fileNameStringEmpty.valueOf());
@@ -284,7 +285,7 @@
 	        	$("#exporta-fitxer").css("font-size", "13px");
 			}
 			else {
-				$.get("http://localhost/compilador-cartografic/CapaServiceServlet?name="+fileNameString);
+				window.open("http://localhost/compilador-cartografic/CapaServiceServlet?filename="+fileNameString+"&username="+userSession+"&extension="+extension)
 				$("#exporta-fitxer").text("La descarrega comensara en breus...");
 	        	$("#exporta-fitxer").css("color", "green");
 	        	$("#exporta-fitxer").css("font-size", "13px");
@@ -613,6 +614,7 @@
 	        processData: false, 
 	        contentType: false, 
 	        success: function(data, textStatus, jqXHR) {
+	        	$("#fileUploader").val("");
 	        	DateTime();
 	        	$("#puja-fitxer").css("color", "green");
 	        	$("#puja-fitxer").text("El fitxer " + file2uploadName + " s'ha pujat correctament.");
@@ -623,17 +625,48 @@
 	        		for (var i = 0; i <= nombreDeFiles; i++) {
 	                	$('#addr'+i).html("<td>"+ i +"</td><td class='bk-td' id='file-name"+i+"'>" + "" + "</td><td class='bk-td' id='file-hour"+i+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+i+"'>" + "" + "</td>");
 	                    $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
-	                    if (i == 1) {
-	    	        		$("#file-name" + filesUploaded).text(file2uploadName);
-	    	        		$("#file-hour" + filesUploaded).text(today);
-	                    }
+// 	                    if (i == 1) {
+// 	                    }
+	        		}
+                	if (file2uploadName.indexOf("zip") > -1) file2uploadName = file2uploadName.replace("zip", "shp");
+					if ((file2uploadName.indexOf("osm") > -1)) {
+						var type = "";
+	        			for (var i = 0; i < 4; i++) {
+		    		    	if (i == 0) type = "line";
+		    		    	else if (i == 1) type = "point";
+		    		    	else if (i == 2) type = "polygon";
+		    		    	else type = "roads";
+	        				$("#file-name" + filesUploaded).text(file2uploadName.split(".")[0] + 
+	        						type + ".shp");
+			        		$("#file-hour" + filesUploaded).text(today);
+			        		++filesUploaded;
+	        			}
+	        		}
+	        		else {
+	                	$("#file-name" + filesUploaded).text(file2uploadName);
+		        		$("#file-hour" + filesUploaded).text(today);
 	        		}
 	        	}
 	        	else if (data > 1) {
 	        		console.log("data == " + data);
 	        		filesUploaded = data;
-	        		$("#file-name" + filesUploaded).text(file2uploadName);
-	        		$("#file-hour" + filesUploaded).text(today);
+	        		if (file2uploadName.indexOf("zip") > -1) file2uploadName = file2uploadName.replace("zip", "shp");
+	        		if ((file2uploadName.indexOf("osm") > -1)) {
+	        			for (var i = 0; i < 4; i++) {
+		    		    	if (i == 0) type = "line";
+		    		    	else if (i == 1) type = "point";
+		    		    	else if (i == 2) type = "polygon";
+		    		    	else type = "roads";
+	        				$("#file-name" + filesUploaded).text(file2uploadName.split(".")[0] + 
+	        						type + ".shp");
+			        		$("#file-hour" + filesUploaded).text(today);
+	        				++filesUploaded;
+	        			}
+	        		}
+	        		else {
+		        		$("#file-name" + filesUploaded).text(file2uploadName);
+		        		$("#file-hour" + filesUploaded).text(today);
+	        		}
 	        	}
 	        	/*if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
 	        		$("#file-name" + filesUploaded).text(file2uploadName);
@@ -654,42 +687,11 @@
 	        	uploadToDatabase(file2uploadName);
 	        },
 	        error: function(jqXHR, textStatus, errorThrown) {
+	        	$("#fileUploader").val("");
 	        	console.log('ERRORS: ' + textStatus);
-	        	DateTime();
 	        	$("#puja-fitxer").css("color", "green"); // red
 	        	$("#puja-fitxer").text("El fitxer " + file2uploadName + " s'ha pujat correctament.");
 	        	$("#puja-fitxer").css("font-size", "13px");
-	        	if (data == 1) {
-	        		filesUploaded = 1;
-	        		for (var i = 0; i <= nombreDeFiles; i++) {
-	                	$('#addr'+i).html("<td>"+ i +"</td><td class='bk-td' id='file-name"+i+"'>" + "" + "</td><td class='bk-td' id='file-hour"+i+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+i+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+i+"'>" + "" + "</td>");
-	                    $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
-	        			if (i == 1) {
-	    	        		$("#file-name" + filesUploaded).text(file2uploadName);
-	    	        		$("#file-hour" + filesUploaded).text(today);
-	        			}
-	        		}
-	        	}
-	        	else if (data > 1) {
-	        		filesUploaded = data;
-	        		$("#file-name" + filesUploaded).text(file2uploadName);
-	        		$("#file-hour" + filesUploaded).text(today);
-	        	}
-	        	/*if (filesUploaded >= 1 && filesUploaded <= nombreDeFiles) {
-		        	$("#file-name" + filesUploaded).text(file2uploadName);
-	        		$("#file-hour" + filesUploaded).text(today);
-	        	}
-	        	else {
-	        	console.log("error postFilesData: " + filesUploaded);
-	            $('#addr'+filesUploaded).html("<td>"+ filesUploaded +"</td><td class='bk-td' id='file-name"+filesUploaded+"'>" + "" + "</td><td class='bk-td' id='file-hour"+filesUploaded+"'>" + "" + "</td><td class='bk-td'><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td class='bk-td' id='file-filter"+filesUploaded+"'>" + "" + "</td>");
-            	$('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');
-		        $("#file-name" + filesUploaded).text(file2uploadName);
-	        	$("#file-hour" + filesUploaded).text(today);
-	                $('#addr'+filesUploaded).html("<td>"+ (filesUploaded) +"</td><td>" + file2uploadName + "</td><td>" + today + "</td><td><input  id='checkbox-file"+filesUploaded+"' type='checkbox' class='form-control ui-checkbox-file'></td><td id='file-filter"+filesUploaded+"'>" + "" + "</td>");
-		            $('#tab_logic').append('<tr id="addr' + (filesUploaded) + '"></tr>');
-	        	}
-	            filesUploaded++;*/
-	            uploadToDatabase(file2uploadName);
 	        }
 	     });
 	};
@@ -714,15 +716,38 @@
 	};
 	function uploadToDatabase(filename) {
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/VectorialServiceServlet?user='+userSession,
+			url: 'http://localhost/compilador-cartografic/VectorialServiceServlet?user='+userSession+'&info=1',
 	        type: 'POST',
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {
 				console.log("uploadToDatabase success filesUploaded: " + filesUploaded);
-				$("#file-filter" + filesUploaded).text(data);
+				if (data.replace(/[^)]/g, "").length > 1) {
+					var dataVector = data.split(")");
+					var count = -4;
+					for(var i = 0; i < dataVector.length; i++) {
+						$("#file-filter" + (filesUploaded + count)).text(dataVector[i] +")");
+						++count;
+					}
+					/*uploadOsmFiles(filename);*/
+				}
+				else
+					$("#file-filter" + filesUploaded).text(data);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log("uploadToDatabase error");
+					}
+				});
+	};
+	function uploadOsmFiles(filename) {
+		$.ajax({
+			url: 'http://localhost/compilador-cartografic/VectorialServiceServlet?user='+userSession+"&info=osm",
+	        type: 'POST',
+	        data: filename,
+	        success: function(data, textStatus, jqXHR) {
+				console.log("uploadOsmFiles success osmFilesUploaded: " + filesUploaded);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log("uploadOsmFiles error");
 					}
 				});
 	};
@@ -745,6 +770,8 @@
 				success: function(data, textStatus, jqXHR) {
 					console.log("UsuariServiceServlet success " + data);
 					if (data.indexOf("NO") == -1) {
+						$("#lg_username").val("");
+						$("#lg_password").val("");
 						$("#user-login-text").text("");
 						hideEntrarForm();
 						++entryVariable;

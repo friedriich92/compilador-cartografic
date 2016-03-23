@@ -97,14 +97,14 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 				System.out.println("changeCS KML");
 				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension.toLowerCase()+"3.shp /files/"+exactName+" -t_srs "+coordenades);
 			}
-			else if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz") || extension.equalsIgnoreCase("osm")) {
+			/*else if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz2")) {
 				// Geometry type of `Geometry Collection' not supported in shapefiles SHPT=POINT/ARC/POLYGON/MULTIPOINT/POINTZ/ARCZ/POLYGONZ/MULTIPOINTZ
 				// pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+fileNameWithoutExtension+"3.shp /files/"+fileName+" -t_srs "+coordenades);
 				System.out.println("changeCS OSM");
 				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension
 						+".shp/"+exactNameWithoutExtension+"3.shp /files/"+exactNameWithoutExtension+
 						".shp/points.shp -t_srs "+coordenades);			
-			}
+			}*/
 			else if (extension.equalsIgnoreCase("csv")) {
 				System.out.println("changeCS CSV");
 				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp /files/"+fileName+" -s_srs "+coordenades);
@@ -125,9 +125,9 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 		    // 4. INSERT INTO TABLE
 			// 4.1 FILE 1 is now FILE2 before changing coordinates
 		    // Aquesta no funciona perque falta guardar el fitxer 2, només es guarda el tercer
-		    if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz") || extension.equalsIgnoreCase("osm"))
-			    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+".shp/"+exactNameWithoutExtension+"2.shp public."+exactNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
-		    else if (extension.equalsIgnoreCase("csv"))
+		    /*if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz2"))
+			    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+".shp/"+exactNameWithoutExtension+"2.shp public."+exactNameWithoutExtension+" | psql -h localhost -d osm -U postgres");*/
+		    if (extension.equalsIgnoreCase("csv"))
 		    	pb = new ProcessBuilder("psql -h localhost -d osm -U postgres -f /files/"+exactNameWithoutExtension+".sql");			    	
 		    else 
 		    	pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+"2.shp public."+exactNameWithoutExtension+" | psql -h localhost -d osm -U postgres");
@@ -145,9 +145,9 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 		    printStream(inputStream);
 		    
 		    // 4.2 FILE 2 is now FILE3 created after changing coordinates
-		    if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz") || extension.equalsIgnoreCase("osm"))
-			    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+".shp/"+exactNameWithoutExtension+"3.shp public."+exactNameWithoutExtension+"2 | psql -h localhost -d osm -U postgres");
-		    else if (extension.equalsIgnoreCase("csv")) { }
+		    /*if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz2"))
+			    pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+".shp/"+exactNameWithoutExtension+"3.shp public."+exactNameWithoutExtension+"2 | psql -h localhost -d osm -U postgres");*/
+		    if (extension.equalsIgnoreCase("csv")) { }
 		    else
 		    	pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+exactNameWithoutExtension+"3.shp public."+exactNameWithoutExtension+"2 | psql -h localhost -d osm -U postgres");
 			System.out.println("Run (AplicarCanviServiceImpl) 3rd command " + pb.toString());

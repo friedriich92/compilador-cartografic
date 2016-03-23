@@ -11,5 +11,7 @@ public interface VectorialService {
 	public void vectoriseAndUploadFileToDatabase(String filename, String filenameWithoutExtension, HttpServletResponse response, HttpServletRequest request);
 
 	public void printStream (InputStream stream) throws IOException;
+
+	public void vectoriseAndUploadOsmFileToDatabase(String fileName, String fileNameWithoutExtension, HttpServletResponse response, HttpServletRequest request) throws IOException;
 	
 }

@@ -28,6 +28,14 @@ public class VectorialServiceServlet extends HttpServlet {
 		System.out.println("filenameWithoutExtension" + fileNameWithoutExtension);
 		System.out.println("filename" + fileName);
 		carregadorFitxersVectorial.vectoriseAndUploadFileToDatabase(fileName, fileNameWithoutExtension, response, request);
+		/*if (request.getParameter("info").equalsIgnoreCase("osm")) {
+			fileNameWithoutExtension = FilenameUtils.removeExtension(fileNameWithoutExtension);
+			System.out.println("vectoriseAndUploadOsmFileToDatabase: " + fileName + fileNameWithoutExtension);
+			carregadorFitxersVectorial.vectoriseAndUploadOsmFileToDatabase(fileName, fileNameWithoutExtension, response, request);
+		} else {*/
+		System.out.println("vectoriseAndUploadFileToDatabase: " + fileName + fileNameWithoutExtension);
+		carregadorFitxersVectorial.vectoriseAndUploadFileToDatabase(fileName, fileNameWithoutExtension, response, request);
+		/*}*/
 	}
 	
 }

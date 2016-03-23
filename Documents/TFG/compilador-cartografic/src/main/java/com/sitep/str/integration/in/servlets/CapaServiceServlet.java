@@ -18,22 +18,30 @@ public class CapaServiceServlet extends HttpServlet {
 	private CapaService capa = new CapaServiceImpl();
 
 	protected void doGet( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String fileName, fileNameWithoutExtension, extension, geometry;
-		extension = geometry = "";
+		String fileName, exactFileName, exactFileNameWithExtension, fileNameWithoutExtension, userName, extension, geometry;
+		fileName = exactFileName = exactFileNameWithExtension = fileNameWithoutExtension = userName = extension = geometry = "";
 		
 		// Obtenir nom de la taula
-		fileName = request.getParameter("name");
-		System.out.println("fileName: " + fileName);
+		fileName = request.getParameter("filename");
+		userName = request.getParameter("username");
+		extension = request.getParameter("extension");
+		System.out.println("fileName: " + fileName + " & userName: " + userName + " & extension: "
+				+ extension);
 		fileNameWithoutExtension = FilenameUtils.removeExtension(fileName);
 		
-		// Obtenir extensio
-        extension = FilenameUtils.getExtension("/files/"+fileName);
+		// Obtenir nom
+		exactFileName = fileNameWithoutExtension + userName;
+		exactFileNameWithExtension = fileNameWithoutExtension + userName + "." + extension;
+		System.out.println("Exact name: " + exactFileName);
+		System.out.println("Exact name with extension: " + exactFileNameWithExtension);
+//      extension = FilenameUtils.getExtension("/files/"+exactFileName);
 		
-        System.out.println("extension: " + extension);
 		if (extension.equalsIgnoreCase("shp")) geometry = "geom"; // geom -> .SHP
+		else if (extension.equalsIgnoreCase("kml")) geometry = "wkb_geometry"; // geom -> .KML
+		else if (extension.equalsIgnoreCase("csv")) geometry = "geometria"; // geom -> .CSV
 		System.out.println("geometry: " + geometry);
 		try {
-			capa.getLayer(fileNameWithoutExtension, geometry, response);
+			capa.getLayer(exactFileName, fileNameWithoutExtension, geometry, response);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
