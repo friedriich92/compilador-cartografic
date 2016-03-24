@@ -5,7 +5,8 @@ import java.sql.SQLException;
 
 import com.sitep.str.integration.in.classes.Usuari;
 
-public interface UsuariService {
+@SuppressWarnings("hiding")
+public interface UsuariService<Usuari> {
 			
 	public int registerUser(String userInformation) throws IOException, SQLException;
 

@@ -2,19 +2,16 @@ package com.sitep.str.integration.in.impl;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.sitep.str.integration.in.FitxerService;
-import com.sitep.str.integration.in.IdiomaService;
 import com.sitep.str.integration.in.UsuariService;
-import com.sitep.str.integration.in.classes.Idioma;
 import com.sitep.str.integration.in.classes.RolDeUsuari;
 import com.sitep.str.integration.in.classes.Usuari;
 
-public class UsuariServiceImpl implements UsuariService {
+public class UsuariServiceImpl implements UsuariService<Usuari> {
 
 	static Connection connectionUsuariService = null;
 	FitxerService importarFitxer = new FitxerServiceImpl();

@@ -14,7 +14,7 @@ import com.sitep.str.integration.in.impl.IdiomaServiceImpl;
 public class IdiomaServiceController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private IdiomaService idiomaService = new IdiomaServiceImpl();
+	private IdiomaService<Idioma> idiomaService = new IdiomaServiceImpl();
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String info = request.getParameter("info");

@@ -14,14 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.sitep.str.integration.in.AplicarCanviService;
 import com.sitep.str.integration.in.FitxerService;
+import com.sitep.str.integration.in.FormatService;
 import com.sitep.str.integration.in.classes.ExtensioDeFitxer;
 import com.sitep.str.integration.in.classes.Fitxer;
 import com.sitep.str.integration.in.classes.InformacioGeografica;
 import com.sitep.str.integration.in.classes.VersioFitxer;
 
-public class AplicarCanviServiceImpl implements AplicarCanviService {
+public class AplicarCanviServiceImpl implements AplicarCanviService<VersioFitxer> {
 	
-	FitxerService importarFitxer = new FitxerServiceImpl();
+	FitxerService<Fitxer> importarFitxer = new FitxerServiceImpl();
+	FormatService<InformacioGeografica> formatService = new FormatServiceImpl();
 	
 	public void printSomething() {
 		System.out.println("OK");
@@ -38,12 +40,13 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 		PreparedStatement pstmt1 = null;
 		ResultSet rs = null;
 		ProcessBuilder pb = null;
+		boolean does2Exist = false;
 		int countNumber2;
 		String sql1, finalResponse, exactNameWithoutExtension, exactName;
 		// Inicialització
 		sql1 = finalResponse = "";
-		exactNameWithoutExtension = fileNameWithoutExtension + username;
-		exactName = fileNameWithoutExtension + username+ "." + extension;
+		exactNameWithoutExtension = fileNameWithoutExtension.toLowerCase() + username;
+		exactName = fileNameWithoutExtension.toLowerCase() + username+ "." + extension;
 		countNumber2 = 0;
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -53,7 +56,7 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 			sql1 = "SELECT COUNT(*) FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
 			pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
 			pstmt1.setString(1, username);
-			pstmt1.setString(2, exactNameWithoutExtension.toLowerCase()+"2");
+			pstmt1.setString(2, exactNameWithoutExtension+"2");
 			pstmt1.setInt(3, 2);
 			rs = pstmt1.executeQuery();
 		    if (rs.next())
@@ -65,13 +68,13 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 //			pstmt1.execute();
 			if (countNumber2 != 0) {
 				// -- Versió 2
-				sql1 = "DROP TABLE IF EXISTS " + exactNameWithoutExtension.toLowerCase() + "2";
+				sql1 = "DROP TABLE IF EXISTS " + exactNameWithoutExtension + "2";
 				pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
 				pstmt1.execute();				
 			}
 			
 		    // 2. DELETE FILE #3
-		    pb = new ProcessBuilder("/bin/sh", "-c", "rm /files/"+exactNameWithoutExtension.toLowerCase()+"3.*");
+		    pb = new ProcessBuilder("/bin/sh", "-c", "rm /files/"+exactNameWithoutExtension + "3.*");
 			System.out.println("Run (applyFilter) clean command " + pb.toString());
 			Process process = pb.start();
 	
@@ -88,11 +91,11 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 			// 3. FILE => SHP => CHANGE C.S. (EPSG:4326) => SHP
 			if (extension.equalsIgnoreCase("shp")) {
 				System.out.println("changeCS SHP");
-				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension.toLowerCase()+"3.shp /files/"+exactName+" -t_srs "+coordenades);
+				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp /files/"+exactName+" -t_srs "+coordenades);
 			}
 			else if (extension.equalsIgnoreCase("kml")) {
 				System.out.println("changeCS KML");
-				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension.toLowerCase()+"3.shp /files/"+exactName+" -t_srs "+coordenades);
+				pb = new ProcessBuilder("/bin/sh", "-c", "ogr2ogr -f \"ESRI Shapefile\" /files/"+exactNameWithoutExtension+"3.shp /files/"+exactName+" -t_srs "+coordenades);
 			}
 			/*else if (extension.equalsIgnoreCase("pbf") || extension.equalsIgnoreCase("bz2")) {
 				// Geometry type of `Geometry Collection' not supported in shapefiles SHPT=POINT/ARC/POLYGON/MULTIPOINT/POINTZ/ARCZ/POLYGONZ/MULTIPOINTZ
@@ -161,9 +164,18 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 		    printStream(inputStream);
 		    
 		    // 5. INSERT INTO BD (fitxer)
-		    java.util.Date today = new java.util.Date();
-		    importarFitxer.addFitxer(new Fitxer(exactNameWithoutExtension+"2."+extension, username, 2, new java.sql.Date(today.getTime()),
+		    // Check if exists
+      		sql1 = "SELECT EXISTS(SELECT 1 FROM fitxer WHERE idfitxer = ?)"; // 2
+    		pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
+    		pstmt1.setString(1, exactNameWithoutExtension+"2."+extension);
+    		rs = pstmt1.executeQuery();
+    		if (rs.next()) does2Exist = rs.getBoolean(1);
+		    // Insert
+		    if (!does2Exist) {
+		    	java.util.Date today = new java.util.Date();
+		    	importarFitxer.addFitxer(new Fitxer(exactNameWithoutExtension+"2."+extension, username, 2, new java.sql.Date(today.getTime()),
 		    		exactNameWithoutExtension+"2", new ExtensioDeFitxer(extension), true, null));
+		    }
 		    
 		    // 6. SEND WHAT HAPPENED => data
 			response.setContentType("text/html");
@@ -312,9 +324,11 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 		ResultSet rs = null;
 		ProcessBuilder pb = null;
 		int countNumber2, numberOfRows;
-		String sql1, finalResponse, limit, columns, columnfield, value, info2, almostFinalResponse, exactNameWithoutExtension;
+		String sql1, finalResponse, limit, columns, columnfield, value, info2, almostFinalResponse, 
+			exactNameWithoutExtension, extensioDeFitxer;
 		// Inicialització
-		finalResponse = sql1 = limit = columns = columnfield = value = almostFinalResponse = "";
+		finalResponse = sql1 = limit = columns = columnfield = value = almostFinalResponse = 
+				extensioDeFitxer= "";
 		exactNameWithoutExtension = fileNameWithoutExtension + username;
 		countNumber2 = numberOfRows = 0;
 		try {
@@ -330,7 +344,8 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 		    if (rs.next()) {
 		    	System.out.println("NEXT");
 		    	// 0. CHECK IF OSM EXTENSIODEFITXER
-		    	if (rs.getString(1).equalsIgnoreCase("osm.pbf") || rs.getString(1).equalsIgnoreCase("osm.bz2")) {
+		    	extensioDeFitxer = rs.getString(1);
+		    	if (extensioDeFitxer.equalsIgnoreCase("osm.pbf") || extensioDeFitxer.equalsIgnoreCase("osm.bz2")) {
 		    		System.out.println("applyFilter2OSM");
 		    		applyFilter2OSM(fileName, fileNameWithoutExtension, exactNameWithoutExtension, info, username, response);
 		    	}
@@ -471,20 +486,40 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 				    inputStream = process.getInputStream();
 				    printStream(inputStream);
 				    
-				    // [OPCIONAL] 5.3 INSERT INTO BD (fitxer)
+				    // [OPCIONAL] 5.3 CSV
+				    if (extensioDeFitxer.equalsIgnoreCase("csv")) {
+				    	// VARCHAR(254) => TEXT
+						sql1 = "ALTER TABLE "+exactNameWithoutExtension.toLowerCase()+"2 ALTER COLUMN geometria TYPE text";
+						System.out.println("extensioDeFitxercsv1: " + sql1 + " " + username + " " 
+							+ exactNameWithoutExtension.toLowerCase());
+						pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
+						pstmt1.executeUpdate();
+						// COLUMN.geometria FROM TABLE1 => COLUMN.geometria FROM TABLE2
+						sql1 = "UPDATE "+exactNameWithoutExtension.toLowerCase()+"2"
+								+ " SET geometria = "+exactNameWithoutExtension.toLowerCase()+".geometria"
+								+ " FROM "+exactNameWithoutExtension.toLowerCase()
+								+ " WHERE "+exactNameWithoutExtension.toLowerCase()+".id"
+										+ " = "+exactNameWithoutExtension.toLowerCase()+"2.id";
+						System.out.println("extensioDeFitxercsv2: " + sql1 + " " + username + " " 
+							+ exactNameWithoutExtension.toLowerCase());
+						pstmt1 = aplicarCanviConnection.prepareStatement(sql1);
+						pstmt1.executeUpdate();
+				    }
+				    
+				    // [OPCIONAL] 5.4 INSERT INTO BD (fitxer)
 				    if (countNumber2 == 0) {
 				    	// File file = new File("/files/"+exactNameWithoutExtension+"3.shp");
 				    	java.util.Date today = new java.util.Date();
 				    	importarFitxer.addFitxer(new Fitxer(exactNameWithoutExtension+"2."+extension, username, 2, new java.sql.Date(today.getTime()),
 				    			exactNameWithoutExtension+"2", new ExtensioDeFitxer(extension), true, null));
 				    	importarFitxer.addVersioFitxer(new VersioFitxer(exactNameWithoutExtension+"2."+extension, 2, null, null, info));
-				    	importarFitxer.addInformacioGeografica(new InformacioGeografica(exactNameWithoutExtension+"2."+extension, "aquesta es la informacio del fitxer", 2));
+				    	formatService.addInformacioGeografica(new InformacioGeografica(exactNameWithoutExtension+"2."+extension, "aquesta es la informacio del fitxer", 2));
 				    	// FileUtils.readFileToString(file) => (FORMAT) ERROR: invalid byte sequence for encoding "UTF8": 0x00
 				    }
 				    else {
 				    	// File file = new File("/files/"+exactNameWithoutExtension+"3.shp");
 				    	importarFitxer.editVersioFitxer(exactNameWithoutExtension+"2."+extension, "filtre", info);
-				    	importarFitxer.editInformacioGeografica(exactNameWithoutExtension+"2."+extension, "aquesta es la informacio del fitxer");
+				    	formatService.editInformacioGeografica(exactNameWithoutExtension+"2."+extension, "aquesta es la informacio del fitxer");
 				    	// FileUtils.readFileToString(file) => (FORMAT) ERROR: invalid byte sequence for encoding "UTF8": 0x00
 				    }
 		    		
@@ -529,4 +564,5 @@ public class AplicarCanviServiceImpl implements AplicarCanviService {
 	public String editFile(String fileName, String username) {
 		return importarFitxer.editFitxer(fileName, username);
 	}
+
 }

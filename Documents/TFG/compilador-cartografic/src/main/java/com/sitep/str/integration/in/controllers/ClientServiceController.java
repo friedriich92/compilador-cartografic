@@ -10,11 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileUploadException;
 
 import com.sitep.str.integration.in.ClientService;
+import com.sitep.str.integration.in.classes.Client;
 import com.sitep.str.integration.in.impl.ClientServiceImpl;
 
 public class ClientServiceController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private ClientService clientService = new ClientServiceImpl();
+	private ClientService<Client> clientService = new ClientServiceImpl();
 
 	protected void doPost( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {

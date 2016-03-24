@@ -23,8 +23,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import com.sitep.str.integration.in.ClientService;
 import com.sitep.str.integration.in.classes.Client;
 
-public class ClientServiceImpl implements ClientService {
+public class ClientServiceImpl implements ClientService<Client> {
 
+	@SuppressWarnings("resource")
 	public void registerClients(HttpServletRequest request) throws IOException, FileUploadException {
 		// Create a new file upload handler 
 		System.out.println("ClientService");
@@ -57,8 +58,8 @@ public class ClientServiceImpl implements ClientService {
 	    		String[] dataArray =  temp.split(",");
 	    		String identificadordeclient, empresa, telefon, adresa;
 	    		identificadordeclient = empresa = telefon = adresa = "";
-	    		int arrayIterator, responseValue;
-	    		arrayIterator = responseValue = 0;
+	    		int arrayIterator;
+	    		arrayIterator = 0;
 	    		
 	    		for (String s: dataArray) {
 	    			if (arrayIterator == 1) identificadordeclient = s;

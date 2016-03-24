@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import com.sitep.str.integration.in.IdiomaService;
 import com.sitep.str.integration.in.classes.Idioma;
 
-public class IdiomaServiceImpl implements IdiomaService {
+public class IdiomaServiceImpl implements IdiomaService<Idioma> {
 
 	public void editIdioma(String idioma) throws IOException {
         PreparedStatement pstmt1 = null;
@@ -45,7 +45,7 @@ public class IdiomaServiceImpl implements IdiomaService {
         Connection connectionIdiomaService = null;
         PreparedStatement pstmt1 = null;
         ResultSet rs = null;
-        String idioma2, sql1;
+        String sql1;
         int count = 0;
         sql1 = "";
 		try {

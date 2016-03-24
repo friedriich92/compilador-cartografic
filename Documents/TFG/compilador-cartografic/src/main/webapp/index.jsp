@@ -285,7 +285,7 @@
 	        	$("#exporta-fitxer").css("font-size", "13px");
 			}
 			else {
-				window.open("http://localhost/compilador-cartografic/CapaServiceController?filename="+fileNameString+"&username="+userSession+"&extension="+extension)
+				window.open("http://localhost/compilador-cartografic/FormatServiceController?filename="+fileNameString+"&username="+userSession+"&extension="+extension+"&function=ly")
 				$("#exporta-fitxer").text("La descarrega comensara en breus...");
 	        	$("#exporta-fitxer").css("color", "green");
 	        	$("#exporta-fitxer").css("font-size", "13px");
@@ -320,12 +320,12 @@
 			else boundingBoxString += extent[i] + ",";
 		}
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/FonsServiceController',
+			url: 'http://localhost/compilador-cartografic/FormatServiceController?function=bg',
 	        type: 'POST',
 	        data: boundingBoxString,
 	        success: function(data, textStatus, jqXHR) {
 	        	$("#myProgress").hide();
-	        	window.open("http://localhost/compilador-cartografic/FonsServiceController", "FonsServiceController");
+	        	window.open("http://localhost/compilador-cartografic/FormatServiceController?function=bg", "FonsServiceController");
 	        	$("#exporta-fitxer-mapa").css("color", "green");
 	        	$("#exporta-fitxer-mapa").text("La desc&agrave;rrega s'inicialitzar&agrave; en breus...");
 	        	for (i = 0; i <= 100; i++) 
@@ -648,6 +648,10 @@
 	        	else if (data > 1) {
 	        		console.log("data == " + data);
 	        		filesUploaded = data;
+	        		$("#file-filter" + filesUploaded).html('<img src="./img/loading.gif"> loading...');
+	        		$("#file-filter" + filesUploaded+1).html('<img src="./img/loading.gif"> loading...');
+	        		$("#file-filter" + filesUploaded+2).html('<img src="./img/loading.gif"> loading...');
+	        		$("#file-filter" + filesUploaded+3).html('<img src="./img/loading.gif"> loading...');
 	        		if (file2uploadName.indexOf("zip") > -1) file2uploadName = file2uploadName.replace("zip", "shp");
 	        		if ((file2uploadName.indexOf("osm") > -1)) {
 	        			for (var i = 0; i < 4; i++) {
@@ -714,7 +718,7 @@
 	};
 	function uploadToDatabase(filename) {
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/VectorialServiceController?user='+userSession+'&info=1',
+			url: 'http://localhost/compilador-cartografic/FormatServiceController?user='+userSession+'&info=1&function=vc',
 	        type: 'POST',
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {
@@ -738,7 +742,7 @@
 	};
 	function uploadOsmFiles(filename) {
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/VectorialServiceController?user='+userSession+"&info=osm",
+			url: 'http://localhost/compilador-cartografic/FormatServiceController?user='+userSession+"&info=osm",
 	        type: 'POST',
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {

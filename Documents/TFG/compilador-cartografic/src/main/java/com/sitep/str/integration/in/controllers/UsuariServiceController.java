@@ -11,11 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sitep.str.integration.in.UsuariService;
+import com.sitep.str.integration.in.classes.Usuari;
 import com.sitep.str.integration.in.impl.UsuariServiceImpl;
 
 public class UsuariServiceController extends HttpServlet {
 		private static final long serialVersionUID = 1L;
-		private UsuariService usuariService = new UsuariServiceImpl();
+		private UsuariService<Usuari> usuariService = new UsuariServiceImpl();
 		
 		protected void doPost( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 			try {

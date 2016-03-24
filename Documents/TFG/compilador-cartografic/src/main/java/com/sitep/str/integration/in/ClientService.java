@@ -8,7 +8,8 @@ import org.apache.commons.fileupload.FileUploadException;
 
 import com.sitep.str.integration.in.classes.Client;
 
-public interface ClientService {
+@SuppressWarnings("hiding")
+public interface ClientService<Client> {
 
 	void registerClients(HttpServletRequest request) throws IOException, FileUploadException;
 	

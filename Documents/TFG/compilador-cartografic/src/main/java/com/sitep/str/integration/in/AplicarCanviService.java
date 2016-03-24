@@ -8,7 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.sitep.str.integration.in.classes.VersioFitxer;
 
-public interface AplicarCanviService {
+@SuppressWarnings("hiding")
+public interface AplicarCanviService<VersioFitxer> {
 
 	public void printSomething();
 	
@@ -21,8 +22,9 @@ public interface AplicarCanviService {
 	public void applyFilter(String fileName, String fileNameWithoutExtension, String extension, String info, String username, HttpServletResponse response);
 
 	public void applyFilter2OSM(String fileName, String fileNameWithoutExtension, String extension, String info, String username, HttpServletResponse response);
-	
+
 	public void deleteFile(String fileName, String username);
 
 	public String editFile(String fileName, String username);
+
 }

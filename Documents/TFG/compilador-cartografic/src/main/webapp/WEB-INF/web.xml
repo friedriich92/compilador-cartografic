@@ -16,36 +16,6 @@
 	</listener>
 	
 	<servlet>
-		<servlet-name>FonsServiceController</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.controllers.FonsServiceController</servlet-class>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>FonsServiceController</servlet-name>
-		<url-pattern>/FonsServiceController</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>VectorialServiceController</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.controllers.VectorialServiceController</servlet-class>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>VectorialServiceController</servlet-name>
-		<url-pattern>/VectorialServiceController</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>CapaServiceController</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.controllers.CapaServiceController</servlet-class>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>CapaServiceController</servlet-name>
-		<url-pattern>/CapaServiceController</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
 		<servlet-name>FitxerServiceController</servlet-name>
 		<servlet-class>com.sitep.str.integration.in.controllers.FitxerServiceController</servlet-class>
 	</servlet>
@@ -103,5 +73,15 @@
 	<servlet-mapping>
 		<servlet-name>ClientServiceController</servlet-name>
 		<url-pattern>/ClientServiceController</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>FormatServiceController</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.controllers.FormatServiceController</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>FormatServiceController</servlet-name>
+		<url-pattern>/FormatServiceController</url-pattern>
 	</servlet-mapping>
 </web-app>

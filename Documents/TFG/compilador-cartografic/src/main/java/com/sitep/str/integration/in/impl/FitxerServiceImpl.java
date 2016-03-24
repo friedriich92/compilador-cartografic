@@ -26,22 +26,24 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import com.sitep.str.integration.in.FitxerService;
+import com.sitep.str.integration.in.FormatService;
 import com.sitep.str.integration.in.classes.ExtensioDeFitxer;
 import com.sitep.str.integration.in.classes.Fitxer;
 import com.sitep.str.integration.in.classes.InformacioGeografica;
 import com.sitep.str.integration.in.classes.VersioFitxer;
 
-public class FitxerServiceImpl implements FitxerService {
+public class FitxerServiceImpl implements FitxerService<Fitxer> {
+	
+	FormatService<InformacioGeografica> formatService = new FormatServiceImpl();
 	
 	public void importFile(HttpServletRequest request, HttpServletResponse response, String userName) throws IOException, SQLException, InterruptedException {
 		int numeroDeFitxers, counter;
 		numeroDeFitxers = counter = 0;
-		String fileNameWithoutExtension, itemGetName, extension, exactName, exactNameWithoutExtension, filetxt, zipfiles;
-		fileNameWithoutExtension = itemGetName = extension = exactName = exactNameWithoutExtension = filetxt = zipfiles = "";
+		String fileNameWithoutExtension, itemGetName, extension, exactName, exactNameWithoutExtension, zipfiles;
+		fileNameWithoutExtension = itemGetName = extension = exactName = exactNameWithoutExtension = zipfiles = "";
 		try {
 			// Create a new file upload handler 
 			ServletFileUpload upload = new ServletFileUpload();
@@ -174,17 +176,17 @@ public class FitxerServiceImpl implements FitxerService {
 			    		addFitxer(new Fitxer(fileNameWithoutExtension + type + userName + ".shp", userName, 
 		            			1, new java.sql.Date(today.getTime()), fileNameWithoutExtension + type + userName,
 		            				extensioDeFitxer, false, null));
-			            addVersioFitxer(new VersioFitxer(fileNameWithoutExtension + type + userName + ".shp",
+			    		addVersioFitxer(new VersioFitxer(fileNameWithoutExtension + type + userName + ".shp",
 			            		1, null, null, null));
-			            addInformacioGeografica(new InformacioGeografica(fileNameWithoutExtension + type + 
+			    		formatService.addInformacioGeografica(new InformacioGeografica(fileNameWithoutExtension + type + 
 			            		userName + ".shp", "aquesta es la info", 1));
 			            // 2
 		            	addFitxer(new Fitxer(fileNameWithoutExtension + type + userName + "2.shp", userName, 
 		            			2, new java.sql.Date(today.getTime()), fileNameWithoutExtension + type + userName + "2",
 		            				extensioDeFitxer, false, null));
-			            addVersioFitxer(new VersioFitxer(fileNameWithoutExtension + type + userName + "2.shp",
+		            	addVersioFitxer(new VersioFitxer(fileNameWithoutExtension + type + userName + "2.shp",
 			            		2, null, null, null));
-			            addInformacioGeografica(new InformacioGeografica(fileNameWithoutExtension + type + 
+		            	formatService.addInformacioGeografica(new InformacioGeografica(fileNameWithoutExtension + type + 
 			            		userName + "2.shp", "aquesta es la info", 2));
 		            }
 	            }
@@ -192,7 +194,7 @@ public class FitxerServiceImpl implements FitxerService {
 		            addFitxer(new Fitxer(exactName, userName, 1, new java.sql.Date(today.getTime()),
 		            		exactNameWithoutExtension.toLowerCase(), extensioDeFitxer, false, null));
 		            addVersioFitxer(new VersioFitxer(exactName, 1, null, null, null));
-		            addInformacioGeografica(new InformacioGeografica(exactName, "aquesta es la info", 1));
+		            formatService.addInformacioGeografica(new InformacioGeografica(exactName, "aquesta es la info", 1));
 	            }
 	            // Number of files X User
 	            numeroDeFitxers = fitxersPerUsuari(userName); // La nova fila
@@ -232,66 +234,7 @@ public class FitxerServiceImpl implements FitxerService {
 		if (entries != null && entries.length() > 0 && entries.charAt(entries.length()-1)==';')
 			entries = entries.substring(0, entries.length()-1);
 		return entries;
-	}
-
-	public void addInformacioGeografica(InformacioGeografica informacioGeografica) {
-        PreparedStatement pstmt1 = null;
-        Connection connectionImportFileService = null;
-		try {
-			Class.forName("org.postgresql.Driver");
-			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
-			
-			String columnsDest = "idinformaciogeografica, informacio, numerodeversio";
-			String sql1 = "INSERT INTO informaciogeografica (" + columnsDest + ") VALUES (?, ?, ?)";
-			System.out.println("SQL Statement: " + sql1);
-			
-			pstmt1 = connectionImportFileService.prepareStatement(sql1);
-			pstmt1.setString(1, informacioGeografica.getIdInformacioGeografica()); // Cal afegir l'usuari i la versió
-			pstmt1.setString(2, informacioGeografica.getInformacio());
-			pstmt1.setInt(3, informacioGeografica.getNumerodeversio());
-			pstmt1.executeUpdate();
-		} catch (Exception e) {
-		      e.printStackTrace();
-	    } finally {
-	    	try {
-	    		pstmt1.close();
-	    		connectionImportFileService.close();
-	    		} catch (SQLException e) {
-	    			e.printStackTrace();
-	    			}
-	    	}
-
-	}
-
-	public void addVersioFitxer(VersioFitxer versioFitxer) {
-        PreparedStatement pstmt1 = null;
-        Connection connectionImportFileService = null;
-		try {
-			Class.forName("org.postgresql.Driver");
-			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
-			
-			String columnsDest = "idversiofitxer, numerodeversio, estil, coordenades, filtre";
-			String sql1 = "INSERT INTO versiofitxer (" + columnsDest + ") VALUES (?, ?, ?, ?, ?)";
-			System.out.println("SQL Statement: " + sql1);
-			
-			pstmt1 = connectionImportFileService.prepareStatement(sql1);
-			pstmt1.setString(1, versioFitxer.getIdversiofitxer()); // Cal afegir l'usuari i la versió
-			pstmt1.setInt(2, versioFitxer.getNumerodeversio());
-			pstmt1.setString(3, versioFitxer.getEstil());
-			pstmt1.setString(4, versioFitxer.getCoordenades());
-			pstmt1.setString(5, versioFitxer.getFiltre());
-			pstmt1.executeUpdate();
-		} catch (Exception e) {
-		      e.printStackTrace();
-	    } finally {
-	    	try {
-	    		pstmt1.close();
-	    		connectionImportFileService.close();
-	    		} catch (SQLException e) {
-	    			e.printStackTrace();
-	    			}
-	    	}
-	}
+	}	
 
 	public int fitxersPerUsuari(String userName) {
         PreparedStatement pstmt1 = null;
@@ -500,7 +443,53 @@ public class FitxerServiceImpl implements FitxerService {
 	        System.out.println(inputLine);
 	    in.close();
 	}
+	
+	public static boolean isZipFile(File file) throws IOException {
+	      if(file.isDirectory()) {
+	          return false;
+	      }
+	      if(!file.canRead()) {
+	          throw new IOException("Cannot read file "+file.getAbsolutePath());
+	      }
+	      if(file.length() < 4) {
+	          return false;
+	      }
+	      DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+	      int test = in.readInt();
+	      in.close();
+	      return test == 0x504b0304;
+	  }
 
+	public void addVersioFitxer(VersioFitxer versioFitxer) {
+        PreparedStatement pstmt1 = null;
+        Connection connectionImportFileService = null;
+		try {
+			Class.forName("org.postgresql.Driver");
+			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+			
+			String columnsDest = "idversiofitxer, numerodeversio, estil, coordenades, filtre";
+			String sql1 = "INSERT INTO versiofitxer (" + columnsDest + ") VALUES (?, ?, ?, ?, ?)";
+			System.out.println("SQL Statement: " + sql1);
+			
+			pstmt1 = connectionImportFileService.prepareStatement(sql1);
+			pstmt1.setString(1, versioFitxer.getIdversiofitxer()); // Cal afegir l'usuari i la versió
+			pstmt1.setInt(2, versioFitxer.getNumerodeversio());
+			pstmt1.setString(3, versioFitxer.getEstil());
+			pstmt1.setString(4, versioFitxer.getCoordenades());
+			pstmt1.setString(5, versioFitxer.getFiltre());
+			pstmt1.executeUpdate();
+		} catch (Exception e) {
+		      e.printStackTrace();
+	    } finally {
+	    	try {
+	    		pstmt1.close();
+	    		connectionImportFileService.close();
+	    		} catch (SQLException e) {
+	    			e.printStackTrace();
+	    			}
+	    	}
+	}
+	
 	public void editVersioFitxer(String fileName, String key, String info) {
         PreparedStatement pstmt1 = null;
         Connection connectionImportFileService = null;
@@ -528,47 +517,4 @@ public class FitxerServiceImpl implements FitxerService {
 	    			}
 	    	}
 	}
-
-	public void editInformacioGeografica(String fileName, String readFileToString) {
-        PreparedStatement pstmt1 = null;
-        Connection connectionImportFileService = null;
-		try {
-			Class.forName("org.postgresql.Driver");
-			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
-			
-			String sql1 = "UPDATE informaciogeografica SET informacio = ? WHERE idinformaciogeografica = ? AND numerodeversio = ?";
-			System.out.println("SQL Statement editInformacioGeografica: " + sql1);
-			
-			pstmt1 = connectionImportFileService.prepareStatement(sql1);
-			pstmt1.setString(1, readFileToString);
-			pstmt1.setString(2, fileName);
-			pstmt1.setInt(3, 2);
-			pstmt1.executeUpdate();
-		} catch (Exception e) {
-		      e.printStackTrace();
-	    } finally {
-	    	try {
-	    		pstmt1.close();
-	    		connectionImportFileService.close();
-	    		} catch (SQLException e) {
-	    			e.printStackTrace();
-	    			}
-	    	}
-	}
-	
-	public static boolean isZipFile(File file) throws IOException {
-	      if(file.isDirectory()) {
-	          return false;
-	      }
-	      if(!file.canRead()) {
-	          throw new IOException("Cannot read file "+file.getAbsolutePath());
-	      }
-	      if(file.length() < 4) {
-	          return false;
-	      }
-	      DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
-	      int test = in.readInt();
-	      in.close();
-	      return test == 0x504b0304;
-	  }
 }

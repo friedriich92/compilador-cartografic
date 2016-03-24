@@ -2,11 +2,10 @@ package com.sitep.str.integration.in;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.sitep.str.integration.in.classes.Idioma;
 
-public interface IdiomaService {
+@SuppressWarnings("hiding")
+public interface IdiomaService<Idioma> {
 	
 	public void editIdioma(String id) throws IOException;
 	
