@@ -21,15 +21,13 @@ public class IdiomaServiceImpl implements IdiomaService {
 			Class.forName("org.postgresql.Driver");
 			connectionIdiomaService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
 			
-			String sql1 = "UPDATE idioma SET ? = ?, ? = ? WHERE identificador = ?";
+			String sql1 = "UPDATE idioma SET " + idioma + " = ?, " + idioma2 + " = ? WHERE identificador = ?";
 			System.out.println("SQL Statement editIdioma: " + sql1);
 			
 			pstmt1 = connectionIdiomaService.prepareStatement(sql1);
-			pstmt1.setString(1, idioma);
-			pstmt1.setString(2, "X");
-			pstmt1.setString(3, idioma2);
-			pstmt1.setString(4,  "O");
-			pstmt1.setInt(5, 1);
+			pstmt1.setString(1, "X");
+			pstmt1.setString(2,  "O");
+			pstmt1.setInt(3, 1);
 			pstmt1.executeUpdate();
 		} catch (Exception e) {
 		      e.printStackTrace();

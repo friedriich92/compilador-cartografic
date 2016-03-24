@@ -1,4 +1,4 @@
-package com.sitep.str.integration.in.servlets;
+package com.sitep.str.integration.in.controllers;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import com.sitep.str.integration.in.IdiomaService;
 import com.sitep.str.integration.in.classes.Idioma;
 import com.sitep.str.integration.in.impl.IdiomaServiceImpl;
 
-public class IdiomaServiceServlet extends HttpServlet {
+public class IdiomaServiceController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private IdiomaService idiomaService = new IdiomaServiceImpl();

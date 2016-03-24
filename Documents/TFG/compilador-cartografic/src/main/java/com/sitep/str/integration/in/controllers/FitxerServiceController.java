@@ -1,4 +1,4 @@
-package com.sitep.str.integration.in.servlets;
+package com.sitep.str.integration.in.controllers;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.sitep.str.integration.in.FitxerService;
 import com.sitep.str.integration.in.impl.FitxerServiceImpl;
 
-public class FitxerServiceServlet extends HttpServlet {
+public class FitxerServiceController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private FitxerService importarFitxerService = new FitxerServiceImpl();

@@ -19,7 +19,7 @@ import com.sitep.str.integration.in.CapaService;
 
 public class CapaServiceImpl implements CapaService {
 
-	public void getLayer(String capa, String filename, String atributGeometria, HttpServletResponse response) throws IOException, InterruptedException {
+	public void getLayer(String capa, String filename, String atributGeometria, HttpServletResponse response, String userName) throws IOException, InterruptedException {
 		System.out.println("getCapa");
 		System.out.println("--------------");
 
@@ -28,11 +28,61 @@ public class CapaServiceImpl implements CapaService {
 		Connection connectionCapa = null;
 		PreparedStatement pstmt1 = null;
 		ResultSet rs = null;
+		boolean does2Exist = false;
 		FileWriter writer = null;
+		String extensioDeFitxer, information;
+		extensioDeFitxer = information = "";
 		try {
 			Class.forName("org.postgresql.Driver");
 			connectionCapa = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
-			sql1 = "SELECT ST_AsGeoJSON(" + atributGeometria + ") from " + capa;
+			
+    		// 2. EXISTEIX EL FITXER 2?
+      		sql1 = "SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name = ?)"; // 2
+    		pstmt1 = connectionCapa.prepareStatement(sql1);
+    		pstmt1.setString(1, capa.toLowerCase() + "2");
+    		rs = pstmt1.executeQuery();
+    		if (rs.next()) does2Exist = rs.getBoolean(1);
+			
+    		// 3. FORMAT FITXER?
+    		sql1 = "SELECT extensiodefitxer FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
+			System.out.println(sql1 + " " + userName + " " + capa.toLowerCase());
+			pstmt1 = connectionCapa.prepareStatement(sql1);
+			pstmt1.setString(1, userName);
+			pstmt1.setString(2, capa.toLowerCase());
+			pstmt1.setInt(3,  1);
+			rs = pstmt1.executeQuery();
+		    if (rs.next()) extensioDeFitxer = rs.getString(1);
+		    
+		    if (extensioDeFitxer.equalsIgnoreCase("osm.bz2") || extensioDeFitxer.equalsIgnoreCase("osm.pbf")) {
+    	    	sql1 = "SELECT info FROM fitxer WHERE idusuari = ? AND nomfitxer = ? AND numerodeversio = ?";
+    			System.out.println(sql1 + " " + userName + " " + capa.toLowerCase());
+    			pstmt1 = connectionCapa.prepareStatement(sql1);
+    			pstmt1.setString(1, userName);
+    			pstmt1.setString(2, capa.toLowerCase()+"2");
+    			pstmt1.setInt(3,  2);
+    			rs = pstmt1.executeQuery();
+    			if (rs.next()) information = rs.getString(1);
+    			
+    			atributGeometria = "way";
+    			if (capa.contains("line")) capa = "planet_osm_line";
+    			else if (capa.contains("point")) capa = "planet_osm_point";
+    			else if (capa.contains("polygon")) capa = "planet_osm_polygon";
+    			else capa = "planet_osm_roads";
+    			
+    			information = information.substring(information.indexOf("(") + 1);
+    			information = information.substring(0, information.indexOf(")"));
+    			
+    			sql1 = "SELECT ST_AsGeoJSON(" + atributGeometria + ") from " + capa + " limit " + information;
+    		}
+		    else {
+		    	if (does2Exist) {
+		    		capa = capa + "2";
+		    		sql1 = "SELECT ST_AsGeoJSON(" + atributGeometria + ") from " + capa;
+		    	}
+		    	else
+		    		sql1 = "SELECT ST_AsGeoJSON(" + atributGeometria + ") from " + capa;
+		    }
+    		
 			pstmt1 = connectionCapa.prepareStatement(sql1);
 			rs = pstmt1.executeQuery();
 			

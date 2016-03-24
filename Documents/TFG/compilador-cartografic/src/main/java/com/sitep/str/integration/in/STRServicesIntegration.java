@@ -41,6 +41,8 @@ public class STRServicesIntegration{
 			System.out.println("DONE STRServicesIntegration.java");
 			AplicarCanviService ap = new AplicarCanviServiceImpl();
 			ap.printSomething();
+			/*UsuariService usuariService = new UsuariServiceImpl();
+			usuariService.getFiles("ester");*/
 		} catch (Exception tr) {
 			System.out.println("Error loading data: " + tr);
 		}

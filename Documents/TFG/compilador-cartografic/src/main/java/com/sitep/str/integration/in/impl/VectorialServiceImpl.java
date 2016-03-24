@@ -69,13 +69,16 @@ public class VectorialServiceImpl implements VectorialService {
 		    InputStream inputStream = process.getInputStream();
 		    printStream(inputStream);
 		    
-		    String finalResponse = "";
+		    String finalResponse, preview;
+		    finalResponse = preview = "";
 		    
 		    // [OPCIONAL] POSAR EL FITXER OSM PGSQL CONVERTIT A SHP /files
 		    if (extension.equalsIgnoreCase("osm.pbf") || extension.equalsIgnoreCase("osm.bz2")) {
 		    	/*pb = new ProcessBuilder("/bin/sh", "-c", "shp2pgsql -s 26986 /files/"+
 		    			exactNameWithoutExtension+".shp/points.shp public."+exactNameWithoutExtension+" | psql -h localhost -d osm -U postgres");*/
 		        String type = "";
+		    	PreparedStatement pstmt1 = null;
+		        Connection connectionImportFileService = null;
 		    	for (int i = 0; i < 4; ++i) {
 		    		if (i == 0) type = "line";
 		    		else if (i == 1) type = "point";
@@ -84,13 +87,48 @@ public class VectorialServiceImpl implements VectorialService {
 		    		
 			    	// 3. AGAFAR LES COLUMNES QUE ES PODRAN FILTRAR & EL # DE FILES (x4)
 			    	if (i <= 0 && i >= 2) {
-			    		finalResponse += (getFileInformation("planet_osm_" + type) + ";");
+			    		preview = getFileInformation("planet_osm_" + type);
+			    		finalResponse += (preview + ";");
 			    		System.out.println("!!!if finalResponse += " + finalResponse);
 			    	}
 			    	else {
-			    		finalResponse += getFileInformation("planet_osm_" + type);
+			    		preview = getFileInformation("planet_osm_" + type);
+			    		finalResponse += preview;
 			    		System.out.println("!!!else finalResponse += " + finalResponse);
 			    	}
+			    	
+			    	// Update fitxer (x4)
+			    	try {
+			    		Class.forName("org.postgresql.Driver");
+			    		connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
+			    		// 1
+			    		String updateTableSQL = "UPDATE fitxer SET info = ? "
+			    				+ " WHERE idfitxer = ? AND numerodeversio = ?";			    			
+			    		System.out.println("updateTableSQL1: " + updateTableSQL);
+			    		pstmt1 = connectionImportFileService.prepareStatement(updateTableSQL);
+			    		pstmt1.setString(1, preview);
+			    		pstmt1.setString(2, fileNameWithoutExtension + type + username + ".shp");
+			    		pstmt1.setInt(3, 1);
+			    		pstmt1.executeUpdate();
+			    		// 2
+			    		updateTableSQL = "UPDATE fitxer SET info = ? "
+			    				+ " WHERE idfitxer = ? AND numerodeversio = ?";			    			
+			    		System.out.println("updateTableSQL2: " + updateTableSQL);
+			    		pstmt1 = connectionImportFileService.prepareStatement(updateTableSQL);
+			    		pstmt1.setString(1, preview);
+			    		pstmt1.setString(2, fileNameWithoutExtension + type + username + "2.shp");
+			    		pstmt1.setInt(3, 2);
+			    		pstmt1.executeUpdate();
+			    		} catch (Exception e) {
+			    		      e.printStackTrace();
+			    	    } finally {
+			    	    	try {
+			    	    		pstmt1.close();
+			    	    		connectionImportFileService.close();
+			    	    		} catch (SQLException e) {
+			    	    			e.printStackTrace();
+			    	    			}
+			    	    	}
 		    		
 		    		// pgsql2shp
 			    	pb = new ProcessBuilder("/bin/sh", "-c", "pgsql2shp -f /files/" +
@@ -110,8 +148,8 @@ public class VectorialServiceImpl implements VectorialService {
 			    	printStream(inputStream);
 		    	}
 		    }
-		    else // 3. AGAFAR LES COLUMNES QUE ES PODRAN FILTRAR & EL # DE FILES 
-		    	finalResponse = getFileInformation(exactNameWithoutExtension);
+		    else  
+		    	finalResponse = getFileInformation(exactNameWithoutExtension); // 3. AGAFAR LES COLUMNES QUE ES PODRAN FILTRAR & EL # DE FILES
 		    // 4. SEND WHAT HAPPENED => data
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();

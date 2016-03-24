@@ -16,53 +16,53 @@
 	</listener>
 	
 	<servlet>
-		<servlet-name>FonsServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.FonsServiceServlet</servlet-class>
+		<servlet-name>FonsServiceController</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.controllers.FonsServiceController</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>FonsServiceServlet</servlet-name>
-		<url-pattern>/FonsServiceServlet</url-pattern>
+		<servlet-name>FonsServiceController</servlet-name>
+		<url-pattern>/FonsServiceController</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>VectorialServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.VectorialServiceServlet</servlet-class>
+		<servlet-name>VectorialServiceController</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.controllers.VectorialServiceController</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>VectorialServiceServlet</servlet-name>
-		<url-pattern>/VectorialServiceServlet</url-pattern>
+		<servlet-name>VectorialServiceController</servlet-name>
+		<url-pattern>/VectorialServiceController</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>CapaServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.CapaServiceServlet</servlet-class>
+		<servlet-name>CapaServiceController</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.controllers.CapaServiceController</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>CapaServiceServlet</servlet-name>
-		<url-pattern>/CapaServiceServlet</url-pattern>
+		<servlet-name>CapaServiceController</servlet-name>
+		<url-pattern>/CapaServiceController</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>FitxerServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.FitxerServiceServlet</servlet-class>
+		<servlet-name>FitxerServiceController</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.controllers.FitxerServiceController</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>FitxerServiceServlet</servlet-name>
-		<url-pattern>/FitxerServiceServlet</url-pattern>
+		<servlet-name>FitxerServiceController</servlet-name>
+		<url-pattern>/FitxerServiceController</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>IdiomaServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.IdiomaServiceServlet</servlet-class>
+		<servlet-name>IdiomaServiceController</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.controllers.IdiomaServiceController</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>IdiomaServiceServlet</servlet-name>
-		<url-pattern>/IdiomaServiceServlet</url-pattern>
+		<servlet-name>IdiomaServiceController</servlet-name>
+		<url-pattern>/IdiomaServiceController</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
@@ -76,32 +76,32 @@
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>UsuariServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.UsuariServiceServlet</servlet-class>
+		<servlet-name>UsuariServiceController</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.controllers.UsuariServiceController</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>UsuariServiceServlet</servlet-name>
-		<url-pattern>/UsuariServiceServlet</url-pattern>
+		<servlet-name>UsuariServiceController</servlet-name>
+		<url-pattern>/UsuariServiceController</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>AplicarCanviServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.AplicarCanviServiceServlet</servlet-class>
+		<servlet-name>AplicarCanviServiceController</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.controllers.AplicarCanviServiceController</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>AplicarCanviServiceServlet</servlet-name>
-		<url-pattern>/AplicarCanviServiceServlet</url-pattern>
+		<servlet-name>AplicarCanviServiceController</servlet-name>
+		<url-pattern>/AplicarCanviServiceController</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>ClientServiceServlet</servlet-name>
-		<servlet-class>com.sitep.str.integration.in.servlets.ClientServiceServlet</servlet-class>
+		<servlet-name>ClientServiceController</servlet-name>
+		<servlet-class>com.sitep.str.integration.in.controllers.ClientServiceController</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>ClientServiceServlet</servlet-name>
-		<url-pattern>/ClientServiceServlet</url-pattern>
+		<servlet-name>ClientServiceController</servlet-name>
+		<url-pattern>/ClientServiceController</url-pattern>
 	</servlet-mapping>
 </web-app>

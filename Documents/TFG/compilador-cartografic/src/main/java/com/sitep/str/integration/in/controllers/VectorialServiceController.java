@@ -1,4 +1,4 @@
-package com.sitep.str.integration.in.servlets;
+package com.sitep.str.integration.in.controllers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import org.apache.commons.io.FilenameUtils;
 import com.sitep.str.integration.in.VectorialService;
 import com.sitep.str.integration.in.impl.VectorialServiceImpl;
 
-public class VectorialServiceServlet extends HttpServlet {
+public class VectorialServiceController extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private VectorialService carregadorFitxersVectorial = new VectorialServiceImpl();
@@ -27,7 +27,6 @@ public class VectorialServiceServlet extends HttpServlet {
 		fileNameWithoutExtension = FilenameUtils.removeExtension(fileName);
 		System.out.println("filenameWithoutExtension" + fileNameWithoutExtension);
 		System.out.println("filename" + fileName);
-		carregadorFitxersVectorial.vectoriseAndUploadFileToDatabase(fileName, fileNameWithoutExtension, response, request);
 		/*if (request.getParameter("info").equalsIgnoreCase("osm")) {
 			fileNameWithoutExtension = FilenameUtils.removeExtension(fileNameWithoutExtension);
 			System.out.println("vectoriseAndUploadOsmFileToDatabase: " + fileName + fileNameWithoutExtension);

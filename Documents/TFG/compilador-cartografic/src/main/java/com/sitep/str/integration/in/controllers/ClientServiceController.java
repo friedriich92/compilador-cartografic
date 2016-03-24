@@ -1,4 +1,4 @@
-package com.sitep.str.integration.in.servlets;
+package com.sitep.str.integration.in.controllers;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import com.sitep.str.integration.in.ClientService;
 import com.sitep.str.integration.in.impl.ClientServiceImpl;
 
-public class ClientServiceServlet extends HttpServlet {
+public class ClientServiceController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ClientService clientService = new ClientServiceImpl();
 

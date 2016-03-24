@@ -1,4 +1,4 @@
-package com.sitep.str.integration.in.servlets;
+package com.sitep.str.integration.in.controllers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.sitep.str.integration.in.UsuariService;
 import com.sitep.str.integration.in.impl.UsuariServiceImpl;
 
-public class UsuariServiceServlet extends HttpServlet {
+public class UsuariServiceController extends HttpServlet {
 		private static final long serialVersionUID = 1L;
 		private UsuariService usuariService = new UsuariServiceImpl();
 		

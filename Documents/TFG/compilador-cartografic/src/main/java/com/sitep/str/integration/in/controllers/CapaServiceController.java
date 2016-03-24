@@ -1,4 +1,4 @@
-package com.sitep.str.integration.in.servlets;
+package com.sitep.str.integration.in.controllers;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import org.apache.commons.io.FilenameUtils;
 import com.sitep.str.integration.in.CapaService;
 import com.sitep.str.integration.in.impl.CapaServiceImpl;
 
-public class CapaServiceServlet extends HttpServlet {
+public class CapaServiceController extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private CapaService capa = new CapaServiceImpl();
@@ -41,7 +41,7 @@ public class CapaServiceServlet extends HttpServlet {
 		else if (extension.equalsIgnoreCase("csv")) geometry = "geometria"; // geom -> .CSV
 		System.out.println("geometry: " + geometry);
 		try {
-			capa.getLayer(exactFileName, fileNameWithoutExtension, geometry, response);
+			capa.getLayer(exactFileName, fileNameWithoutExtension, geometry, response, userName);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

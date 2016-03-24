@@ -10,6 +10,7 @@ public class Fitxer {
 	String nomDeFitxer;
 	ExtensioDeFitxer extensioDeFitxer;
 	boolean modificat;
+	String info;
 	
 	public Fitxer() {
 		super();
@@ -23,8 +24,9 @@ public class Fitxer {
 	 * @param nomDeFitxer
 	 * @param extensioDeFitxer
 	 * @param modificat
+	 * @param info
 	 */
-	public Fitxer(String idFitxer, String idUsuari, int numeroDeVersio, Date date, String nomDeFitxer, ExtensioDeFitxer extensioDeFitxer, boolean modificat) {
+	public Fitxer(String idFitxer, String idUsuari, int numeroDeVersio, Date date, String nomDeFitxer, ExtensioDeFitxer extensioDeFitxer, boolean modificat, String info) {
 		super();
 		this.idFitxer = idFitxer;
 		this.idUsuari = idUsuari;
@@ -33,7 +35,10 @@ public class Fitxer {
 		this.nomDeFitxer = nomDeFitxer;
 		this.extensioDeFitxer = extensioDeFitxer;
 		this.modificat = modificat;
+		this.info = info;
 	}
+
+
 
 	/**
 	 * @return the idFitxer
@@ -131,6 +136,20 @@ public class Fitxer {
 	 */
 	public void setModificat(boolean modificat) {
 		this.modificat = modificat;
+	}
+
+	/**
+	 * @return the info
+	 */
+	public String getInfo() {
+		return info;
+	}
+
+	/**
+	 * @param info the info to set
+	 */
+	public void setInfo(String info) {
+		this.info = info;
 	}
 	
 }

@@ -1,4 +1,4 @@
-package com.sitep.str.integration.in.servlets;
+package com.sitep.str.integration.in.controllers;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.sitep.str.integration.in.FonsService;
 import com.sitep.str.integration.in.impl.FonsServiceImpl;
 
-public class FonsServiceServlet extends HttpServlet {
+public class FonsServiceController extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	FonsService fonsService = new FonsServiceImpl();

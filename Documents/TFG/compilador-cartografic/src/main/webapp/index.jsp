@@ -285,7 +285,7 @@
 	        	$("#exporta-fitxer").css("font-size", "13px");
 			}
 			else {
-				window.open("http://localhost/compilador-cartografic/CapaServiceServlet?filename="+fileNameString+"&username="+userSession+"&extension="+extension)
+				window.open("http://localhost/compilador-cartografic/CapaServiceController?filename="+fileNameString+"&username="+userSession+"&extension="+extension)
 				$("#exporta-fitxer").text("La descarrega comensara en breus...");
 	        	$("#exporta-fitxer").css("color", "green");
 	        	$("#exporta-fitxer").css("font-size", "13px");
@@ -320,12 +320,12 @@
 			else boundingBoxString += extent[i] + ",";
 		}
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/FonsServiceServlet',
+			url: 'http://localhost/compilador-cartografic/FonsServiceController',
 	        type: 'POST',
 	        data: boundingBoxString,
 	        success: function(data, textStatus, jqXHR) {
 	        	$("#myProgress").hide();
-	        	window.open("http://localhost/compilador-cartografic/FonsServiceServlet", "FonsServiceServlet");
+	        	window.open("http://localhost/compilador-cartografic/FonsServiceController", "FonsServiceController");
 	        	$("#exporta-fitxer-mapa").css("color", "green");
 	        	$("#exporta-fitxer-mapa").text("La desc&agrave;rrega s'inicialitzar&agrave; en breus...");
 	        	for (i = 0; i <= 100; i++) 
@@ -344,22 +344,21 @@
     	try {
 			console.log("editIdioma");
 			$.ajax({
-				url: 'http://localhost/compilador-cartografic/IdiomaServiceServlet?info=edit&idioma=encatala',
+				url: 'http://localhost/compilador-cartografic/IdiomaServiceController?info=edit&idioma=encatala',
 			       type: 'POST',
-			       data: userInformation,
 			       success: function(data, textStatus, jqXHR) {
-			    	   console.log("IdiomaServiceServlet (edit) success");
+			    	   console.log("IdiomaServiceController (edit) success");
 			    	   },
 			    	   error: function(jqXHR, textStatus, errorThrown) {
-			    		   console.log("IdiomaServiceServlet (edit) error");
+			    		   console.log("IdiomaServiceController (edit) error");
 			    		   }
 			    	   });
 		} catch (e) { throw new Error(e.message); }
 		idiomaVariable = 0;
 		console.log("idioma-catala");
 		$("#titol").text("Compilador Cartografic");
-		$("#opcio-a").text("Metode A");
-		$("#opcio-b").text("Metode B");
+		$("#opcio-a").text("Metode Principal");
+		$("#opcio-b").text("Metode Opcional");
 		$("#importacio-text2").text("Selecciona una porcio del mapa:");
 		$("#taula-atribut2").text("Fitxer");
 		$("#taula-atribut4").text("Seleccio");
@@ -381,22 +380,21 @@
     	try {
 			console.log("editIdioma");
 			$.ajax({
-				url: 'http://localhost/compilador-cartografic/IdiomaServiceServlet?info=edit&idioma=encastella',
+				url: 'http://localhost/compilador-cartografic/IdiomaServiceController?info=edit&idioma=encastella',
 			       type: 'POST',
-			       data: userInformation,
 			       success: function(data, textStatus, jqXHR) {
-			    	   console.log("IdiomaServiceServlet (edit) success");
+			    	   console.log("IdiomaServiceController (edit) success");
 			    	   },
 			    	   error: function(jqXHR, textStatus, errorThrown) {
-			    		   console.log("IdiomaServiceServlet (edit) error");
+			    		   console.log("IdiomaServiceController (edit) error");
 			    		   }
 			    	   });
 		} catch (e) { throw new Error(e.message); }
 		idiomaVariable = 1;
 		console.log("idioma-castella");
 		$("#titol").text("Compilador Cartografico");
-		$("#opcio-a").text("Metodo A");
-		$("#opcio-b").text("Metodo B");
+		$("#opcio-a").text("Metodo Principal");
+		$("#opcio-b").text("Metodo Opcional");
 		$("#importacio-text2").text("Selecciona una porcion del mapa:");
 		$("#taula-atribut2").text("Fichero");
 		$("#taula-atribut4").text("Seleccion");
@@ -498,11 +496,11 @@
 			else {
 				try {
 					$.ajax({
-						url: 'http://localhost/compilador-cartografic/AplicarCanviServiceServlet?name='+fileNameString+'&user='+userSession+'&info='+optionText+'&c='+optionChange,
+						url: 'http://localhost/compilador-cartografic/AplicarCanviServiceController?name='+fileNameString+'&user='+userSession+'&info='+optionText+'&c='+optionChange,
 						type: 'POST',
 // 						data: '',
 						success: function(data, textStatus, jqXHR) {
-							console.log("UsuariServiceServlet success " + data);
+							console.log("UsuariServiceController success " + data);
 							if (optionChange.indexOf("coord") == 0) {
 								if (data.indexOf("SI") == 0) {
 									$("#file-change-text").text("El canvi de coordenades s'ha realitzat correctament.");
@@ -606,7 +604,7 @@
 	{
 		console.log("postFilesData");
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/FitxerServiceServlet?name='+userSession, //+'&filename='+file2uploadName
+			url: 'http://localhost/compilador-cartografic/FitxerServiceController?name='+userSession, //+'&filename='+file2uploadName
 	        type: 'POST',
 	        data: data,
 	        cache: false,
@@ -699,7 +697,7 @@
 	{
 		console.log("postFilesData");
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/ClientServiceServlet?name='+userSession, //+'&filename='+file2uploadName
+			url: 'http://localhost/compilador-cartografic/ClientServiceController?name='+userSession, //+'&filename='+file2uploadName
 	        type: 'POST',
 	        data: data,
 	        cache: false,
@@ -716,7 +714,7 @@
 	};
 	function uploadToDatabase(filename) {
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/VectorialServiceServlet?user='+userSession+'&info=1',
+			url: 'http://localhost/compilador-cartografic/VectorialServiceController?user='+userSession+'&info=1',
 	        type: 'POST',
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {
@@ -724,7 +722,7 @@
 				if (data.replace(/[^)]/g, "").length > 1) {
 					var dataVector = data.split(")");
 					var count = -4;
-					for(var i = 0; i < dataVector.length; i++) {
+					for(var i = 0; i < dataVector.length-1; i++) {
 						$("#file-filter" + (filesUploaded + count)).text(dataVector[i] +")");
 						++count;
 					}
@@ -740,7 +738,7 @@
 	};
 	function uploadOsmFiles(filename) {
 		$.ajax({
-			url: 'http://localhost/compilador-cartografic/VectorialServiceServlet?user='+userSession+"&info=osm",
+			url: 'http://localhost/compilador-cartografic/VectorialServiceController?user='+userSession+"&info=osm",
 	        type: 'POST',
 	        data: filename,
 	        success: function(data, textStatus, jqXHR) {
@@ -764,11 +762,11 @@
 			var userInformation = "1," + $("#lg_username").val() + "," + $("#lg_password").val();
 			console.log("userInformation: " + userInformation);
 			$.ajax({
-				url: 'http://localhost/compilador-cartografic/UsuariServiceServlet?userSession='+userSession,
+				url: 'http://localhost/compilador-cartografic/UsuariServiceController?userSession='+userSession,
 				type: 'POST',
 				data: userInformation,
 				success: function(data, textStatus, jqXHR) {
-					console.log("UsuariServiceServlet success " + data);
+					console.log("UsuariServiceController success " + data);
 					if (data.indexOf("NO") == -1) {
 						$("#lg_username").val("");
 						$("#lg_password").val("");
@@ -827,7 +825,7 @@
 						}
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
-						console.log("UsuariServiceServlet error" + data);
+						console.log("UsuariServiceController error" + data);
 						}
 					});
 			}
@@ -842,11 +840,11 @@
 				$("#rg_email").val() + "," + $("#rg_rol").val() + "," + $("#rg_client").val();
 			console.log("userInformation: " + userInformation);
 			$.ajax({
-				url: 'http://localhost/compilador-cartografic/UsuariServiceServlet',
+				url: 'http://localhost/compilador-cartografic/UsuariServiceController',
 			       type: 'POST',
 			       data: userInformation,
 			       success: function(data, textStatus, jqXHR) {
-			    	   console.log("UsuariServiceServlet success");
+			    	   console.log("UsuariServiceController success");
 			    	   if (data.indexOf("1") == 0) {
 			    		   console.log("data.indexOf(1) == 0");
 			    		   $("#missatge-registre").text("");
@@ -869,7 +867,7 @@
 			    	   }
 			    	   },
 			    	   error: function(jqXHR, textStatus, errorThrown) {
-			    		   console.log("UsuariServiceServlet error");
+			    		   console.log("UsuariServiceController error");
 			    		   }
 			    	   });
 		} catch (e) { throw new Error(e.message); }
@@ -908,13 +906,13 @@
     	try {
 			console.log("addIdioma");
 			$.ajax({
-				url: 'http://localhost/compilador-cartografic/IdiomaServiceServlet?info=add&idioma=encatala',
+				url: 'http://localhost/compilador-cartografic/IdiomaServiceController?info=add&idioma=encatala',
 			       type: 'POST',
 			       success: function(data, textStatus, jqXHR) {
-			    	   console.log("IdiomaServiceServlet success");
+			    	   console.log("IdiomaServiceController success");
 			    	   },
 			    	   error: function(jqXHR, textStatus, errorThrown) {
-			    		   console.log("IdiomaServiceServlet error");
+			    		   console.log("IdiomaServiceController error");
 			    		   }
 			    	   });
 		} catch (e) { throw new Error(e.message); }

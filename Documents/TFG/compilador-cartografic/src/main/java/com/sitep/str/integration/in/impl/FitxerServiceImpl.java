@@ -157,6 +157,8 @@ public class FitxerServiceImpl implements FitxerService {
 	            
 	            // Atributs per insertar
 	            ExtensioDeFitxer extensioDeFitxer = new ExtensioDeFitxer(extension);
+	            System.out.println("ExtensioDeFitxer: " + extensioDeFitxer.getExtensio() +
+	            		", extensio: " + extension);
 				java.util.Date today = new java.util.Date();
 	            System.out.println("File field " + name + " with file name " + itemGetName + " detected.");
 	            
@@ -168,18 +170,27 @@ public class FitxerServiceImpl implements FitxerService {
 			    		else if (j == 1) type = "point";
 			    		else if (j == 2) type = "polygon";
 			    		else type = "roads";
-		            	addFitxer(new Fitxer(fileNameWithoutExtension + type + userName + ".shp", userName, 
-		            			1, new java.sql.Date(today.getTime()), exactNameWithoutExtension.toLowerCase(),
-		            				extensioDeFitxer, false));
+		            	// 1
+			    		addFitxer(new Fitxer(fileNameWithoutExtension + type + userName + ".shp", userName, 
+		            			1, new java.sql.Date(today.getTime()), fileNameWithoutExtension + type + userName,
+		            				extensioDeFitxer, false, null));
 			            addVersioFitxer(new VersioFitxer(fileNameWithoutExtension + type + userName + ".shp",
 			            		1, null, null, null));
 			            addInformacioGeografica(new InformacioGeografica(fileNameWithoutExtension + type + 
 			            		userName + ".shp", "aquesta es la info", 1));
+			            // 2
+		            	addFitxer(new Fitxer(fileNameWithoutExtension + type + userName + "2.shp", userName, 
+		            			2, new java.sql.Date(today.getTime()), fileNameWithoutExtension + type + userName + "2",
+		            				extensioDeFitxer, false, null));
+			            addVersioFitxer(new VersioFitxer(fileNameWithoutExtension + type + userName + "2.shp",
+			            		2, null, null, null));
+			            addInformacioGeografica(new InformacioGeografica(fileNameWithoutExtension + type + 
+			            		userName + "2.shp", "aquesta es la info", 2));
 		            }
 	            }
 	            else {
 		            addFitxer(new Fitxer(exactName, userName, 1, new java.sql.Date(today.getTime()),
-		            		exactNameWithoutExtension.toLowerCase(), extensioDeFitxer, false));
+		            		exactNameWithoutExtension.toLowerCase(), extensioDeFitxer, false, null));
 		            addVersioFitxer(new VersioFitxer(exactName, 1, null, null, null));
 		            addInformacioGeografica(new InformacioGeografica(exactName, "aquesta es la info", 1));
 	            }
@@ -317,8 +328,8 @@ public class FitxerServiceImpl implements FitxerService {
 			Class.forName("org.postgresql.Driver");
 			connectionImportFileService = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
 			
-			String columnsDest = "idfitxer, idusuari, numerodeversio, date, nomfitxer, extensiodefitxer, modificat";
-			String sql1 = "INSERT INTO fitxer (" + columnsDest + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
+			String columnsDest = "idfitxer, idusuari, numerodeversio, date, nomfitxer, extensiodefitxer, modificat, info";
+			String sql1 = "INSERT INTO fitxer (" + columnsDest + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 			System.out.println("SQL Statement: " + sql1);
 			
 			pstmt1 = connectionImportFileService.prepareStatement(sql1);
@@ -327,8 +338,9 @@ public class FitxerServiceImpl implements FitxerService {
 			pstmt1.setInt(3, fitxer.getNumeroDeVersio());
 			pstmt1.setDate(4, fitxer.getDate());
 			pstmt1.setString(5, fitxer.getNomDeFitxer());
-			pstmt1.setString(6, fitxer.getExtensioDeFitxer().toString());
+			pstmt1.setString(6, fitxer.getExtensioDeFitxer().getExtensio());
 			pstmt1.setBoolean(7, fitxer.isModificat());
+			pstmt1.setString(8, fitxer.getInfo());
 			pstmt1.executeUpdate();
 		} catch (Exception e) {
 		      e.printStackTrace();
@@ -346,7 +358,7 @@ public class FitxerServiceImpl implements FitxerService {
 		PreparedStatement pstmt1 = null;
         Connection connectionImportFileService = null;
         String fileNameWithoutExtension = FilenameUtils.removeExtension(fileName);
-        String exactNameWithoutExtension = fileNameWithoutExtension + username;
+        String exactNameWithoutExtension = fileNameWithoutExtension.toLowerCase() + username;
         String extension = FilenameUtils.getExtension("/files/"+fileName);
         String exactName = exactNameWithoutExtension + "." + extension;
         String exactName2 = exactNameWithoutExtension + "2." + extension;

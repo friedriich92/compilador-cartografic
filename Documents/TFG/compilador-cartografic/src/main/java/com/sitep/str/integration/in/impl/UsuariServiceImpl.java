@@ -126,13 +126,15 @@ public class UsuariServiceImpl implements UsuariService {
 
 	public String getFiles(String userName) {
 		boolean does2Exist;
-		String name2Use, fileNameEdit, fileNameEdit2, sql1, sql2, finalResponse, almostFinalResponse, theFinalResponse, exactName;;
+		String name2Use, fileNameEdit, fileNameEdit2, sql1, sql2, finalResponse, almostFinalResponse, 
+		theFinalResponse, exactName, extensioDeFitxer, information;
 		PreparedStatement pstmt1, pstmt2;
 		int countNumber2, numberOfRows, loopNumber;
 		ResultSet rs, rs2;
 		// Inicialització
 		does2Exist = false;
-		finalResponse = fileNameEdit = fileNameEdit2 = almostFinalResponse = theFinalResponse = name2Use = exactName = "";
+		finalResponse = fileNameEdit = fileNameEdit2 = almostFinalResponse = theFinalResponse = sql2
+				= name2Use = exactName = extensioDeFitxer = information = "";
 		rs = rs2 = null;
 		pstmt1 = pstmt2 = null;
 		Connection conn = null;
@@ -145,7 +147,7 @@ public class UsuariServiceImpl implements UsuariService {
     			conn = java.sql.DriverManager.getConnection("jdbc:postgresql://192.122.214.77:5432/osm", "postgres", "SiteP0305");
 
     			// 2. DADES DELS ARXIUS
-	        	sql1 = "SELECT idfitxer, date, nomfitxer FROM fitxer WHERE idusuari = ? AND numerodeversio = ?";
+	        	sql1 = "SELECT idfitxer, date, nomfitxer, extensiodefitxer, info FROM fitxer WHERE idusuari = ? AND numerodeversio = ?";
 	        	pstmt1 = conn.prepareStatement(sql1);
 	        	pstmt1.setString(1, userName);
 	        	pstmt1.setInt(2, 1);
@@ -160,40 +162,50 @@ public class UsuariServiceImpl implements UsuariService {
 	    				System.out.println("New fileNameEdit: " + fileNameEdit2);
 	    				almostFinalResponse += (fileNameEdit2 + "'" + rs.getString(2) + "'");
 	            		exactName = rs.getString(3);
-	            				
-	            		// 3.0 EXISTEIX EL FITXER 2?
-	              		sql2 = "SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name = ?)"; // 2
-	            		pstmt2 = conn.prepareStatement(sql2);
-	            		pstmt2.setString(1, exactName.toLowerCase() + "2");
-	            		rs2 = pstmt2.executeQuery();
-	            		if (rs2.next()) does2Exist = rs2.getBoolean(1);
-	            		
-	            		if (does2Exist) name2Use = exactName.toLowerCase() + "2";
-	            		else name2Use = exactName.toLowerCase();
-	            		
-	            		// 3.1 COLUMNES DE LA TAULA DE L'ARXIU
-	            		sql2 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?"; // 2
-	            		pstmt2 = conn.prepareStatement(sql2);
-	            		pstmt2.setString(1, name2Use);
-	            		rs2 = pstmt2.executeQuery();
-	            		while (rs2.next())
-	            			almostFinalResponse += (rs2.getString(1) + ", ");
-	            		finalResponse += almostFinalResponse.substring(0, almostFinalResponse.length()-2);
-	            		
-	            		// 3.2 FILES DE LA TAULA DE L'ARXIU
-	            		sql2 = "SELECT COUNT(*) FROM " + name2Use; // 2
-	            		pstmt2 = conn.prepareStatement(sql2);
-	            		rs2 = pstmt2.executeQuery();
-	            		if (rs2.next()) numberOfRows = rs2.getInt(1);
-	            			finalResponse += " (" + numberOfRows + ");";
-	            			almostFinalResponse = "";
-	    				} catch (Exception e) {
+	            		extensioDeFitxer = rs.getString(4);
+	            		information = rs.getString(5);
+	            		if (extensioDeFitxer.equalsIgnoreCase("osm.pbf") || extensioDeFitxer.equalsIgnoreCase("osm.bz2")) {
+	            			System.out.println("information: " + information + ";");
+	            			almostFinalResponse += (information + ";");
+	            			System.out.println("almostFinalResponse: " + fileNameEdit + " " + almostFinalResponse);
+	            			if (loopNumber == countNumber2) finalResponse = almostFinalResponse;
+	            			System.out.println("theFinalResponse: " + fileNameEdit + " " + theFinalResponse);
+	            		}
+	            		else {
+		            		// 3.0 EXISTEIX EL FITXER 2?
+		              		sql2 = "SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name = ?)"; // 2
+		            		pstmt2 = conn.prepareStatement(sql2);
+		            		pstmt2.setString(1, exactName.toLowerCase() + "2");
+		            		rs2 = pstmt2.executeQuery();
+		            		if (rs2.next()) does2Exist = rs2.getBoolean(1);
+		            		
+		            		if (does2Exist) name2Use = exactName.toLowerCase() + "2";
+		            		else name2Use = exactName.toLowerCase();
+		            		
+		            		// 3.1 COLUMNES DE LA TAULA DE L'ARXIU
+		            		sql2 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?"; // 2
+		            		pstmt2 = conn.prepareStatement(sql2);
+		            		pstmt2.setString(1, name2Use);
+		            		rs2 = pstmt2.executeQuery();
+		            		while (rs2.next())
+		            			almostFinalResponse += (rs2.getString(1) + ", ");
+		            		finalResponse += almostFinalResponse.substring(0, almostFinalResponse.length()-2);
+		            		
+		            		// 3.2 FILES DE LA TAULA DE L'ARXIU
+		            		sql2 = "SELECT COUNT(*) FROM " + name2Use; // 2
+		            		pstmt2 = conn.prepareStatement(sql2);
+		            		rs2 = pstmt2.executeQuery();
+		            		if (rs2.next()) numberOfRows = rs2.getInt(1);
+		            		finalResponse += " (" + numberOfRows + ");";
+		            		almostFinalResponse = "";
+	            		}} catch (Exception e) {
 	    				      e.printStackTrace();
 	    			    } finally {
 	    			    	try {
-	    			    	  rs2.close();
-	    			    	  pstmt2.close();
-	    			    	  } catch (java.sql.SQLException e) {
+	    			    	  if (!extensioDeFitxer.equalsIgnoreCase("osm.pbf") && !extensioDeFitxer.equalsIgnoreCase("osm.bz2")) {
+		    			    	  rs2.close();
+		    			    	  pstmt2.close();
+	    			    	  }} catch (java.sql.SQLException e) {
 	    			    		  e.printStackTrace();
 	    			    		  }
 	    			    	}

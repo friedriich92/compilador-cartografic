@@ -20,6 +20,8 @@ public interface AplicarCanviService {
 
 	public void applyFilter(String fileName, String fileNameWithoutExtension, String extension, String info, String username, HttpServletResponse response);
 
+	public void applyFilter2OSM(String fileName, String fileNameWithoutExtension, String extension, String info, String username, HttpServletResponse response);
+	
 	public void deleteFile(String fileName, String username);
 
 	public String editFile(String fileName, String username);

@@ -1,4 +1,4 @@
-package com.sitep.str.integration.in.servlets;
+package com.sitep.str.integration.in.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,7 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 import com.sitep.str.integration.in.AplicarCanviService;
 import com.sitep.str.integration.in.impl.AplicarCanviServiceImpl;
 
-public class AplicarCanviServiceServlet extends HttpServlet {
+public class AplicarCanviServiceController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	AplicarCanviService aplicarCanvi = new AplicarCanviServiceImpl();
