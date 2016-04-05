@@ -37,7 +37,7 @@
 	{ "type": "Feature",
 		"geometry":	{"type":"Point","coordinates":[19.2006989500993,42.6483896644749]}},
 	{ "type": "Feature",
-        "geometry": {"type":"Point","coordinates":[19.2023211278394,42.6494320378492]},
+        "geometry": {"type":"Point","coordinates":[19.2023211278394,42.6494320378492]}},
 	{ "type": "Feature",
         "geometry": {"type":"Point","coordinates":[19.2047345416817,42.6528854909407]}},
 	{ "type": "Feature",
